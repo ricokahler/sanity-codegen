@@ -1,6 +1,6 @@
-import prettier, { ResolveConfigOptions } from 'prettier';
+import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 
-interface TopLevelType {
+export interface TopLevelType {
   type: string;
   description?: string;
   name: string;
@@ -68,26 +68,71 @@ type Field = {
   validation?: any;
 };
 
-interface Options {
+function defaultGenerateTypeName(sanityTypeName: string) {
+  if (!/^[A-Z0-9]+$/i.test(sanityTypeName)) {
+    throw new Error(
+      `Name "${sanityTypeName}" is not valid. Ensure camel case and alphanumeric characters only.`
+    );
+  }
+
+  const typeName = `${sanityTypeName
+    .substring(0, 1)
+    .toUpperCase()}${sanityTypeName.substring(1)}`;
+
+  return typeName;
+}
+
+export interface GenerateTypesOptions {
+  /**
+   * Provide an array of uncompiled sanity types prior to running them through
+   * sanity's `createSchema`
+   */
   types: TopLevelType[];
+  /**
+   * Provide any additional types that your schema may reference here. This is
+   * useful if you're using a sanity plugin that defines a type that is outside
+   * of your schema.
+   *
+   * Accepts an object where the keys are the typescript name you're looking to
+   * define and the value is a string of the typescript definition. Don't forget
+   * to export the type.
+   */
+  additionalTypes?: { [typescriptTypeName: string]: string };
+  /**
+   * Optionally provide a function that generates the typescript type identifer
+   * from the sanity type name. Use this function to override the default and
+   * prevent naming collisions.
+   */
   generateTypeName?: (sanityTypeName: string) => string;
+  /**
+   * This option is fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
   prettierResolveConfigPath?: string;
+  /**
+   * This options is also fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
   prettierResolveConfigOptions?: ResolveConfigOptions;
 }
 
 async function generateTypes({
   types,
+  additionalTypes = {},
+  generateTypeName = defaultGenerateTypeName,
   prettierResolveConfigPath,
   prettierResolveConfigOptions,
-}: Options) {
+}: GenerateTypesOptions) {
   const documentTypes = types.filter(({ type }) => type === 'document');
   const otherTypes = types.filter(({ type }) => type !== 'document');
 
   const createdTypeNames: { [name: string]: boolean } = {};
-  const referencedTypeNames: { [name: string]: string } = {};
+  const referencedTypeNames: { [name: string]: boolean } = {};
 
   function createTypeName(name: string) {
-    const typeName = getTypeName(name);
+    const typeName = generateTypeName(name);
     createdTypeNames[typeName] = true;
     return typeName;
   }
@@ -97,18 +142,8 @@ async function generateTypes({
    * typescript interfaces throwing if invalid
    */
   function getTypeName(sanityTypeName: string) {
-    if (!/^[A-Z0-9]+$/i.test(sanityTypeName)) {
-      throw new Error(
-        `Name "${sanityTypeName}" is not valid. Ensure camel case and alphanumeric characters only`
-      );
-    }
-
-    const typeName = `${sanityTypeName
-      .substring(0, 1)
-      .toUpperCase()}${sanityTypeName.substring(1)}`;
-
-    referencedTypeNames[typeName] = sanityTypeName;
-
+    const typeName = generateTypeName(sanityTypeName);
+    referencedTypeNames[typeName] = true;
     return typeName;
   }
 
@@ -338,7 +373,12 @@ async function generateTypes({
       (type) => `
         export type ${createTypeName(type.name)} = ${convertType(type, [])};`
     ),
+    ...Object.values(additionalTypes),
   ];
+
+  for (const typescriptTypeName of Object.keys(additionalTypes)) {
+    createdTypeNames[typescriptTypeName] = true;
+  }
 
   if (documentTypes.length) {
     typeStrings.push(`
@@ -356,19 +396,19 @@ async function generateTypes({
     throw new Error(
       `Could not find types for: ${missingTypes
         .map((t) => `"${t}"`)
-        .join(', ')}. Ensure they are present in your schema.` +
+        .join(', ')}. Ensure they are present in your schema. ` +
         `You may have to type them separately. TODO: add README link.`
     );
   }
 
   const resolvedConfig = prettierResolveConfigPath
-    ? await prettier.resolveConfig(
+    ? await resolveConfig(
         prettierResolveConfigPath,
         prettierResolveConfigOptions
       )
     : null;
 
-  return prettier.format(typeStrings.join('\n'), {
+  return format(typeStrings.join('\n'), {
     ...resolvedConfig,
     parser: 'typescript',
   });

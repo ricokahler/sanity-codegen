@@ -9,7 +9,12 @@
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "baseUrl": ".",
+    "paths": {
+      "sanity-codegen/cli/resolve-config": ["./src/cli/resolve-config"]
+    }
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "exclude": ["**/*.test.ts"]
 }

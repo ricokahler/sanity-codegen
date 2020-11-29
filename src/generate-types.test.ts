@@ -1226,6 +1226,91 @@ describe('generate-types', () => {
     `);
   });
 
+  it('allows for additional typescript types', async () => {
+    const foo = {
+      name: 'foo',
+      type: 'object',
+      fields: [
+        {
+          name: 'code',
+          type: 'code',
+        },
+      ],
+    };
+
+    const result = await generateTypes({
+      types: [foo],
+      additionalTypes: {
+        Code: `export type Code = string`,
+      },
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      "/**
+       * Represents a reference in Sanity to another entity. Note that the
+       * generic type is strictly for TypeScript meta programming.
+       */
+      // NOTE: the _T is for only for typescript meta
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      export type Reference<_T> = {
+        _type: \\"reference\\";
+        _key?: string;
+        _ref: string;
+      };
+
+      /**
+       * Assets in Sanity follow the same structure as references however
+       * the string in _ref can be formatted differently than a document.
+       */
+      export type SanityAsset = Reference<any>;
+
+      export interface SanityImage {
+        asset: SanityAsset;
+      }
+
+      export interface SanityFile {
+        asset: SanityAsset;
+      }
+
+      export interface SanitySlug {
+        _type: \\"slug\\";
+        current: string;
+      }
+
+      export interface SanityGeoPoint {
+        _type: \\"geopoint\\";
+        lat: number;
+        lng: number;
+        alt: number;
+      }
+
+      // blocks are typically handled by a block conversion lib
+      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
+      export interface SanityBlock {
+        _type: \\"block\\";
+        [key: string]: any;
+      }
+
+      export interface SanityDocument {
+        _id: string;
+        _createAt: string;
+        _rev: string;
+        _updatedAt: string;
+      }
+
+      export type Foo = {
+        /**
+         * code — \`code\`
+         *
+         *
+         */
+        code?: Code;
+      };
+      export type Code = string;
+      "
+    `);
+  });
+
   it('throws if the required flag is present but there is no validation function', async () => {
     const foo = {
       type: 'document',
@@ -1277,7 +1362,7 @@ describe('generate-types', () => {
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Name "foo_bar" is not valid. Ensure camel case and alphanumeric characters only]`
+        `[Error: Name "foo_bar" is not valid. Ensure camel case and alphanumeric characters only.]`
       );
     }
 
@@ -1362,6 +1447,32 @@ describe('generate-types', () => {
       caught = true;
       expect(e).toMatchInlineSnapshot(
         `[Error: Found span outside of a block type.]`
+      );
+    }
+
+    expect(caught).toBe(true);
+  });
+
+  it('throws if it finds unknown referenced types', async () => {
+    const foo = {
+      name: 'foo',
+      type: 'object',
+      fields: [
+        {
+          name: 'code',
+          type: 'code',
+        },
+      ],
+    };
+
+    let caught = false;
+
+    try {
+      await generateTypes({ types: [foo] });
+    } catch (e) {
+      caught = true;
+      expect(e).toMatchInlineSnapshot(
+        `[Error: Could not find types for: "Code". Ensure they are present in your schema. You may have to type them separately. TODO: add README link.]`
       );
     }
 
