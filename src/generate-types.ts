@@ -215,7 +215,7 @@ async function generateTypes({
       // Note: we want the union to be wrapped by one Reference<T> so when
       // unwrapped the union can be further discriminated using the `_type`
       // of each individual reference type
-      return `Reference<${union}>`;
+      return `SanityReference<${union}>`;
     }
 
     if (intrinsic.type === 'boolean') {
@@ -311,50 +311,27 @@ async function generateTypes({
 
   const typeStrings = [
     `
-      /**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: 'reference';
-        _key?: string;
-        _ref: string;
+      import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from 'sanity-codegen';
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage { asset: SanityAsset; };
-
-      export interface SanityFile { asset: SanityAsset; };
-
-      export interface SanitySlug { _type: 'slug'; current: string; }
-
-      export interface SanityGeoPoint {
-        _type: 'geopoint',
-        lat: number,
-        lng: number,
-        alt: number,
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: 'block';
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
   `,
     ...types
       .filter(({ type }) => type === 'document')

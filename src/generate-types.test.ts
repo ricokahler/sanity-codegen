@@ -61,57 +61,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -235,57 +205,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * foo
@@ -326,57 +266,27 @@ describe('generate-types', () => {
 
     expect(result.includes('name?: string')).toBe(true);
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -441,57 +351,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       export type Foo = {
         _type: \\"foo\\";
@@ -582,57 +462,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       export type Foo = {
         _type: \\"image\\";
@@ -737,57 +587,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar, baz] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -889,57 +709,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -997,57 +787,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -1111,57 +871,27 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar, baz] });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       /**
        * Foo
@@ -1183,14 +913,14 @@ describe('generate-types', () => {
          *
          *
          */
-        bar?: Reference<Bar>;
+        bar?: SanityReference<Bar>;
 
         /**
          * Two Types — \`reference\`
          *
          *
          */
-        complex?: Reference<Bar | Baz>;
+        complex?: SanityReference<Bar | Baz>;
       }
 
       /**
@@ -1247,57 +977,27 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/**
-       * Represents a reference in Sanity to another entity. Note that the
-       * generic type is strictly for TypeScript meta programming.
-       */
-      // NOTE: the _T is for only for typescript meta
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      export type Reference<_T> = {
-        _type: \\"reference\\";
-        _key?: string;
-        _ref: string;
+      "import {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
       };
-
-      /**
-       * Assets in Sanity follow the same structure as references however
-       * the string in _ref can be formatted differently than a document.
-       */
-      export type SanityAsset = Reference<any>;
-
-      export interface SanityImage {
-        asset: SanityAsset;
-      }
-
-      export interface SanityFile {
-        asset: SanityAsset;
-      }
-
-      export interface SanitySlug {
-        _type: \\"slug\\";
-        current: string;
-      }
-
-      export interface SanityGeoPoint {
-        _type: \\"geopoint\\";
-        lat: number;
-        lng: number;
-        alt: number;
-      }
-
-      // blocks are typically handled by a block conversion lib
-      // (e.g. block \`@sanity/block-content-to-react\`) so we only type lightly
-      export interface SanityBlock {
-        _type: \\"block\\";
-        [key: string]: any;
-      }
-
-      export interface SanityDocument {
-        _id: string;
-        _createAt: string;
-        _rev: string;
-        _updatedAt: string;
-      }
 
       export type Foo = {
         _type: \\"foo\\";
