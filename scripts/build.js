@@ -17,10 +17,13 @@ async function build() {
   console.log('Compiling types…');
   await exec('npx tsc');
 
-  console.log('Compiling JavaScript…');
+  console.log('Compiling Non-Client JS…');
   await exec(
     'npx babel -x .ts,.js --ignore /**/*.test.ts,/**/*.d.ts ./src --out-dir ./dist'
   );
+
+  console.log('Compiling Client JS…');
+  await exec('npx rollup -c');
 
   // add node hash-bang to cli entry point
   const cliIndexPath = path.resolve(__dirname, '../dist/cli.js');

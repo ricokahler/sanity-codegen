@@ -4,16 +4,13 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
     "outDir": "./dist",
     "strict": true,
     "target": "esnext",
-    "baseUrl": ".",
-    "paths": {
-      "sanity-codegen/cli/resolve-config": ["./src/cli/resolve-config"]
-    }
+    "baseUrl": "."
   },
   "include": ["./src"],
   "exclude": ["**/*.test.ts"]
