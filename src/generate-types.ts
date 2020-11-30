@@ -319,6 +319,7 @@ async function generateTypes({
         SanitySlug,
         SanityGeoPoint,
         SanityBlock,
+        SanityDocument,
       } from 'sanity-codegen';
 
       export {
@@ -329,6 +330,7 @@ async function generateTypes({
         SanitySlug,
         SanityGeoPoint,
         SanityBlock,
+        SanityDocument,
       };
   `,
     ...types
