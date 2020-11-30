@@ -191,11 +191,12 @@ async function generateTypes({
       const lastParent = parents[parents.length - 1];
       const fromArray = typeof lastParent === 'number';
 
+      const typeClause = intrinsic.name ? `_type: '${intrinsic.name}';` : '';
       // if this object is from a parent that is an array, then the _key
       // property will be present.
       const keyClause = fromArray ? `_key: string;` : '';
 
-      return `{ ${keyClause} ${intrinsic.fields
+      return `{ ${typeClause} ${keyClause} ${intrinsic.fields
         .map((field) =>
           convertField(field, [
             ...parents,

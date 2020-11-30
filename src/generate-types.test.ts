@@ -494,6 +494,7 @@ describe('generate-types', () => {
       }
 
       export type Foo = {
+        _type: \\"foo\\";
         /**
          * Name — \`string\`
          *
@@ -507,12 +508,14 @@ describe('generate-types', () => {
          *
          */
         subObject: {
+          _type: \\"subObject\\";
           /**
            * Really nested — \`object\`
            *
            *
            */
           reallyNested: {
+            _type: \\"reallyNested\\";
             /**
              * Bar — \`string\`
              *
@@ -643,6 +646,7 @@ describe('generate-types', () => {
       };
 
       export type Bar = {
+        _type: \\"bar\\";
         /**
          * Nested Image Type — \`image\`
          *
@@ -1296,6 +1300,7 @@ describe('generate-types', () => {
       }
 
       export type Foo = {
+        _type: \\"foo\\";
         /**
          * code — \`code\`
          *
