@@ -1226,7 +1226,7 @@ describe('generate-types', () => {
     `);
   });
 
-  it('allows for additional typescript types', async () => {
+  it('generates empty interfaces for unknown types', async () => {
     const foo = {
       name: 'foo',
       type: 'object',
@@ -1240,9 +1240,6 @@ describe('generate-types', () => {
 
     const result = await generateTypes({
       types: [foo],
-      additionalTypes: {
-        Code: `export type Code = string`,
-      },
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -1306,7 +1303,16 @@ describe('generate-types', () => {
          */
         code?: Code;
       };
-      export type Code = string;
+
+      /**
+       * This interface is a stub. It was referenced in your sanity schema but
+       * the definition was not actually found. Future versions of
+       * sanity-codegen will let you type this explicity.
+       *
+       * Interface merging may help for the time being:
+       * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces
+       */
+      interface Code {}
       "
     `);
   });
@@ -1447,32 +1453,6 @@ describe('generate-types', () => {
       caught = true;
       expect(e).toMatchInlineSnapshot(
         `[Error: Found span outside of a block type.]`
-      );
-    }
-
-    expect(caught).toBe(true);
-  });
-
-  it('throws if it finds unknown referenced types', async () => {
-    const foo = {
-      name: 'foo',
-      type: 'object',
-      fields: [
-        {
-          name: 'code',
-          type: 'code',
-        },
-      ],
-    };
-
-    let caught = false;
-
-    try {
-      await generateTypes({ types: [foo] });
-    } catch (e) {
-      caught = true;
-      expect(e).toMatchInlineSnapshot(
-        `[Error: Could not find types for: "Code". Ensure they are present in your schema. You may have to type them separately. TODO: add README link.]`
       );
     }
 

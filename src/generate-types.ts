@@ -89,16 +89,6 @@ export interface GenerateTypesOptions {
    */
   types: TopLevelType[];
   /**
-   * Provide any additional types that your schema may reference here. This is
-   * useful if you're using a sanity plugin that defines a type that is outside
-   * of your schema.
-   *
-   * Accepts an object where the keys are the typescript name you're looking to
-   * define and the value is a string of the typescript definition. Don't forget
-   * to export the type.
-   */
-  additionalTypes?: { [typescriptTypeName: string]: string };
-  /**
    * Optionally provide a function that generates the typescript type identifer
    * from the sanity type name. Use this function to override the default and
    * prevent naming collisions.
@@ -120,7 +110,6 @@ export interface GenerateTypesOptions {
 
 async function generateTypes({
   types,
-  additionalTypes = {},
   generateTypeName = defaultGenerateTypeName,
   prettierResolveConfigPath,
   prettierResolveConfigOptions,
@@ -373,12 +362,7 @@ async function generateTypes({
       (type) => `
         export type ${createTypeName(type.name)} = ${convertType(type, [])};`
     ),
-    ...Object.values(additionalTypes),
   ];
-
-  for (const typescriptTypeName of Object.keys(additionalTypes)) {
-    createdTypeNames[typescriptTypeName] = true;
-  }
 
   if (documentTypes.length) {
     typeStrings.push(`
@@ -393,12 +377,26 @@ async function generateTypes({
   );
 
   if (missingTypes.length) {
-    throw new Error(
+    console.warn(
       `Could not find types for: ${missingTypes
         .map((t) => `"${t}"`)
         .join(', ')}. Ensure they are present in your schema. ` +
-        `You may have to type them separately. TODO: add README link.`
+        `Future versions of sanity-codegen will allow you to type them separately.`
     );
+  }
+
+  for (const missingType of missingTypes) {
+    typeStrings.push(`
+      /**
+       * This interface is a stub. It was referenced in your sanity schema but
+       * the definition was not actually found. Future versions of
+       * sanity-codegen will let you type this explicity.
+       * 
+       * Interface merging may help for the time being:
+       * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces
+       */
+      interface ${missingType} {}
+    `);
   }
 
   const resolvedConfig = prettierResolveConfigPath
