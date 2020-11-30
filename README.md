@@ -53,7 +53,7 @@ The Sanity Codegen client is a very simple Sanity client that utilizes the gener
 
 Create `sanity-client.ts` file and configure and export the client.
 
-## Client Installation
+### Client Installation
 
 ```ts
 // sanity-client.ts
@@ -78,7 +78,7 @@ export default createClient<Documents>({
 });
 ```
 
-## Client Usage
+### Client Usage
 
 The client currently only contains 3 methods:
 
@@ -104,9 +104,9 @@ function expand<T>(ref: SanityReference<T>): Promise<R>;
 
 The design behind the client is to fetch full documents and handle projections and transforms in code.
 
-The appeal of this approach is purely its simplicity, and in the context Jamstack apps the extra weight of requests doesn't matter since it'll get compiled to stack data anyway.
+The appeal of this approach is purely its simplicity, and in the context Jamstack apps the extra weight of the request doesn't matter since it'll get compiled to static data anyway.
 
-If you're using next.js you can write your projects/transforms in `getStaticProps` and use the return type to infer incoming props. The types will flow down nicely.
+If you're using next.js you can write your projections/transforms in `getStaticProps` and use the return type to infer incoming props. The types will flow down nicely 😎.
 
 ```tsx
 import sanity from './sanity-client';
