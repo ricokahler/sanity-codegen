@@ -86,6 +86,31 @@ export default createClient<Documents>({
 });
 ```
 
+### Schema Codegen Options
+
+If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
+
+```ts
+export default {
+  name: 'myDocument',
+  type: 'document',
+  fields: [
+    {
+      name: 'aRequiredField',
+      type: 'string',
+      // 👇👇👇
+      codegen: { required: true },
+      validation: (Rule) => Rule.required(),
+      // 👆👆👆
+    },
+  ],
+};
+```
+
+This will tell the codegen to remove the optional `?` modifier on the field.
+
+> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
+
 ### Client Usage
 
 The client currently only contains 3 methods:
