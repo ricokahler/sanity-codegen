@@ -1,4 +1,4 @@
-# Sanity Codegen
+# Sanity Codegen ✨
 
 > Generate TypeScript types from your Sanity schemas
 
