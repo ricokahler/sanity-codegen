@@ -1,22 +1,23 @@
 {
   "name": "sanity-codegen",
+  "version": "0.0.0-alpha.5",
   "private": true,
-  "version": "0.0.0-alpha.3",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen"
+  },
   "license": "MIT",
   "author": {
     "name": "Rico Kahler",
     "email": "ricokahler@me.com",
     "url": "https://github.com/ricokahler"
   },
+  "sideEffects": false,
   "scripts": {
+    "build": "node ./scripts/build",
     "test": "jest",
-    "typecheck": "tsc --noEmit",
-    "build": "node ./scripts/build"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ricokahler/sanity-codegen"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.12.1",

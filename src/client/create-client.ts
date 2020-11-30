@@ -96,7 +96,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
       (doc) => !doc._id.startsWith('drafts.')
     );
 
-    return previewDoc || publishedDoc;
+    return previewDoc || publishedDoc || null;
   }
 
   /**
