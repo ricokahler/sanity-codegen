@@ -17,7 +17,8 @@
   "scripts": {
     "build": "node ./scripts/build",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "lint": "npx eslint --ext .ts,.js ./src"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.12.1",
