@@ -4,11 +4,13 @@
 
 Includes:
 
-1. A CLI to generate the types file (CLI handles a babel setup and shims out the Sanity part system)
-   ![CLI Demo](./cli-demo.gif)
-2. An programmatic codegen API to generate the types programmatically for advanced setups
-3. A simple and tiny Sanity client that utilizes the generated types for great DX
-   ![Client Demo](./client-demo.gif)
+**A CLI to generate the types file (CLI handles a babel setup and shims out the Sanity part system)**
+
+![CLI Demo](./cli-demo.gif)
+
+**A simple and tiny Sanity client that utilizes the generated types for great DX**
+
+![Client Demo](./client-demo.gif)
 
 ## Installation
 
