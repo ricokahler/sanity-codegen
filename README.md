@@ -38,7 +38,7 @@ Create a `sanity-codegen.config.ts` or `sanity-codegen.config.js` at the root of
 import { SanityCodegenConfig } from 'sanity-codegen';
 
 const config: SanityCodegenConfig = {
-  schema: './path/to/your/schema',
+  schemaPath: './path/to/your/schema',
   outputPath: './schema.ts',
 };
 
