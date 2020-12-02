@@ -16,11 +16,13 @@ async function build() {
 
   console.log('Compiling types…');
   await exec('npx tsc');
+  await exec('rm ./dist/index.umd.d.ts');
 
   console.log('Compiling Non-Client JS…');
   await exec(
     'npx babel -x .ts,.js --ignore /**/*.test.ts,/**/*.d.ts ./src --out-dir ./dist'
   );
+  await exec('rm ./dist/index.umd.js');
 
   console.log('Compiling Client JS…');
   await exec('npx rollup -c');
