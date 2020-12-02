@@ -22,7 +22,13 @@ function createClient<Documents extends { _type: string; _id: string }>({
   fetch,
 }: CreateClientOptions) {
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
-    const response = await fetch(url, options);
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        Accept: 'application/json',
+        ...options?.headers,
+      },
+    });
     return (await response.json()) as T;
   }
 
