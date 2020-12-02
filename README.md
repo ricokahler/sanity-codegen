@@ -6,7 +6,7 @@
 
 ### CLI — generate types in seconds
 
-CLI handles a babel setup and shims out the Sanity part system to generate TypeScript types in seconds.
+CLI handles a babel setup and shims out the Sanity part system to generate TypeScript types with ease.
 
 ![CLI Demo](./cli-demo.gif)
 
