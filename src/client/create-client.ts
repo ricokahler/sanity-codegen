@@ -1,4 +1,3 @@
-import SanityCodegenClientError from './sanity-codegen-client-error';
 import { SanityReference } from '../types';
 
 interface CreateClientOptions {
@@ -23,27 +22,8 @@ function createClient<Documents extends { _type: string; _id: string }>({
   fetch,
 }: CreateClientOptions) {
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
-    const response = await (async () => {
-      try {
-        const response = await fetch(url, options);
-        if (options?.signal?.aborted) {
-          throw new SanityCodegenClientError('aborted');
-        }
-        return response;
-      } catch (e) {
-        throw new SanityCodegenClientError('network', e, e);
-      }
-    })();
-
-    if (!response.ok) {
-      throw new SanityCodegenClientError('not-okay', await response.text());
-    }
-
-    try {
-      return (await response.json()) as T;
-    } catch (e) {
-      throw new SanityCodegenClientError('json-parse', e, e);
-    }
+    const response = await fetch(url, options);
+    return (await response.json()) as T;
   }
 
   /**
