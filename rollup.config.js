@@ -24,7 +24,7 @@ export default [
     external: [/^@babel\/runtime/],
   },
   {
-    input: './src/index.ts',
+    input: './src/index.umd.ts',
     output: {
       file: './dist/index.js',
       format: 'umd',
@@ -40,5 +40,6 @@ export default [
         extensions,
       }),
     ],
+    external: ['regenerator-runtime/runtime'],
   },
 ];
