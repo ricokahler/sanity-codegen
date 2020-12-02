@@ -72,7 +72,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -216,7 +216,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -277,7 +277,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -362,7 +362,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -473,7 +473,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -598,7 +598,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -720,7 +720,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -798,7 +798,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -882,7 +882,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -988,7 +988,7 @@ describe('generate-types', () => {
         SanityDocument,
       } from \\"sanity-codegen\\";
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,

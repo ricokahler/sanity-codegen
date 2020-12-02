@@ -322,7 +322,7 @@ async function generateTypes({
         SanityDocument,
       } from 'sanity-codegen';
 
-      export {
+      export type {
         SanityReference,
         SanityAsset,
         SanityImage,
