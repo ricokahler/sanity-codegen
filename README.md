@@ -1,4 +1,4 @@
-# Sanity Codegen ✨ · [![codecov](https://codecov.io/gh/ricokahler/sanity-codegen/branch/main/graph/badge.svg?token=tsUGZsR5QG)](https://codecov.io/gh/ricokahler/sanity-codegen) [![github status checks](https://badgen.net/github/checks/ricokahler/sanity-codegen/main)](https://github.com/ricokahler/sanity-codegen/actions)
+# Sanity Codegen ✨ · [![codecov](https://codecov.io/gh/ricokahler/sanity-codegen/branch/main/graph/badge.svg?token=tsUGZsR5QG)](https://codecov.io/gh/ricokahler/sanity-codegen) [![github status checks](https://badgen.net/github/checks/ricokahler/sanity-codegen/main)](https://github.com/ricokahler/sanity-codegen/actions) [![bundlephobia](https://badgen.net/bundlephobia/minzip/sanity-codegen)](https://bundlephobia.com/result?p=sanity-codegen)
 
 > Generate TypeScript types from your Sanity schemas
 
