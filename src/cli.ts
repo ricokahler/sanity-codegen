@@ -7,7 +7,10 @@ import register from '@babel/register';
 
 register({
   extensions: ['.js', '.ts', '.tsx', '.mjs'],
+  // these disable any babel config files in the project so we can run our
+  // very specific babel config for the CLI
   babelrc: false,
+  configFile: false,
   presets: [
     ['@babel/preset-env', { targets: { node: true } }],
     '@babel/preset-typescript',
