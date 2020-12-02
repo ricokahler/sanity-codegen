@@ -15,7 +15,10 @@ export default [
       resolve({ extensions, modulesOnly: true }),
       babel({
         babelrc: false,
-        presets: ['@babel/preset-typescript'],
+        presets: [
+          ['@babel/preset-env', { targets: 'node 10 and not IE 11' }],
+          '@babel/preset-typescript',
+        ],
         plugins: ['@babel/plugin-transform-runtime'],
         babelHelpers: 'runtime',
         extensions,
