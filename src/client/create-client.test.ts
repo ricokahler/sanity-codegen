@@ -29,7 +29,11 @@ describe('get', () => {
     expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
       Array [
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_id+%3D%3D+%22settings%22+%5D",
-        Object {},
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+          },
+        },
       ]
     `);
   });
@@ -73,6 +77,7 @@ describe('get', () => {
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_id+%3D%3D+%22settings%22+%7C%7C+_id%3D%3D%22drafts.settings%22%5D",
         Object {
           "headers": Object {
+            "Accept": "application/json",
             "Authorization": "Bearer test-token",
           },
         },
@@ -123,7 +128,11 @@ describe('getAll', () => {
     expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
       Array [
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_type+%3D%3D+%22post%22%5D",
-        Object {},
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+          },
+        },
       ]
     `);
   });
@@ -174,6 +183,7 @@ describe('getAll', () => {
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_type+%3D%3D+%22post%22%5D",
         Object {
           "headers": Object {
+            "Accept": "application/json",
             "Authorization": "Bearer test-token",
           },
         },
@@ -217,7 +227,11 @@ describe('expand', () => {
     expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
       Array [
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_id+%3D%3D+%22settings%22+%5D",
-        Object {},
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+          },
+        },
       ]
     `);
   });
