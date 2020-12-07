@@ -61,7 +61,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -205,7 +205,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -266,7 +266,7 @@ describe('generate-types', () => {
 
     expect(result.includes('name?: string')).toBe(true);
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -351,7 +351,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -462,7 +462,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -587,7 +587,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar, baz] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -709,7 +709,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -787,7 +787,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -871,7 +871,7 @@ describe('generate-types', () => {
     const result = await generateTypes({ types: [foo, bar, baz] });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,
@@ -977,7 +977,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "import {
+      "import type {
         SanityReference,
         SanityAsset,
         SanityImage,

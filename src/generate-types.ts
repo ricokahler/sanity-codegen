@@ -311,7 +311,7 @@ async function generateTypes({
 
   const typeStrings = [
     `
-      import {
+      import type {
         SanityReference,
         SanityAsset,
         SanityImage,
