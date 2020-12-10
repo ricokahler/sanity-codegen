@@ -60,7 +60,7 @@ export interface SanityBlock {
 
 export interface SanityDocument {
   _id: string;
-  _createAt: string;
+  _createdAt: string;
   _rev: string;
   _updatedAt: string;
 }
