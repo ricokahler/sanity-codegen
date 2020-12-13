@@ -113,7 +113,7 @@ This will tell the codegen to remove the optional `?` modifier on the field.
 
 ### Client Usage
 
-The client currently only contains 3 methods:
+The client currently only contains 4 methods:
 
 ```ts
 /**
