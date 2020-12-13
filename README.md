@@ -113,7 +113,7 @@ This will tell the codegen to remove the optional `?` modifier on the field.
 
 ### Client Usage
 
-The client currently only contains 3 methods:
+The client currently only contains 4 methods:
 
 ```ts
 /**
@@ -133,6 +133,13 @@ function getAll<T>(type: string, filter?: string): Promise<T[]>;
  * Calls the above `get` function internally
  */
 function expand<T>(ref: SanityReference<T>): Promise<R>;
+
+/**
+ * Passes a query along to sanity. If preview mode is active and a token is
+ * present, it will prefer drafts over the published versions. The type must be
+ * provided by you.
+ */
+function query<T = any>(query: string): Promise<T[]>;
 ```
 
 The design behind the client is to fetch full documents and handle projections and transforms in code.

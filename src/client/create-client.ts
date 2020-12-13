@@ -45,7 +45,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     id: string
   ) {
     type R = Documents & { _type: T };
-    const searchParams = new URLSearchParams();
+
     const preview = previewMode && !!token;
     const previewClause = preview
       ? // sanity creates a new document with an _id prefix of `drafts.`
@@ -53,25 +53,8 @@ function createClient<Documents extends { _type: string; _id: string }>({
         `|| _id=="drafts.${id}"`
       : '';
 
-    searchParams.set('query', `* [_id == "${id}" ${previewClause}]`);
-    const response = await jsonFetch<SanityResult<R>>(
-      `https://${projectId}.api.sanity.io/v1/data/query/${dataset}?${searchParams.toString()}`,
-      {
-        // conditionally add the authorization header if the token is present
-        ...(token && { headers: { Authorization: `Bearer ${token}` } }),
-      }
-    );
-
-    // this will always be undefined in non-preview mode
-    const previewDoc = response.result.find((doc) =>
-      doc._id.startsWith('drafts.')
-    );
-
-    const publishedDoc = response.result.find(
-      (doc) => !doc._id.startsWith('drafts.')
-    );
-
-    return previewDoc || publishedDoc || null;
+    const result = await query<R>(`* [_id == "${id}" ${previewClause}]`);
+    return result[0];
   }
 
   /**
@@ -86,14 +69,34 @@ function createClient<Documents extends { _type: string; _id: string }>({
     // TODO: might be a cleaner way to do this. this creates an ugly lookin type
     type R = { _type: T } & Documents;
 
+    return query<R>(
+      `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
+    );
+  }
+
+  /**
+   * If a sanity document refers to another sanity document, then you can use this
+   * function to expand that document, preserving the type
+   */
+  async function expand<T extends Documents>(ref: SanityReference<T>) {
+    // this function is primarily for typescript
+    const response = await get<T['_type']>(null as any, ref._ref);
+    // since this is a ref, the response will be defined (unless weak reference)
+    return response!;
+  }
+
+  /**
+   * Passes a query along to sanity. If preview mode is active and a token is
+   * present, it will prefer drafts over the published versions.
+   */
+  async function query<T extends { _id: string } = any>(
+    query: string
+  ): Promise<T[]> {
     const searchParams = new URLSearchParams();
     const preview = previewMode && !!token;
 
-    searchParams.set(
-      'query',
-      `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
-    );
-    const response = await jsonFetch<SanityResult<R>>(
+    searchParams.set('query', query);
+    const response = await jsonFetch<SanityResult<T>>(
       `https://${projectId}.api.sanity.io/v1/data/query/${dataset}?${searchParams.toString()}`,
       {
         // conditionally add the authorization header if the token is present
@@ -113,14 +116,14 @@ function createClient<Documents extends { _type: string; _id: string }>({
     // create a lookup of only draft docs
     const draftDocs = response.result
       .filter((doc) => doc._id.startsWith('drafts.'))
-      .reduce<{ [_id: string]: R }>((acc, next) => {
+      .reduce<{ [_id: string]: T }>((acc, next) => {
         acc[removeDraftPrefix(next._id)] = next;
         return acc;
       }, {});
 
     // in this dictionary, if there is draft doc, that will be preferred,
     // otherwise it'll use the published version
-    const finalAcc = response.result.reduce<{ [_id: string]: R }>(
+    const finalAcc = response.result.reduce<{ [_id: string]: T }>(
       (acc, next) => {
         const id = removeDraftPrefix(next._id);
         acc[id] = draftDocs[id] || next;
@@ -132,18 +135,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     return Object.values(finalAcc);
   }
 
-  /**
-   * If a sanity document refers to another sanity document, then you can use this
-   * function to expand that document, preserving the type
-   */
-  async function expand<T extends Documents>(ref: SanityReference<T>) {
-    // this function is primarily for typescript
-    const response = await get<T['_type']>(null as any, ref._ref);
-    // since this is a ref, the response will be defined (unless weak reference)
-    return response!;
-  }
-
-  return { get, getAll, expand };
+  return { get, getAll, expand, query };
 }
 
 export default createClient;
