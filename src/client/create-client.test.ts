@@ -1,5 +1,61 @@
 import createClient from './create-client';
 
+describe('query', () => {
+  it('prefers draft documents in preview mode', async () => {
+    const postOne = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-one',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+    const postTwo = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-two',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+    const postTwoDraft = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'drafts.post-two',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+
+    const mockFetch: any = jest.fn(() => ({
+      ok: true,
+      json: () => Promise.resolve({ result: [postOne, postTwo, postTwoDraft] }),
+    }));
+
+    const sanity = createClient({
+      projectId: 'test-project-id',
+      dataset: 'test-dataset',
+      fetch: mockFetch,
+      previewMode: true,
+      token: 'test-token',
+    });
+
+    const docs = await sanity.query('*');
+
+    expect(docs).toEqual([postOne, postTwoDraft]);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
+      Array [
+        "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*",
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        },
+      ]
+    `);
+  });
+});
+
 describe('get', () => {
   it('gets one document from the sanity instance', async () => {
     const mockDoc = {
@@ -128,6 +184,49 @@ describe('getAll', () => {
     expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
       Array [
         "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_type+%3D%3D+%22post%22%5D",
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+          },
+        },
+      ]
+    `);
+  });
+
+  it('passes the filter param', async () => {
+    const postOne = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-one',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+    const postTwo = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-two',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+
+    const mockFetch: any = jest.fn(() => ({
+      ok: true,
+      json: () => Promise.resolve({ result: [postOne, postTwo] }),
+    }));
+
+    const sanity = createClient({
+      projectId: 'test-project-id',
+      dataset: 'test-dataset',
+      fetch: mockFetch,
+    });
+    const docs = await sanity.getAll('post', 'name == "test"');
+
+    expect(docs).toEqual([postOne, postTwo]);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
+      Array [
+        "https://test-project-id.api.sanity.io/v1/data/query/test-dataset?query=*+%5B_type+%3D%3D+%22post%22+%26%26+name+%3D%3D+%22test%22%5D",
         Object {
           "headers": Object {
             "Accept": "application/json",
