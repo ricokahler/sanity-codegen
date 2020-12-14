@@ -960,6 +960,82 @@ describe('generate-types', () => {
     `);
   });
 
+  it('generates types for fields with underscores', async () => {
+    const foo = {
+      title: 'Foo',
+      name: 'foo',
+      type: 'document',
+      fields: [
+        {
+          title: 'Bar',
+          name: 'foo_bar',
+          type: 'foo_bar',
+        },
+      ],
+    };
+
+    const bar = {
+      name: 'foo_bar',
+      type: 'object',
+      fields: [{ name: 'name', type: 'string' }],
+    };
+
+    const result = await generateTypes({ types: [foo, bar] });
+
+    expect(result).toMatchInlineSnapshot(`
+      "import type {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export type {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      };
+
+      /**
+       * Foo
+       *
+       *
+       */
+      export interface Foo extends SanityDocument {
+        _type: \\"foo\\";
+
+        /**
+         * Bar — \`foo_bar\`
+         *
+         *
+         */
+        foo_bar?: FooBar;
+      }
+
+      export type FooBar = {
+        _type: \\"foo_bar\\";
+        /**
+         * name — \`string\`
+         *
+         *
+         */
+        name?: string;
+      };
+
+      export type Documents = Foo;
+      "
+    `);
+  });
+
   it('generates empty interfaces for unknown types', async () => {
     const foo = {
       name: 'foo',
@@ -1051,10 +1127,10 @@ describe('generate-types', () => {
     expect(caught).toBe(true);
   });
 
-  it('throws if the top-level type name is non-alphanumeric', async () => {
+  it('throws if the top-level type name is not composed of alphanumeric or underscores', async () => {
     const foo = {
       type: 'document',
-      name: 'foo_bar',
+      name: 'foo_baré',
       fields: [
         {
           title: 'Name',
@@ -1073,21 +1149,21 @@ describe('generate-types', () => {
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Name "foo_bar" is not valid. Ensure camel case and alphanumeric characters only.]`
+        `[Error: Name "foo_baré" is not valid. Ensure camel case, alphanumeric and underscore characters only]`
       );
     }
 
     expect(caught).toBe(true);
   });
 
-  it('throws if the field name is non-alphanumeric', async () => {
+  it('throws if the field name is not composed of alphanumeric or underscores', async () => {
     const foo = {
       type: 'document',
       name: 'foo',
       fields: [
         {
           title: 'Cool Name',
-          name: 'cool_name',
+          name: 'cool_namé',
           type: 'string',
           codegen: { required: true },
           validation: jest.fn(),
@@ -1102,7 +1178,7 @@ describe('generate-types', () => {
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Name "cool_name" in type "foo" is not valid. Ensure camel case and alphanumeric characters only]`
+        `[Error: Name "cool_namé" in type "foo" is not valid. Ensure camel case, alphanumeric and underscore characters only]`
       );
     }
 

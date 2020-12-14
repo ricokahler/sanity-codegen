@@ -68,16 +68,28 @@ type Field = {
   validation?: any;
 };
 
-function defaultGenerateTypeName(sanityTypeName: string) {
-  if (!/^[A-Z0-9]+$/i.test(sanityTypeName)) {
+function validatePropertyName(
+  sanityTypeName: string,
+  parents: (string | number)[]
+) {
+  if (!/^[A-Z][A-Z0-9_]*$/i.test(sanityTypeName)) {
     throw new Error(
-      `Name "${sanityTypeName}" is not valid. Ensure camel case and alphanumeric characters only.`
+      `Name "${sanityTypeName}" ${
+        parents.length > 0 ? `in type "${parents.join('.')}" ` : ''
+      }is not valid. Ensure camel case, alphanumeric and underscore characters only`
     );
   }
+}
+
+function defaultGenerateTypeName(sanityTypeName: string) {
+  validatePropertyName(sanityTypeName, []);
 
   const typeName = `${sanityTypeName
     .substring(0, 1)
-    .toUpperCase()}${sanityTypeName.substring(1)}`;
+    .toUpperCase()}${sanityTypeName
+    // If using snake_case, remove underscores and convert to uppercase the letter following them.
+    .replace(/(_[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
+    .substring(1)}`;
 
   return typeName;
 }
@@ -269,13 +281,7 @@ async function generateTypes({
       );
     }
 
-    if (!/^[A-Z0-9]+$/i.test(field.name)) {
-      throw new Error(
-        `Name "${field.name}" in type "${parents.join(
-          '.'
-        )}" is not valid. Ensure camel case and alphanumeric characters only`
-      );
-    }
+    validatePropertyName(field.name, parents);
 
     return `
     /**
