@@ -6,6 +6,7 @@ interface CreateClientOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   token?: string;
   previewMode?: boolean;
+  disabledCache?: boolean;
 }
 
 interface SanityResult<T> {
@@ -20,7 +21,10 @@ function createClient<Documents extends { _type: string; _id: string }>({
   token,
   previewMode = false,
   fetch,
+  disabledCache,
 }: CreateClientOptions) {
+  const cache: { [key: string]: any } = {};
+
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
     const response = await fetch(url, {
       ...options,
@@ -46,6 +50,10 @@ function createClient<Documents extends { _type: string; _id: string }>({
   ) {
     type R = Documents & { _type: T };
 
+    if (cache[id] && !disabledCache) {
+      return cache[id] as R;
+    }
+
     const preview = previewMode && !!token;
     const previewClause = preview
       ? // sanity creates a new document with an _id prefix of `drafts.`
@@ -53,8 +61,12 @@ function createClient<Documents extends { _type: string; _id: string }>({
         `|| _id=="drafts.${id}"`
       : '';
 
-    const result = await query<R>(`* [_id == "${id}" ${previewClause}]`);
-    return result[0];
+    const [result] = await query<R>(`* [_id == "${id}" ${previewClause}]`);
+
+    if (!disabledCache) {
+      cache[id] = result;
+    }
+    return result;
   }
 
   /**
@@ -69,9 +81,29 @@ function createClient<Documents extends { _type: string; _id: string }>({
     // TODO: might be a cleaner way to do this. this creates an ugly lookin type
     type R = { _type: T } & Documents;
 
-    return query<R>(
-      `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
+    if (disabledCache) {
+      return await query<{ _id: string }>(
+        `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
+      );
+    }
+
+    const ids = await query<{ _id: string }>(
+      `* [_type == "${type}"${
+        filterClause ? ` && ${filterClause}` : ''
+      }] { _id }`
     );
+
+    const idsToFetch = ids.filter(({ _id }) => !cache[_id]);
+
+    const newDocumentList = await query<R>(
+      `* [_id in [${idsToFetch.map(({ _id }) => `'${_id}'`).join(', ')}]]`
+    );
+
+    for (const doc of newDocumentList) {
+      cache[doc._id] = doc;
+    }
+
+    return ids.map(({ _id }) => cache[_id] as R);
   }
 
   /**
@@ -135,7 +167,15 @@ function createClient<Documents extends { _type: string; _id: string }>({
     return Object.values(finalAcc);
   }
 
-  return { get, getAll, expand, query };
+  function clearCache() {
+    const keys = Object.keys(cache);
+
+    for (const key of keys) {
+      delete cache[key];
+    }
+  }
+
+  return { get, getAll, expand, query, clearCache };
 }
 
 export default createClient;
