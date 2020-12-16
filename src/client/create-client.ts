@@ -82,7 +82,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     type R = { _type: T } & Documents;
 
     if (disabledCache) {
-      return await query<{ _id: string }>(
+      return await query<R>(
         `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
       );
     }
