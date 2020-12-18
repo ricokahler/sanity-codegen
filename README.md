@@ -83,6 +83,8 @@ export default createClient<Documents>({
   previewMode: true,
   // (optional) only required if your dataset is private or if you want to use preview mode
   token: '...',
+  // by default sanity-codegen caches responses in memory. this can be disabled if desired
+  // disabledCache: true,
 });
 ```
 
@@ -140,6 +142,12 @@ function expand<T>(ref: SanityReference<T>): Promise<R>;
  * provided by you.
  */
 function query<T = any>(query: string): Promise<T[]>;
+
+/**
+ * Clears the in-memory cache. The cache can also be disabled when creating
+ * the client
+ */
+function clearCache(): void;
 ```
 
 The design behind the client is to fetch full documents and handle projections and transforms in code.
