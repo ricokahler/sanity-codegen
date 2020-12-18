@@ -485,7 +485,7 @@ describe('generate-types', () => {
       };
 
       export type Foo = {
-        _type: \\"image\\";
+        _type: \\"foo\\";
         asset: SanityAsset;
         /**
          * Title — \`string\`
@@ -503,7 +503,7 @@ describe('generate-types', () => {
          *
          */
         nestedImage?: {
-          _type: \\"image\\";
+          _type: \\"nestedImage\\";
           asset: SanityAsset;
           /**
            * Description — \`string\`
@@ -519,7 +519,7 @@ describe('generate-types', () => {
          *
          */
         nestedFile?: {
-          _type: \\"file\\";
+          _type: \\"nestedFile\\";
           asset: SanityAsset;
           /**
            * Other Description — \`number\`

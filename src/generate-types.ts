@@ -183,7 +183,7 @@ async function generateTypes({
       // if this object is from a parent that is an array, then the _key
       // property will be present.
       const keyClause = fromArray ? `_key: string;` : '';
-      const typeClause = `_type: '${intrinsic.type}'; `;
+      const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
       const assetClause = 'asset: SanityAsset;';
 
       const fields = intrinsic?.fields || [];
