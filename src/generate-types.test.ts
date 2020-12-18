@@ -96,7 +96,12 @@ describe('generate-types', () => {
          *
          *
          */
-        image?: { _type: \\"image\\"; asset: SanityAsset };
+        image?: {
+          _type: \\"image\\";
+          asset: SanityAsset;
+          crop?: SanityImageCrop;
+          hotspot?: SanityImageHotspot;
+        };
 
         /**
          * boolean — \`boolean\`
@@ -159,7 +164,12 @@ describe('generate-types', () => {
          *
          *
          */
-        image?: { _type: \\"image\\"; asset: SanityAsset };
+        image?: {
+          _type: \\"image\\";
+          asset: SanityAsset;
+          crop?: SanityImageCrop;
+          hotspot?: SanityImageHotspot;
+        };
 
         /**
          * file — \`file\`
@@ -487,6 +497,9 @@ describe('generate-types', () => {
       export type Foo = {
         _type: \\"foo\\";
         asset: SanityAsset;
+        crop?: SanityImageCrop;
+        hotspot?: SanityImageHotspot;
+
         /**
          * Title — \`string\`
          *
@@ -505,6 +518,9 @@ describe('generate-types', () => {
         nestedImage?: {
           _type: \\"nestedImage\\";
           asset: SanityAsset;
+          crop?: SanityImageCrop;
+          hotspot?: SanityImageHotspot;
+
           /**
            * Description — \`string\`
            *

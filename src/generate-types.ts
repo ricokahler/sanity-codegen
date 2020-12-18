@@ -189,10 +189,14 @@ async function generateTypes({
       const keyClause = fromArray ? `_key: string;` : '';
       const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
       const assetClause = 'asset: SanityAsset;';
+      const imageSpecificClause = intrinsic.type === 'image' ? `
+        crop?: SanityImageCrop;
+        hotspot?: SanityImageHotspot;
+      ` : '';
 
       const fields = intrinsic?.fields || [];
 
-      return `{ ${typeClause} ${keyClause} ${assetClause} ${fields
+      return `{ ${typeClause} ${keyClause} ${assetClause} ${imageSpecificClause} ${fields
         .map((field) =>
           convertField(field, [
             ...parents,
