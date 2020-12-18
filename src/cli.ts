@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { SanityCodegenConfig } from './types';
-import generateTypes, { TopLevelType } from './generate-types';
+import generateTypes from './generate-types';
 
 import register from '@babel/register';
 
@@ -64,7 +64,7 @@ async function cli() {
     );
   }
 
-  const types: TopLevelType[] =
+  const types: any[] =
     require(path.resolve(config.schemaPath)).default ||
     require(path.resolve(config.schemaPath));
 
