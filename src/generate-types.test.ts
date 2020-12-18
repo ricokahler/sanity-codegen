@@ -131,7 +131,7 @@ describe('generate-types', () => {
          *
          *
          */
-        slug?: SanitySlug;
+        slug?: { _type: \\"slug\\"; current: string };
 
         /**
          * string — \`string\`
@@ -665,6 +665,42 @@ describe('generate-types', () => {
       }
 
       export type Documents = Foo | Bar | Baz;
+      "
+    `);
+  });
+
+  it('generates types for named slugs', async () => {
+    const foo = {
+      type: 'slug',
+      name: 'fooSlug',
+    };
+
+    const result = await generateTypes({ types: [foo] });
+
+    expect(result).toMatchInlineSnapshot(`
+      "import type {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      } from \\"sanity-codegen\\";
+
+      export type {
+        SanityReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanitySlug,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+      };
+
+      export type FooSlug = { _type: \\"fooSlug\\"; current: string };
       "
     `);
   });

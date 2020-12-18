@@ -1,20 +1,17 @@
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 
-export interface TopLevelType {
-  type: string;
-  description?: string;
-  name: string;
-  title?: string;
-  fields: Field[];
-  validation?: any;
-}
-
 type ArrayType = { type: 'array'; of: Array<{ type: string }> };
 type BlockType = { type: 'block' };
 type BooleanType = { type: 'boolean' };
 type DateType = { type: 'date' };
 type DatetimeType = { type: 'datetime' };
-type DocumentType = { type: 'document' };
+type DocumentType = {
+  type: 'document';
+  fields: Field[];
+  name: string;
+  title?: string;
+  description?: string;
+};
 type FileType = { type: 'file'; name?: string; fields?: any[] };
 type GeopointType = { type: 'geopoint' };
 type ImageType = { type: 'image'; name?: string; fields?: any[] };
@@ -31,7 +28,7 @@ type ReferenceType = {
   to: Array<{ type: string }>;
   weak?: boolean;
 };
-type SlugType = { type: 'slug' };
+type SlugType = { name?: string; type: 'slug' };
 type StringType = {
   type: 'string';
   options?: { list?: Array<string | { title: string; value: string }> };
@@ -58,6 +55,9 @@ type IntrinsicType =
   | SpanType
   | TextType
   | UrlType;
+
+type GetNameTypes<T> = T extends { name?: string } ? T : never;
+type NamedType = GetNameTypes<IntrinsicType>;
 
 type Field = {
   name: string;
@@ -99,7 +99,7 @@ export interface GenerateTypesOptions {
    * Provide an array of uncompiled sanity types prior to running them through
    * sanity's `createSchema`
    */
-  types: TopLevelType[];
+  types: IntrinsicType[];
   /**
    * Optionally provide a function that generates the typescript type identifer
    * from the sanity type name. Use this function to override the default and
@@ -126,8 +126,12 @@ async function generateTypes({
   prettierResolveConfigPath,
   prettierResolveConfigOptions,
 }: GenerateTypesOptions) {
-  const documentTypes = types.filter(({ type }) => type === 'document');
-  const otherTypes = types.filter(({ type }) => type !== 'document');
+  const documentTypes = types.filter(
+    (t): t is DocumentType => t.type === 'document'
+  );
+  const otherTypes = types.filter(
+    (t): t is Exclude<IntrinsicType, DocumentType> => t.type !== 'document'
+  );
 
   const createdTypeNames: { [name: string]: boolean } = {};
   const referencedTypeNames: { [name: string]: boolean } = {};
@@ -243,7 +247,9 @@ async function generateTypes({
       return 'number';
     }
     if (intrinsic.type === 'slug') {
-      return 'SanitySlug';
+      return `{ _type: '${
+        intrinsic.name || intrinsic.type
+      }'; current: string; }`;
     }
     if (intrinsic.type === 'string') {
       // Sanity lets you specify a set of list allowed strings in the editor
@@ -293,10 +299,12 @@ async function generateTypes({
   `;
   }
 
-  function generateTypeForDocument(schemaType: TopLevelType) {
-    const { name, title, description, fields, type } = schemaType;
+  function generateTypeForDocument(schemaType: DocumentType) {
+    const { name, title, description, fields } = schemaType;
 
-    const assetField = type === 'image' ? `asset: SanityAsset;` : '';
+    if (!name) {
+      throw new Error(`Found a document type with no name field.`);
+    }
 
     return `
     /**
@@ -306,7 +314,6 @@ async function generateTypes({
      */
     export interface ${createTypeName(name)} extends SanityDocument {
         _type: '${name}';
-        ${assetField}
         ${fields
           .map((field) => convertField(field, [name]))
           .filter(Boolean)
@@ -340,12 +347,18 @@ async function generateTypes({
       };
   `,
     ...types
-      .filter(({ type }) => type === 'document')
+      .filter((t): t is DocumentType => t.type === 'document')
       .map(generateTypeForDocument),
-    ...otherTypes.map(
-      (type) => `
-        export type ${createTypeName(type.name)} = ${convertType(type, [])};`
-    ),
+    ...otherTypes
+      .filter(
+        (t): t is Exclude<NamedType, DocumentType> & { name: string } =>
+          !!(t as any).name
+      )
+      .map((type) => {
+        return `
+          export type ${createTypeName(type.name)} = ${convertType(type, [])};
+        `;
+      }),
   ];
 
   if (documentTypes.length) {

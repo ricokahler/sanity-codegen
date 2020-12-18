@@ -39,11 +39,6 @@ export interface SanityFile {
   asset: SanityAsset;
 }
 
-export interface SanitySlug {
-  _type: 'slug';
-  current: string;
-}
-
 export interface SanityGeoPoint {
   _type: 'geopoint';
   lat: number;
