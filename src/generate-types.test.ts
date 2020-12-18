@@ -66,10 +66,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -77,10 +78,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -220,10 +222,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -231,10 +234,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -281,10 +285,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -292,10 +297,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -366,10 +372,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -377,10 +384,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       export type Foo = {
@@ -477,10 +485,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -488,10 +497,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       export type Foo = {
@@ -608,10 +618,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -619,10 +630,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -699,10 +711,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -710,10 +723,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       export type FooSlug = { _type: \\"fooSlug\\"; current: string };
@@ -766,10 +780,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -777,10 +792,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -844,10 +860,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -855,10 +872,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -928,10 +946,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -939,10 +958,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -1040,10 +1060,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1051,10 +1072,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       /**
@@ -1110,10 +1132,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1121,10 +1144,11 @@ describe('generate-types', () => {
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
 
       export type Foo = {
