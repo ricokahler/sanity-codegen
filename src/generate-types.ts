@@ -333,10 +333,11 @@ async function generateTypes({
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       } from 'sanity-codegen';
 
       export type {
@@ -344,10 +345,11 @@ async function generateTypes({
         SanityAsset,
         SanityImage,
         SanityFile,
-        SanitySlug,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
       };
   `,
     ...types
