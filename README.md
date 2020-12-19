@@ -154,7 +154,7 @@ The design behind the client is to fetch full documents and handle projections a
 
 The appeal of this approach is purely its simplicity, and in the context Jamstack apps the extra weight of the request doesn't matter since it'll get compiled to static data anyway.
 
-#### Next.js
+### Next.js
 
 If you're using Next.js you can write your projections/transforms in `getStaticProps` and use the return type to infer incoming props. The types will flow down nicely 😎.
 
@@ -186,7 +186,7 @@ export default BlogPost;
 
 > 👋 Alternatively, I recommend checking out [`next-data-hooks`](https://github.com/ricokahler/next-data-hooks). Types + Sanity Codegen just work with its provided pattern.
 
-#### Gatsby
+### Gatsby
 
 If you're using Gatsby, we recommend you follow their guide for using [Gatsby without GraphQL](https://www.gatsbyjs.com/docs/how-to/querying-data/using-gatsby-without-graphql/#the-approach-fetch-data-and-use-gatsbys-createpages-api).
 
