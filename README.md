@@ -184,7 +184,11 @@ function BlogPost({ title, content }: Props) {
 export default BlogPost;
 ```
 
+> 👇👇👇
+>
 > 👋 Alternatively, I recommend checking out [`next-data-hooks`](https://github.com/ricokahler/next-data-hooks). Types + Sanity Codegen just work with its provided pattern.
+>
+> 👆👆👆
 
 ### Gatsby
 
