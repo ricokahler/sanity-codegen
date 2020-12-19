@@ -3,14 +3,16 @@ import path from 'path';
 import { SanityCodegenConfig } from './types';
 import generateTypes from './generate-types';
 
-import register from '@babel/register';
+import register, { revert } from '@babel/register';
 
-register({
+const defaultBabelOptions = {
   extensions: ['.js', '.ts', '.tsx', '.mjs'],
   // these disable any babel config files in the project so we can run our
   // very specific babel config for the CLI
   babelrc: false,
   configFile: false,
+  // disables the warning "Babel has de-optimized the styling of..."
+  compact: true,
   presets: [
     ['@babel/preset-env', { targets: { node: true } }],
     '@babel/preset-typescript',
@@ -35,7 +37,9 @@ register({
       },
     ],
   ],
-});
+};
+
+register(defaultBabelOptions);
 
 async function cli() {
   // this required needs to come after register
@@ -51,6 +55,13 @@ async function cli() {
 
   const config: SanityCodegenConfig =
     require(configPath).default || require(configPath);
+
+  // revert and re-register with new babel options from the config
+  revert();
+  register({
+    ...defaultBabelOptions,
+    ...config.babelOptions,
+  });
 
   if (!config.schemaPath) {
     throw new Error(
