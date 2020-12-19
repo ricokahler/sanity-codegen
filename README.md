@@ -2,15 +2,15 @@
 
 > Generate TypeScript types from your Sanity schemas
 
-## Demos
+## [Demos](https://github.com/ricokahler/sanity-codegen#demos)
 
-### CLI — generate types in seconds
+### [CLI — generate types in seconds](https://github.com/ricokahler/sanity-codegen#cli--generate-types-in-seconds)
 
 CLI handles a babel setup and shims out the Sanity part system to generate TypeScript types with ease.
 
 ![CLI Demo](./cli-demo.gif)
 
-### Client — for optimized Sanity DX
+### [Client — for optimized Sanity DX](https://github.com/ricokahler/sanity-codegen#client-for-optimized-sanity-dx)
 
 Sanity Codegen ships with a simple and tiny client that hooks up with your types.
 
