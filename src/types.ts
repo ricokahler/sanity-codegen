@@ -11,6 +11,10 @@ export interface SanityCodegenConfig
    * The output path for the resulting codegen. Defaults to `./schema.ts`
    */
   outputPath?: string;
+  /**
+   * Pass options directly to `@babel/register`
+   */
+  babelOptions?: any;
 }
 
 /**

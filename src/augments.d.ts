@@ -5,5 +5,8 @@ declare module '@babel/register' {
   const register: (
     options: TransformOptions & { extensions: string[] }
   ) => void;
+
+  export const revert: () => void;
+
   export default register;
 }
