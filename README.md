@@ -40,12 +40,17 @@ import { SanityCodegenConfig } from 'sanity-codegen';
 const config: SanityCodegenConfig = {
   schemaPath: './path/to/your/schema',
   outputPath: './schema.ts',
+  // NOTE: The CLI ships with a pre-configured babel config that shims out
+  // the Sanity parts system. This babel config does not read from any
+  // `.babelrc` or `babel.config.js`. You can only configure extra babel
+  // options here.
+  // babelOptions: require('./.babelrc.json'),
 };
 
 export default config;
 ```
 
-[See here for the rest of the available options.](https://github.com/ricokahler/sanity-codegen/blob/13250d60892bfc95b73d88b28e88b574a31935a7/src/generate-types.ts#L85-L109)
+[See here for the rest of the available options.](https://github.com/ricokahler/sanity-codegen/blob/d4eb4a8ac5f6d27f709697ccdbd2a296d1e51dc2/src/generate-types.ts#L97-L121)
 
 Then run the CLI with [`npx`](https://github.com/npm/npx) at the root of your sanity project.
 
@@ -211,4 +216,4 @@ generateTypes({
 });
 ```
 
-However you may run into challenges with executing the code if your schema imports from the sanity parts system. [The CLI tries to help you with this.](https://github.com/ricokahler/sanity-codegen/blob/13250d60892bfc95b73d88b28e88b574a31935a7/src/cli.ts#L18-L34)
+However you may run into challenges with executing the code if your schema imports from the sanity parts system. [The CLI tries to help you with this.](https://github.com/ricokahler/sanity-codegen/blob/d4eb4a8ac5f6d27f709697ccdbd2a296d1e51dc2/src/cli.ts#L8-L40)
