@@ -15,11 +15,18 @@ export default [
       resolve({ extensions, modulesOnly: true }),
       babel({
         babelrc: false,
+        configFile: false,
         presets: [
           ['@babel/preset-env', { targets: 'node 10 and not IE 11' }],
           '@babel/preset-typescript',
         ],
-        plugins: ['@babel/plugin-transform-runtime'],
+        plugins: [
+          '@babel/plugin-transform-runtime',
+          [
+            '@babel/plugin-proposal-object-rest-spread',
+            { loose: true, useBuiltIns: true },
+          ],
+        ],
         babelHelpers: 'runtime',
         extensions,
       }),
@@ -38,6 +45,7 @@ export default [
       resolve({ extensions, modulesOnly: true }),
       babel({
         babelrc: false,
+        configFile: false,
         presets: ['@babel/preset-env', '@babel/preset-typescript'],
         babelHelpers: 'bundled',
         extensions,
