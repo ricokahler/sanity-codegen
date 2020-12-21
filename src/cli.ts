@@ -36,6 +36,8 @@ const defaultBabelOptions = {
         },
       },
     ],
+    // used to resolve css module imports that are allowed in sanity projects
+    'css-modules-transform',
   ],
 };
 
