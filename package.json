@@ -24,7 +24,7 @@
     "@babel/plugin-transform-runtime": "7.12.10",
     "@babel/register": "7.12.10",
     "@types/prettier": "2.1.5",
-    "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-css-modules-transform": "1.6.2",
     "babel-plugin-module-resolver": "4.1.0",
     "regenerator-runtime": "0.13.7"
   },
