@@ -91,6 +91,11 @@ export default createClient<Documents>({
   token: '...',
   // by default sanity-codegen caches responses in memory. this can be disabled if desired
   // disabledCache: true,
+  //
+  // (optional) enables the usage of `apicdn.sanity.io`. this is recommended
+  // if you plan on using this in browsers. don't use this with preview mode
+  // see here: https://www.sanity.io/docs/api-cdn
+  // useCdn: true,
 });
 ```
 

@@ -54,6 +54,60 @@ describe('query', () => {
       ]
     `);
   });
+
+  it('conditionally applies tokens and CDN endpoints', async () => {
+    const postOne = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-one',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+    const postTwo = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'post-two',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+    const postTwoDraft = {
+      _createdAt: '2020-10-24T03:00:29Z',
+      _id: 'drafts.post-two',
+      _rev: 'rev',
+      _type: 'post',
+      _updatedAt: '2020-10-24T03:04:54Z',
+    };
+
+    const mockFetch: any = jest.fn(() => ({
+      ok: true,
+      json: () => Promise.resolve({ result: [postOne, postTwo, postTwoDraft] }),
+    }));
+
+    const sanity = createClient({
+      projectId: 'test-project-id',
+      dataset: 'test-dataset',
+      fetch: mockFetch,
+      previewMode: false,
+      token: 'test-token',
+      useCdn: true,
+    });
+
+    const docs = await sanity.query('*');
+
+    expect(docs).toEqual([postOne, postTwo]);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch.mock.calls[0]).toMatchInlineSnapshot(`
+      Array [
+        "https://test-project-id.apicdn.sanity.io/v1/data/query/test-dataset?query=*",
+        Object {
+          "headers": Object {
+            "Accept": "application/json",
+          },
+        },
+      ]
+    `);
+  });
 });
 
 describe('get', () => {
