@@ -27,7 +27,7 @@ type ReferenceType = {
   type: 'reference';
   // even though the sanity docs say this is only ever an array, their default
   // blog example doesn't follow this.
-  to: Array<{ type: string }>;
+  to: { type: string } | Array<{ type: string }>;
   weak?: boolean;
 };
 type SlugType = { name?: string; type: 'slug' };
