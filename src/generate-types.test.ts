@@ -915,7 +915,7 @@ describe('generate-types', () => {
           title: 'Bar',
           name: 'bar',
           type: 'reference' as const,
-          to: [{ type: 'bar' as const }],
+          to: { type: 'bar' as const },
         },
         {
           title: 'Two Types',
