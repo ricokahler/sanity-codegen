@@ -5,55 +5,55 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           name: 'image',
-          type: 'image',
+          type: 'image' as const,
         },
         {
           name: 'boolean',
-          type: 'boolean',
+          type: 'boolean' as const,
         },
         {
           name: 'date',
-          type: 'date',
+          type: 'date' as const,
         },
         {
           name: 'datetime',
-          type: 'datetime',
+          type: 'datetime' as const,
         },
         {
           name: 'number',
-          type: 'number',
+          type: 'number' as const,
         },
         {
           name: 'slug',
-          type: 'slug',
+          type: 'slug' as const,
         },
         {
           name: 'string',
-          type: 'string',
+          type: 'string' as const,
         },
         {
           name: 'text',
-          type: 'text',
+          type: 'text' as const,
         },
         {
           name: 'url',
-          type: 'url',
+          type: 'url' as const,
         },
         {
           name: 'image',
-          type: 'image',
+          type: 'image' as const,
         },
         {
           name: 'file',
-          type: 'file',
+          type: 'file' as const,
         },
         {
           name: 'geopoint',
-          type: 'geopoint',
+          type: 'geopoint' as const,
         },
       ],
     };
@@ -195,12 +195,12 @@ describe('generate-types', () => {
 
   it('generates unioned string literals if options.list is provided', async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       name: 'foo',
       fields: [
         {
           name: 'choices',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
           options: {
@@ -264,14 +264,14 @@ describe('generate-types', () => {
 
   it("generates an optional prop if required isn't present", async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       title: 'Foo',
       name: 'foo',
       fields: [
         {
           title: 'Name',
           name: 'name',
-          type: 'string',
+          type: 'string' as const,
         },
       ],
     };
@@ -327,33 +327,33 @@ describe('generate-types', () => {
 
   it('generates types for nested objects', async () => {
     const foo = {
-      type: 'object',
+      type: 'object' as const,
       name: 'foo',
       fields: [
         {
           title: 'Name',
           name: 'name',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
         },
         {
           name: 'subObject',
-          type: 'object',
+          type: 'object' as const,
           codegen: { required: true },
           validation: jest.fn(),
           fields: [
             {
               title: 'Really nested',
               name: 'reallyNested',
-              type: 'object',
+              type: 'object' as const,
               validation: jest.fn(),
               codegen: { required: true },
               fields: [
                 {
                   title: 'Bar',
                   name: 'bar',
-                  type: 'string',
+                  type: 'string' as const,
                   codegen: { required: true },
                   validation: jest.fn(),
                 },
@@ -429,32 +429,32 @@ describe('generate-types', () => {
 
   it('generates types for images and files with fields', async () => {
     const foo = {
-      type: 'image',
+      type: 'image' as const,
       title: 'Top-level Image Type',
       name: 'foo',
       fields: [
         {
           title: 'Title',
           name: 'title',
-          type: 'string',
+          type: 'string' as const,
         },
       ],
     };
 
     const bar = {
-      type: 'object',
+      type: 'object' as const,
       title: 'Bar',
       name: 'bar',
       fields: [
         {
           title: 'Nested Image Type',
           name: 'nestedImage',
-          type: 'image',
+          type: 'image' as const,
           fields: [
             {
               title: 'Description',
               name: 'description',
-              type: 'string',
+              type: 'string' as const,
               codegen: { required: true },
               validation: jest.fn(),
             },
@@ -463,12 +463,12 @@ describe('generate-types', () => {
         {
           title: 'Nested File Type',
           name: 'nestedFile',
-          type: 'file',
+          type: 'file' as const,
           fields: [
             {
               title: 'Other Description',
               name: 'otherDescription',
-              type: 'number',
+              type: 'number' as const,
               codegen: { required: true },
               validation: jest.fn(),
             },
@@ -563,19 +563,19 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Array',
           name: 'array',
-          type: 'array',
-          of: [{ type: 'string' }],
+          type: 'array' as const,
+          of: [{ type: 'string' as const }],
         },
         {
           title: 'Array Two',
           name: 'arrayTwo',
-          type: 'array',
-          of: [{ type: 'bar' }, { type: 'baz' }],
+          type: 'array' as const,
+          of: [{ type: 'bar' as const }, { type: 'baz' as const }],
         },
       ],
     };
@@ -583,12 +583,12 @@ describe('generate-types', () => {
     const bar = {
       title: 'Bar',
       name: 'bar',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Bar',
           name: 'bar',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
         },
@@ -598,12 +598,12 @@ describe('generate-types', () => {
     const baz = {
       title: 'Baz',
       name: 'baz',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Baz',
           name: 'baz',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
         },
@@ -699,7 +699,7 @@ describe('generate-types', () => {
 
   it('generates types for named slugs', async () => {
     const foo = {
-      type: 'slug',
+      type: 'slug' as const,
       name: 'fooSlug',
     };
 
@@ -737,31 +737,31 @@ describe('generate-types', () => {
 
   it('generates types with arrays and nested objects', async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       title: 'Foo',
       name: 'foo',
       fields: [
         {
           title: 'Array',
           name: 'array',
-          type: 'array',
+          type: 'array' as const,
           codegen: { required: true },
           validation: jest.fn(),
           of: [
             {
-              type: 'object',
+              type: 'object' as const,
               fields: [
                 {
                   title: 'Question',
                   name: 'question',
-                  type: 'string',
+                  type: 'string' as const,
                   codegen: { required: true },
                   validation: jest.fn(),
                 },
                 {
                   title: 'Answer',
                   name: 'answer',
-                  type: 'string',
+                  type: 'string' as const,
                   codegen: { required: true },
                   validation: jest.fn(),
                 },
@@ -839,15 +839,15 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Description',
           name: 'description',
-          type: 'array',
+          type: 'array' as const,
           codegen: { required: true },
           validation: jest.fn(),
-          of: [{ type: 'block' }],
+          of: [{ type: 'block' as const }],
         },
       ],
     };
@@ -904,38 +904,38 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Name',
           name: 'name',
-          type: 'string',
+          type: 'string' as const,
         },
         {
           title: 'Bar',
           name: 'bar',
-          type: 'reference',
-          to: [{ type: 'bar' }],
+          type: 'reference' as const,
+          to: [{ type: 'bar' as const }],
         },
         {
           title: 'Two Types',
           name: 'complex',
-          type: 'reference',
-          to: [{ type: 'bar' }, { type: 'baz' }],
+          type: 'reference' as const,
+          to: [{ type: 'bar' as const }, { type: 'baz' as const }],
         },
       ],
     };
 
     const bar = {
       name: 'bar',
-      type: 'document',
-      fields: [{ name: 'name', type: 'string' }],
+      type: 'document' as const,
+      fields: [{ name: 'name', type: 'string' as const }],
     };
 
     const baz = {
       name: 'baz',
-      type: 'document',
-      fields: [{ name: 'name', type: 'string' }],
+      type: 'document' as const,
+      fields: [{ name: 'name', type: 'string' as const }],
     };
 
     const result = await generateTypes({ types: [foo, bar, baz] });
@@ -1036,20 +1036,20 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Bar',
           name: 'foo_bar',
-          type: 'foo_bar',
+          type: 'foo_bar' as const,
         },
       ],
     };
 
     const bar = {
       name: 'foo_bar',
-      type: 'object',
-      fields: [{ name: 'name', type: 'string' }],
+      type: 'object' as const,
+      fields: [{ name: 'name', type: 'string' as const }],
     };
 
     const result = await generateTypes({ types: [foo, bar] });
@@ -1113,11 +1113,11 @@ describe('generate-types', () => {
   it('generates empty interfaces for unknown types', async () => {
     const foo = {
       name: 'foo',
-      type: 'object',
+      type: 'object' as const,
       fields: [
         {
           name: 'code',
-          type: 'code',
+          type: 'code' as const,
         },
       ],
     };
@@ -1176,14 +1176,14 @@ describe('generate-types', () => {
 
   it('throws if the required flag is present but there is no validation function', async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       title: 'Foo',
       name: 'foo',
       fields: [
         {
           title: 'Name',
           name: 'name',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
         },
       ],
@@ -1205,13 +1205,13 @@ describe('generate-types', () => {
 
   it('throws if the top-level type name is not composed of alphanumeric or underscores', async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       name: 'foo_baré',
       fields: [
         {
           title: 'Name',
           name: 'name',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
         },
@@ -1234,13 +1234,13 @@ describe('generate-types', () => {
 
   it('throws if the field name is not composed of alphanumeric or underscores', async () => {
     const foo = {
-      type: 'document',
+      type: 'document' as const,
       name: 'foo',
       fields: [
         {
           title: 'Cool Name',
           name: 'cool_namé',
-          type: 'string',
+          type: 'string' as const,
           codegen: { required: true },
           validation: jest.fn(),
         },
@@ -1265,12 +1265,12 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Document',
           name: 'document',
-          type: 'document',
+          type: 'document' as const,
           fields: [],
         },
       ],
@@ -1292,12 +1292,12 @@ describe('generate-types', () => {
     const foo = {
       title: 'Foo',
       name: 'foo',
-      type: 'document',
+      type: 'document' as const,
       fields: [
         {
           title: 'Span',
           name: 'span',
-          type: 'span',
+          type: 'span' as const,
         },
       ],
     };
