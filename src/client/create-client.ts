@@ -7,6 +7,7 @@ interface CreateClientOptions {
   token?: string;
   previewMode?: boolean;
   disabledCache?: boolean;
+  useCdn?: boolean;
 }
 
 interface SanityResult<T> {
@@ -22,6 +23,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
   previewMode = false,
   fetch,
   disabledCache,
+  useCdn,
 }: CreateClientOptions) {
   const cache: { [key: string]: any } = {};
 
@@ -129,10 +131,12 @@ function createClient<Documents extends { _type: string; _id: string }>({
 
     searchParams.set('query', query);
     const response = await jsonFetch<SanityResult<T>>(
-      `https://${projectId}.api.sanity.io/v1/data/query/${dataset}?${searchParams.toString()}`,
+      `https://${projectId}.${
+        useCdn ? 'apicdn' : 'api'
+      }.sanity.io/v1/data/query/${dataset}?${searchParams.toString()}`,
       {
         // conditionally add the authorization header if the token is present
-        ...(token && { headers: { Authorization: `Bearer ${token}` } }),
+        ...(preview && { headers: { Authorization: `Bearer ${token}` } }),
       }
     );
 
