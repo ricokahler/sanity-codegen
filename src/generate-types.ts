@@ -25,6 +25,8 @@ type ObjectType = {
 };
 type ReferenceType = {
   type: 'reference';
+  // even though the sanity docs say this is only ever an array, their default
+  // blog example doesn't follow this.
   to: Array<{ type: string }>;
   weak?: boolean;
 };
@@ -189,10 +191,13 @@ async function generateTypes({
       const keyClause = fromArray ? `_key: string;` : '';
       const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
       const assetClause = 'asset: SanityAsset;';
-      const imageSpecificClause = intrinsic.type === 'image' ? `
+      const imageSpecificClause =
+        intrinsic.type === 'image'
+          ? `
         crop?: SanityImageCrop;
         hotspot?: SanityImageHotspot;
-      ` : '';
+      `
+          : '';
 
       const fields = intrinsic?.fields || [];
 
@@ -228,7 +233,8 @@ async function generateTypes({
     }
     if (intrinsic.type === 'reference') {
       // TODO for weak references, the expand should return \`T | undefined\`
-      const union = intrinsic.to
+      const to = Array.isArray(intrinsic.to) ? intrinsic.to : [intrinsic.to];
+      const union = to
         .map((refType) => convertType(refType, [...parents, '_ref']))
         .join(' | ');
 
