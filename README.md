@@ -159,6 +159,12 @@ function query<T = any>(query: string): Promise<T[]>;
  * the client
  */
 function clearCache(): void;
+
+/**
+ * Flip whether or not this client is using preview mode or not. Useful for
+ * preview mode within next.js.
+ */
+function setPreviewMode(previewMode: boolean): void;
 ```
 
 The design behind the client is to fetch full documents and handle projections and transforms in code.

@@ -20,12 +20,13 @@ function createClient<Documents extends { _type: string; _id: string }>({
   dataset,
   projectId,
   token,
-  previewMode = false,
+  previewMode: _previewMode = false,
   fetch,
   disabledCache,
   useCdn,
 }: CreateClientOptions) {
   const cache: { [key: string]: any } = {};
+  const previewModeRef = { current: _previewMode };
 
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
     const response = await fetch(url, {
@@ -56,7 +57,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
       return cache[id] as R;
     }
 
-    const preview = previewMode && !!token;
+    const preview = previewModeRef.current && !!token;
     const previewClause = preview
       ? // sanity creates a new document with an _id prefix of `drafts.`
         // for when a document is edited without being published
@@ -127,7 +128,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     query: string
   ): Promise<T[]> {
     const searchParams = new URLSearchParams();
-    const preview = previewMode && !!token;
+    const preview = previewModeRef.current && !!token;
 
     searchParams.set('query', query);
     const response = await jsonFetch<SanityResult<T>>(
@@ -171,6 +172,10 @@ function createClient<Documents extends { _type: string; _id: string }>({
     return Object.values(finalAcc);
   }
 
+  /**
+   * Clears the in-memory cache. The cache can also be disabled when creating
+   * the client
+   */
   function clearCache() {
     const keys = Object.keys(cache);
 
@@ -179,7 +184,15 @@ function createClient<Documents extends { _type: string; _id: string }>({
     }
   }
 
-  return { get, getAll, expand, query, clearCache };
+  /**
+   * Flip whether or not this client is using preview mode or not. Useful for
+   * preview mode within next.js.
+   */
+  function setPreviewMode(previewMode: boolean) {
+    previewModeRef.current = previewMode;
+  }
+
+  return { get, getAll, expand, query, clearCache, setPreviewMode };
 }
 
 export default createClient;
