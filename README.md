@@ -53,6 +53,8 @@ export default config;
 
 [See here for the rest of the available options.](https://github.com/ricokahler/sanity-codegen/blob/d4eb4a8ac5f6d27f709697ccdbd2a296d1e51dc2/src/generate-types.ts#L97-L121)
 
+Additionally, you can import the [default babel config](https://github.com/ricokahler/sanity-codegen/blob/36e74c3b73bde57e0fbeb913857f98c190407d26/src/cli.ts#L8-L46) from `const { defaultBabelOptions } = require('sanity-codegen/cli')` if you need to merge your current config.
+
 Then run the CLI with [`npx`](https://github.com/npm/npx) at the root of your sanity project.
 
 ```
