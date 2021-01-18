@@ -1032,10 +1032,10 @@ describe('generate-types', () => {
     `);
   });
 
-  it('generates types for fields with underscores', async () => {
+  it('generates types for fields with underscores and documents with hyphens', async () => {
     const foo = {
       title: 'Foo',
-      name: 'foo',
+      name: 'foo-with-hyphen',
       type: 'document' as const,
       fields: [
         {
@@ -1084,8 +1084,8 @@ describe('generate-types', () => {
        *
        *
        */
-      export interface Foo extends SanityDocument {
-        _type: \\"foo\\";
+      export interface FooWithHyphen extends SanityDocument {
+        _type: \\"foo-with-hyphen\\";
 
         /**
          * Bar — \`foo_bar\`
@@ -1105,7 +1105,7 @@ describe('generate-types', () => {
         name?: string;
       };
 
-      export type Documents = Foo;
+      export type Documents = FooWithHyphen;
       "
     `);
   });
@@ -1225,7 +1225,7 @@ describe('generate-types', () => {
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Name "foo_baré" is not valid. Ensure camel case, alphanumeric and underscore characters only]`
+        `[Error: Name "foo_baré" is not valid. Ensure camel case, alphanumeric, and underscore characters only]`
       );
     }
 
@@ -1254,7 +1254,7 @@ describe('generate-types', () => {
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Name "cool_namé" in type "foo" is not valid. Ensure camel case, alphanumeric and underscore characters only]`
+        `[Error: Name "cool_namé" in type "foo" is not valid. Ensure camel case, alphanumeric, and underscore characters only]`
       );
     }
 
