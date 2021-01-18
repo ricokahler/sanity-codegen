@@ -5,7 +5,7 @@ import generateTypes from './generate-types';
 
 import register, { revert } from '@babel/register';
 
-const defaultBabelOptions = {
+export const defaultBabelOptions = {
   extensions: ['.js', '.ts', '.tsx', '.mjs'],
   // these disable any babel config files in the project so we can run our
   // very specific babel config for the CLI
@@ -38,6 +38,10 @@ const defaultBabelOptions = {
     ],
     // used to resolve css module imports that are allowed in sanity projects
     'css-modules-transform',
+    '@babel/plugin-proposal-class-properties',
+    '@babel/plugin-proposal-numeric-separator',
+    '@babel/plugin-proposal-optional-chaining',
+    '@babel/plugin-proposal-nullish-coalescing-operator',
   ],
 };
 
