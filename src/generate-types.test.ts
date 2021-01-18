@@ -71,6 +71,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -83,6 +84,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -227,6 +229,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -239,6 +242,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -290,6 +294,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -302,6 +307,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -377,6 +383,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -389,6 +396,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       export type Foo = {
@@ -490,6 +498,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -502,6 +511,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       export type Foo = {
@@ -623,6 +633,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -635,6 +646,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -650,14 +662,14 @@ describe('generate-types', () => {
          *
          *
          */
-        array?: Array<string>;
+        array?: SanityArray<string>;
 
         /**
          * Array Two — \`array\`
          *
          *
          */
-        arrayTwo?: Array<Bar | Baz>;
+        arrayTwo?: SanityArray<Bar | Baz>;
       }
 
       /**
@@ -716,6 +728,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -728,6 +741,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       export type FooSlug = { _type: \\"fooSlug\\"; current: string };
@@ -785,6 +799,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -797,6 +812,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -812,8 +828,7 @@ describe('generate-types', () => {
          *
          *
          */
-        array: Array<{
-          _key: string;
+        array: SanityArray<{
           /**
            * Question — \`string\`
            *
@@ -865,6 +880,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -877,6 +893,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -892,7 +909,7 @@ describe('generate-types', () => {
          *
          *
          */
-        description: Array<SanityBlock>;
+        description: SanityArray<SanityBlock>;
       }
 
       export type Documents = Foo;
@@ -951,6 +968,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -963,6 +981,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -1065,6 +1084,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1077,6 +1097,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       /**
@@ -1137,6 +1158,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1149,6 +1171,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityArray,
       };
 
       export type Foo = {

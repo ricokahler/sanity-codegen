@@ -79,3 +79,7 @@ export interface SanityImageHotspot {
   x: number;
   y: number;
 }
+
+export type SanityArray<T> = T extends object
+  ? Array<T & { _key: string }>
+  : Array<T>;
