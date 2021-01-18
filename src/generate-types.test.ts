@@ -63,6 +63,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -71,11 +72,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -84,7 +86,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -221,6 +223,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -229,11 +232,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -242,7 +246,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -286,6 +290,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -294,11 +299,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -307,7 +313,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -375,6 +381,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -383,11 +390,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -396,7 +404,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       export type Foo = {
@@ -490,6 +498,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -498,11 +507,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -511,7 +521,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       export type Foo = {
@@ -582,6 +592,12 @@ describe('generate-types', () => {
           of: [{ type: 'string' as const }],
         },
         {
+          title: 'Array of references',
+          name: 'refs',
+          type: 'array' as const,
+          of: [{ type: 'reference', to: [{ type: 'bar' }] }],
+        },
+        {
           title: 'Array Two',
           name: 'arrayTwo',
           type: 'array' as const,
@@ -625,6 +641,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -633,11 +650,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -646,7 +664,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -662,14 +680,21 @@ describe('generate-types', () => {
          *
          *
          */
-        array?: SanityArray<string>;
+        array?: Array<SanityKeyed<string>>;
+
+        /**
+         * Array of references — \`array\`
+         *
+         *
+         */
+        refs?: Array<SanityKeyedReference<Bar>>;
 
         /**
          * Array Two — \`array\`
          *
          *
          */
-        arrayTwo?: SanityArray<Bar | Baz>;
+        arrayTwo?: Array<SanityKeyed<Bar> | SanityKeyed<Baz>>;
       }
 
       /**
@@ -720,6 +745,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -728,11 +754,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -741,7 +768,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       export type FooSlug = { _type: \\"fooSlug\\"; current: string };
@@ -791,6 +818,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -799,11 +827,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -812,7 +841,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -828,21 +857,23 @@ describe('generate-types', () => {
          *
          *
          */
-        array: SanityArray<{
-          /**
-           * Question — \`string\`
-           *
-           *
-           */
-          question: string;
+        array: Array<
+          SanityKeyed<{
+            /**
+             * Question — \`string\`
+             *
+             *
+             */
+            question: string;
 
-          /**
-           * Answer — \`string\`
-           *
-           *
-           */
-          answer: string;
-        }>;
+            /**
+             * Answer — \`string\`
+             *
+             *
+             */
+            answer: string;
+          }>
+        >;
       }
 
       export type Documents = Foo;
@@ -872,6 +903,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -880,11 +912,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -893,7 +926,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -909,7 +942,7 @@ describe('generate-types', () => {
          *
          *
          */
-        description: SanityArray<SanityBlock>;
+        description: Array<SanityKeyed<SanityBlock>>;
       }
 
       export type Documents = Foo;
@@ -960,6 +993,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -968,11 +1002,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -981,7 +1016,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -1076,6 +1111,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -1084,11 +1120,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -1097,7 +1134,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       /**
@@ -1150,6 +1187,7 @@ describe('generate-types', () => {
     expect(result).toMatchInlineSnapshot(`
       "import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -1158,11 +1196,12 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from \\"sanity-codegen\\";
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -1171,7 +1210,7 @@ describe('generate-types', () => {
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
 
       export type Foo = {

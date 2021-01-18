@@ -180,8 +180,21 @@ async function generateTypes({
     if (intrinsic.type === 'array') {
       const union = intrinsic.of
         .map((i, index) => convertType(i, [...parents, index]))
+        .map((i) => {
+          // if the wrapping type is a reference, we need to replace that type
+          // with `SanityKeyedReference<T>` in order to preserve `T` (which
+          // is purely for meta programming purposes)
+          const referenceMatch = /^\s*SanityReference<([^>]+)>\s*$/.exec(i);
+
+          if (referenceMatch) {
+            const innerType = referenceMatch[1];
+            return `SanityKeyedReference<${innerType}>`;
+          }
+
+          return `SanityKeyed<${i}>`;
+        })
         .join(' | ');
-      return `SanityArray<${union}>`;
+      return `Array<${union}>`;
     }
     if (intrinsic.type === 'block') {
       return 'SanityBlock';
@@ -338,6 +351,7 @@ async function generateTypes({
     `
       import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -346,11 +360,12 @@ async function generateTypes({
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       } from 'sanity-codegen';
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -359,7 +374,7 @@ async function generateTypes({
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
-        SanityArray,
+        SanityKeyed,
       };
   `,
     ...types
