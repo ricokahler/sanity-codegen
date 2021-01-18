@@ -1,4 +1,4 @@
-import { SanityReference } from '../types';
+import { SanityReference, SanityKeyedReference } from '../types';
 
 interface CreateClientOptions {
   projectId: string;
@@ -113,7 +113,9 @@ function createClient<Documents extends { _type: string; _id: string }>({
    * If a sanity document refers to another sanity document, then you can use this
    * function to expand that document, preserving the type
    */
-  async function expand<T extends Documents>(ref: SanityReference<T>) {
+  async function expand<T extends Documents>(
+    ref: SanityReference<T> | SanityKeyedReference<T>
+  ) {
     // this function is primarily for typescript
     const response = await get<T['_type']>(null as any, ref._ref);
     // since this is a ref, the response will be defined (unless weak reference)

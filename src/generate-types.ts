@@ -80,7 +80,6 @@ function validatePropertyName(
     : /^[A-Z][A-Z0-9_]*$/i;
 
   if (!regex.test(sanityTypeName)) {
-    console.log(params);
     throw new Error(
       `Name "${sanityTypeName}" ${
         parents.length > 0 ? `in type "${parents.join('.')}" ` : ''
@@ -181,6 +180,19 @@ async function generateTypes({
     if (intrinsic.type === 'array') {
       const union = intrinsic.of
         .map((i, index) => convertType(i, [...parents, index]))
+        .map((i) => {
+          // if the wrapping type is a reference, we need to replace that type
+          // with `SanityKeyedReference<T>` in order to preserve `T` (which
+          // is purely for meta programming purposes)
+          const referenceMatch = /^\s*SanityReference<([^>]+)>\s*$/.exec(i);
+
+          if (referenceMatch) {
+            const innerType = referenceMatch[1];
+            return `SanityKeyedReference<${innerType}>`;
+          }
+
+          return `SanityKeyed<${i}>`;
+        })
         .join(' | ');
       return `Array<${union}>`;
     }
@@ -197,13 +209,6 @@ async function generateTypes({
       return 'SanityGeoPoint';
     }
     if (intrinsic.type === 'image' || intrinsic.type === 'file') {
-      // it will be from an array if the last parent is a number
-      const lastParent = parents[parents.length - 1];
-      const fromArray = typeof lastParent === 'number';
-
-      // if this object is from a parent that is an array, then the _key
-      // property will be present.
-      const keyClause = fromArray ? `_key: string;` : '';
       const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
       const assetClause = 'asset: SanityAsset;';
       const imageSpecificClause =
@@ -216,7 +221,7 @@ async function generateTypes({
 
       const fields = intrinsic?.fields || [];
 
-      return `{ ${typeClause} ${keyClause} ${assetClause} ${imageSpecificClause} ${fields
+      return `{ ${typeClause} ${assetClause} ${imageSpecificClause} ${fields
         .map((field) =>
           convertField(field, [
             ...parents,
@@ -227,16 +232,9 @@ async function generateTypes({
         .join('\n')} }`;
     }
     if (intrinsic.type === 'object') {
-      // it will be from an array if the last parent is a number
-      const lastParent = parents[parents.length - 1];
-      const fromArray = typeof lastParent === 'number';
-
       const typeClause = intrinsic.name ? `_type: '${intrinsic.name}';` : '';
-      // if this object is from a parent that is an array, then the _key
-      // property will be present.
-      const keyClause = fromArray ? `_key: string;` : '';
 
-      return `{ ${typeClause} ${keyClause} ${intrinsic.fields
+      return `{ ${typeClause} ${intrinsic.fields
         .map((field) =>
           convertField(field, [
             ...parents,
@@ -353,6 +351,7 @@ async function generateTypes({
     `
       import type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -361,10 +360,12 @@ async function generateTypes({
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityKeyed,
       } from 'sanity-codegen';
 
       export type {
         SanityReference,
+        SanityKeyedReference,
         SanityAsset,
         SanityImage,
         SanityFile,
@@ -373,6 +374,7 @@ async function generateTypes({
         SanityDocument,
         SanityImageCrop,
         SanityImageHotspot,
+        SanityKeyed,
       };
   `,
     ...types

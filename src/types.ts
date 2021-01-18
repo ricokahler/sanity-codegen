@@ -25,7 +25,18 @@ export interface SanityCodegenConfig
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type SanityReference<_T> = {
   _type: 'reference';
-  _key?: string;
+  _ref: string;
+};
+
+/**
+ * Represents a reference in Sanity to another entity with a key. Note that the
+ * generic type is strictly for TypeScript meta programming.
+ */
+// NOTE: the _T is for only for typescript meta
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type SanityKeyedReference<_T> = {
+  _type: 'reference';
+  _key: string;
   _ref: string;
 };
 
@@ -79,3 +90,5 @@ export interface SanityImageHotspot {
   x: number;
   y: number;
 }
+
+export type SanityKeyed<T> = T extends object ? T & { _key: string } : T;
