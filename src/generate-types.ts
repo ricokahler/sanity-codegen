@@ -72,25 +72,30 @@ type Field = {
 
 function validatePropertyName(
   sanityTypeName: string,
-  parents: (string | number)[]
+  parents: (string | number)[],
+  params: { allowHyphen: boolean }
 ) {
-  if (!/^[A-Z][A-Z0-9_]*$/i.test(sanityTypeName)) {
+  const regex = params.allowHyphen
+    ? /^[A-Z][A-Z0-9_-]*$/i
+    : /^[A-Z][A-Z0-9_]*$/i;
+
+  if (!regex.test(sanityTypeName)) {
+    console.log(params);
     throw new Error(
       `Name "${sanityTypeName}" ${
         parents.length > 0 ? `in type "${parents.join('.')}" ` : ''
-      }is not valid. Ensure camel case, alphanumeric and underscore characters only`
+      }is not valid. Ensure camel case, alphanumeric, and underscore characters only`
     );
   }
 }
 
 function defaultGenerateTypeName(sanityTypeName: string) {
-  validatePropertyName(sanityTypeName, []);
-
   const typeName = `${sanityTypeName
     .substring(0, 1)
     .toUpperCase()}${sanityTypeName
     // If using snake_case, remove underscores and convert to uppercase the letter following them.
     .replace(/(_[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
+    .replace(/(-[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
     .substring(1)}`;
 
   return typeName;
@@ -138,8 +143,13 @@ async function generateTypes({
   const createdTypeNames: { [name: string]: boolean } = {};
   const referencedTypeNames: { [name: string]: boolean } = {};
 
-  function createTypeName(name: string) {
-    const typeName = generateTypeName(name);
+  function createTypeName(
+    sanityTypeName: string,
+    params: { allowHyphen: boolean }
+  ) {
+    validatePropertyName(sanityTypeName, [], params);
+
+    const typeName = generateTypeName(sanityTypeName);
     createdTypeNames[typeName] = true;
     return typeName;
   }
@@ -148,7 +158,12 @@ async function generateTypes({
    * Given a sanity type name, it returns a normalized name that will be used for
    * typescript interfaces throwing if invalid
    */
-  function getTypeName(sanityTypeName: string) {
+  function getTypeName(
+    sanityTypeName: string,
+    params: { allowHyphen: boolean }
+  ) {
+    validatePropertyName(sanityTypeName, [], params);
+
     const typeName = generateTypeName(sanityTypeName);
     referencedTypeNames[typeName] = true;
     return typeName;
@@ -282,7 +297,7 @@ async function generateTypes({
       return 'string';
     }
 
-    return getTypeName(obj.type);
+    return getTypeName(obj.type, { allowHyphen: false });
   }
 
   function convertField(field: Field, parents: (string | number)[]) {
@@ -297,16 +312,16 @@ async function generateTypes({
       );
     }
 
-    validatePropertyName(field.name, parents);
+    validatePropertyName(field.name, parents, { allowHyphen: false });
 
     return `
-    /**
-     * ${field.title || field.name} — \`${field.type}\`
-     *
-     * ${field.description || ''}
-     */
-    ${field.name}${optional}: ${convertType(field, [...parents, field.name])};
-  `;
+      /**
+       * ${field.title || field.name} — \`${field.type}\`
+       *
+       * ${field.description || ''}
+       */
+      ${field.name}${optional}: ${convertType(field, [...parents, field.name])};
+    `;
   }
 
   function generateTypeForDocument(schemaType: DocumentType) {
@@ -322,7 +337,9 @@ async function generateTypes({
      *
      * ${description || ''}
      */
-    export interface ${createTypeName(name)} extends SanityDocument {
+    export interface ${createTypeName(name, {
+      allowHyphen: true,
+    })} extends SanityDocument {
         _type: '${name}';
         ${fields
           .map((field) => convertField(field, [name]))
@@ -368,7 +385,9 @@ async function generateTypes({
       )
       .map((type) => {
         return `
-          export type ${createTypeName(type.name)} = ${convertType(type, [])};
+          export type ${createTypeName(type.name, {
+            allowHyphen: false,
+          })} = ${convertType(type, [])};
         `;
       }),
   ];
@@ -376,7 +395,7 @@ async function generateTypes({
   if (documentTypes.length) {
     typeStrings.push(`
       export type Documents = ${documentTypes
-        .map(({ name }) => getTypeName(name))
+        .map(({ name }) => getTypeName(name, { allowHyphen: true }))
         .join(' | ')}
     `);
   }
