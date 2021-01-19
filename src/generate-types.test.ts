@@ -1227,11 +1227,8 @@ describe('generate-types', () => {
        * This interface is a stub. It was referenced in your sanity schema but
        * the definition was not actually found. Future versions of
        * sanity-codegen will let you type this explicity.
-       *
-       * Interface merging may help for the time being:
-       * https://www.typescriptlang.org/docs/handbook/declaration-merging.html#merging-interfaces
        */
-      interface Code {}
+      type Code = any;
       "
     `);
   });
