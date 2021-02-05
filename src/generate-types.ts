@@ -173,13 +173,14 @@ async function generateTypes({
    */
   function convertType(
     obj: IntrinsicType | { type: string },
-    parents: (string | number)[]
+    parents: (string | number)[],
+     isArray = false
   ): string {
     const intrinsic = obj as IntrinsicType;
 
     if (intrinsic.type === 'array') {
       const union = intrinsic.of
-        .map((i, index) => convertType(i, [...parents, index]))
+        .map((i, index) => convertType(i, [...parents, index], true))
         .map((i) => {
           // if the wrapping type is a reference, we need to replace that type
           // with `SanityKeyedReference<T>` in order to preserve `T` (which
@@ -209,7 +210,7 @@ async function generateTypes({
       return 'SanityGeoPoint';
     }
     if (intrinsic.type === 'image' || intrinsic.type === 'file') {
-      const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
+      const typeClause = `_type: '${isArray ? intrinsic.name : intrinsic.type}'; `;
       const assetClause = 'asset: SanityAsset;';
       const imageSpecificClause =
         intrinsic.type === 'image'
