@@ -546,7 +546,7 @@ describe('generate-types', () => {
          *
          */
         nestedImage?: {
-          _type: \\"nestedImage\\";
+          _type: \\"image\\";
           asset: SanityAsset;
           crop?: SanityImageCrop;
           hotspot?: SanityImageHotspot;
@@ -565,7 +565,7 @@ describe('generate-types', () => {
          *
          */
         nestedFile?: {
-          _type: \\"nestedFile\\";
+          _type: \\"file\\";
           asset: SanityAsset;
           /**
            * Other Description — \`number\`

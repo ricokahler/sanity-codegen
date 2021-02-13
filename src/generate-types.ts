@@ -70,9 +70,12 @@ type Field = {
   validation?: any;
 };
 
+type Node = IntrinsicType | { type: string };
+type Parent = { node: Node; path: string | number };
+
 function validatePropertyName(
   sanityTypeName: string,
-  parents: (string | number)[],
+  parents: Parent[],
   params: { allowHyphen: boolean }
 ) {
   const regex = params.allowHyphen
@@ -82,7 +85,9 @@ function validatePropertyName(
   if (!regex.test(sanityTypeName)) {
     throw new Error(
       `Name "${sanityTypeName}" ${
-        parents.length > 0 ? `in type "${parents.join('.')}" ` : ''
+        parents.length > 0
+          ? `in type "${parents.map((i) => i.path).join('.')}" `
+          : ''
       }is not valid. Ensure camel case, alphanumeric, and underscore characters only`
     );
   }
@@ -171,15 +176,20 @@ async function generateTypes({
   /**
    * Converts a sanity type to a typescript type recursively
    */
-  function convertType(
-    obj: IntrinsicType | { type: string },
-    parents: (string | number)[]
-  ): string {
+  function convertType(obj: Node, parents: Parent[]): string {
     const intrinsic = obj as IntrinsicType;
 
     if (intrinsic.type === 'array') {
       const union = intrinsic.of
-        .map((i, index) => convertType(i, [...parents, index]))
+        .map((i, index) =>
+          convertType(i, [
+            ...parents,
+            {
+              node: intrinsic,
+              path: index,
+            },
+          ])
+        )
         .map((i) => {
           // if the wrapping type is a reference, we need to replace that type
           // with `SanityKeyedReference<T>` in order to preserve `T` (which
@@ -209,7 +219,18 @@ async function generateTypes({
       return 'SanityGeoPoint';
     }
     if (intrinsic.type === 'image' || intrinsic.type === 'file') {
-      const typeClause = `_type: '${intrinsic.name || intrinsic.type}'; `;
+      const lastParent = parents[parents.length - 1] as Parent | undefined;
+
+      // if the last parent has fields, then the resulting type won't use it's
+      // name as the `_type`
+      const lastParentHasFields =
+        lastParent?.node.type &&
+        ['object', 'image', 'file'].includes(lastParent.node.type);
+      const typeName = lastParentHasFields
+        ? intrinsic.type
+        : intrinsic.name || intrinsic.type;
+
+      const typeClause = `_type: '${typeName}'; `;
       const assetClause = 'asset: SanityAsset;';
       const imageSpecificClause =
         intrinsic.type === 'image'
@@ -225,7 +246,10 @@ async function generateTypes({
         .map((field) =>
           convertField(field, [
             ...parents,
-            intrinsic.name || `(anonymous ${intrinsic.type})`,
+            {
+              node: intrinsic,
+              path: intrinsic.name || `(anonymous ${intrinsic.type})`,
+            },
           ])
         )
         .filter(Boolean)
@@ -238,7 +262,10 @@ async function generateTypes({
         .map((field) =>
           convertField(field, [
             ...parents,
-            intrinsic.name || '(anonymous object)',
+            {
+              node: intrinsic,
+              path: intrinsic.name || '(anonymous object)',
+            },
           ])
         )
         .filter(Boolean)
@@ -248,7 +275,15 @@ async function generateTypes({
       // TODO for weak references, the expand should return \`T | undefined\`
       const to = Array.isArray(intrinsic.to) ? intrinsic.to : [intrinsic.to];
       const union = to
-        .map((refType) => convertType(refType, [...parents, '_ref']))
+        .map((refType) =>
+          convertType(refType, [
+            ...parents,
+            {
+              node: intrinsic,
+              path: '_ref',
+            },
+          ])
+        )
         .join(' | ');
 
       // Note: we want the union to be wrapped by one Reference<T> so when
@@ -298,13 +333,13 @@ async function generateTypes({
     return getTypeName(obj.type, { allowHyphen: true });
   }
 
-  function convertField(field: Field, parents: (string | number)[]) {
+  function convertField(field: Field, parents: Parent[]) {
     const required = !!field.codegen?.required;
     const optional = !required ? '?' : '';
 
     if (required && typeof field.validation !== 'function') {
       throw new Error(
-        `Field "${[...parents, field.name].join(
+        `Field "${[...parents.map((i) => i.path), field.name].join(
           '.'
         )}" was marked as required but did not have a validation function.`
       );
@@ -318,7 +353,10 @@ async function generateTypes({
        *
        * ${field.description || ''}
        */
-      ${field.name}${optional}: ${convertType(field, [...parents, field.name])};
+      ${field.name}${optional}: ${convertType(field, [
+      ...parents,
+      { node: field, path: field.name },
+    ])};
     `;
   }
 
@@ -340,7 +378,9 @@ async function generateTypes({
     })} extends SanityDocument {
         _type: '${name}';
         ${fields
-          .map((field) => convertField(field, [name]))
+          .map((field) =>
+            convertField(field, [{ node: schemaType, path: name }])
+          )
           .filter(Boolean)
           .join('\n')}
     }

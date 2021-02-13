@@ -12,6 +12,6 @@
     "target": "esnext",
     "baseUrl": "."
   },
-  "include": ["./src"],
+  "include": ["./src/**/*"],
   "exclude": ["**/*.test.ts"]
 }
