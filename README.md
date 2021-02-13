@@ -91,8 +91,6 @@ export default createClient<Documents>({
   previewMode: true,
   // (optional) only required if your dataset is private or if you want to use preview mode
   token: '...',
-  // by default sanity-codegen caches responses in memory. this can be disabled if desired
-  // disabledCache: true,
   //
   // (optional) enables the usage of `apicdn.sanity.io`. this is recommended
   // if you plan on using this in browsers. don't use this with preview mode
@@ -155,12 +153,6 @@ function expand<T>(ref: SanityReference<T>): Promise<R>;
  * provided by you.
  */
 function query<T = any>(query: string): Promise<T[]>;
-
-/**
- * Clears the in-memory cache. The cache can also be disabled when creating
- * the client
- */
-function clearCache(): void;
 
 /**
  * Flip whether or not this client is using preview mode or not. Useful for

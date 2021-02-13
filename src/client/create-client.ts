@@ -6,7 +6,6 @@ interface CreateClientOptions {
   fetch: WindowOrWorkerGlobalScope['fetch'];
   token?: string;
   previewMode?: boolean;
-  disabledCache?: boolean;
   useCdn?: boolean;
 }
 
@@ -22,10 +21,8 @@ function createClient<Documents extends { _type: string; _id: string }>({
   token,
   previewMode: _previewMode = false,
   fetch,
-  disabledCache,
   useCdn,
 }: CreateClientOptions) {
-  const cache: { [key: string]: any } = {};
   const previewModeRef = { current: _previewMode };
 
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
@@ -53,10 +50,6 @@ function createClient<Documents extends { _type: string; _id: string }>({
   ) {
     type R = Documents & { _type: T };
 
-    if (cache[id] && !disabledCache) {
-      return cache[id] as R;
-    }
-
     const preview = previewModeRef.current && !!token;
     const previewClause = preview
       ? // sanity creates a new document with an _id prefix of `drafts.`
@@ -65,10 +58,6 @@ function createClient<Documents extends { _type: string; _id: string }>({
       : '';
 
     const [result] = await query<R>(`* [_id == "${id}" ${previewClause}]`);
-
-    if (!disabledCache) {
-      cache[id] = result;
-    }
     return result;
   }
 
@@ -84,29 +73,9 @@ function createClient<Documents extends { _type: string; _id: string }>({
     // TODO: might be a cleaner way to do this. this creates an ugly lookin type
     type R = { _type: T } & Documents;
 
-    if (disabledCache) {
-      return await query<R>(
-        `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
-      );
-    }
-
-    const ids = await query<{ _id: string }>(
-      `* [_type == "${type}"${
-        filterClause ? ` && ${filterClause}` : ''
-      }] { _id }`
+    return await query<R>(
+      `* [_type == "${type}"${filterClause ? ` && ${filterClause}` : ''}]`
     );
-
-    const idsToFetch = ids.filter(({ _id }) => !cache[_id]);
-
-    const newDocumentList = await query<R>(
-      `* [_id in [${idsToFetch.map(({ _id }) => `'${_id}'`).join(', ')}]]`
-    );
-
-    for (const doc of newDocumentList) {
-      cache[doc._id] = doc;
-    }
-
-    return ids.map(({ _id }) => cache[_id] as R);
   }
 
   /**
@@ -175,18 +144,6 @@ function createClient<Documents extends { _type: string; _id: string }>({
   }
 
   /**
-   * Clears the in-memory cache. The cache can also be disabled when creating
-   * the client
-   */
-  function clearCache() {
-    const keys = Object.keys(cache);
-
-    for (const key of keys) {
-      delete cache[key];
-    }
-  }
-
-  /**
    * Flip whether or not this client is using preview mode or not. Useful for
    * preview mode within next.js.
    */
@@ -194,7 +151,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     previewModeRef.current = previewMode;
   }
 
-  return { get, getAll, expand, query, clearCache, setPreviewMode };
+  return { get, getAll, expand, query, setPreviewMode };
 }
 
 export default createClient;
