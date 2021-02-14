@@ -67,6 +67,31 @@ npx sanity-codegen
 
 > Running with `npx` runs the CLI in the context of your project's node_modules.
 
+### Schema Codegen Options
+
+If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
+
+```ts
+export default {
+  name: 'myDocument',
+  type: 'document',
+  fields: [
+    {
+      name: 'aRequiredField',
+      type: 'string',
+      // 👇👇👇
+      codegen: { required: true },
+      validation: (Rule) => Rule.required(),
+      // 👆👆👆
+    },
+  ],
+};
+```
+
+This will tell the codegen to remove the optional `?` modifier on the field.
+
+> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
+
 ## Usage with first-party client (`@sanity/codegen`)
 
 For more stable usage, you can use the generated types with the first party javascript client [`@sanity/client`](https://www.sanity.io/docs/js-client) (or the tiny alternative [`picosanity`](https://github.com/rexxars/picosanity)).
@@ -163,31 +188,6 @@ export default createClient<Documents>({
   // useCdn: true,
 });
 ```
-
-### Schema Codegen Options
-
-If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
-
-```ts
-export default {
-  name: 'myDocument',
-  type: 'document',
-  fields: [
-    {
-      name: 'aRequiredField',
-      type: 'string',
-      // 👇👇👇
-      codegen: { required: true },
-      validation: (Rule) => Rule.required(),
-      // 👆👆👆
-    },
-  ],
-};
-```
-
-This will tell the codegen to remove the optional `?` modifier on the field.
-
-> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
 
 ### Client Usage
 
