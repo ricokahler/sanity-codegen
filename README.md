@@ -2,15 +2,19 @@
 
 > Generate TypeScript types from your Sanity schemas
 
-## [Demos](https://github.com/ricokahler/sanity-codegen#demos)
+## Demos
 
-### [CLI — generate types in seconds](https://github.com/ricokahler/sanity-codegen#cli--generate-types-in-seconds)
+### CLI — generate types in seconds
 
 CLI handles a babel setup and shims out the Sanity part system to generate TypeScript types with ease.
 
 ![CLI Demo](./cli-demo.gif)
 
-### [Client — for optimized Sanity DX](https://github.com/ricokahler/sanity-codegen#client-for-optimized-sanity-dx)
+### Typed Client — for optimized Sanity DX
+
+> **Status:** ⚠️ Experimental
+>
+> The client is currently experimental. Its API may change in the future.
 
 Sanity Codegen ships with a simple and tiny client that hooks up with your types.
 
@@ -63,7 +67,93 @@ npx sanity-codegen
 
 > Running with `npx` runs the CLI in the context of your project's node_modules.
 
-## Client
+### Schema Codegen Options
+
+If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
+
+```ts
+export default {
+  name: 'myDocument',
+  type: 'document',
+  fields: [
+    {
+      name: 'aRequiredField',
+      type: 'string',
+      // 👇👇👇
+      codegen: { required: true },
+      validation: (Rule) => Rule.required(),
+      // 👆👆👆
+    },
+  ],
+};
+```
+
+This will tell the codegen to remove the optional `?` modifier on the field.
+
+> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
+
+## Usage with first-party client (`@sanity/codegen`)
+
+For more stable usage, you can use the generated types with the first party javascript client [`@sanity/client`](https://www.sanity.io/docs/js-client) (or the tiny alternative [`picosanity`](https://github.com/rexxars/picosanity)).
+
+Query for documents like normal but use the generated types to create the correct type for your query.
+
+```ts
+import sanityClient from '@sanity/client';
+import groq from 'groq';
+import type * as Schema from '../your-resulting-codegen';
+
+const client = sanityClient({
+  projectId: 'your-project-id',
+  dataset: 'bikeshop',
+  token: 'sanity-auth-token', // or leave blank to be anonymous user
+  useCdn: true, // `false` if you want to ensure fresh data
+});
+
+// Step 1: write a query
+const query = groq`
+  *[_type == 'blogPost'] {
+    // pick the title
+    title,
+    // then a full expansion of the author
+    author -> { ... },
+  }
+`;
+
+// Step 2: create a type for your query's result composed from the codegen types.
+//
+// Refer to Typescript's utility types for useful type helpers:
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
+//
+// And also intersections:
+// https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#intersection-types
+type QueryResult = Array<
+  Omit<Pick<Schema.BlogPost, 'title'>, 'author'> & {
+    author: Schema.Author;
+  }
+>;
+
+async function main() {
+  // Step 3: add the `QueryResult` as the type parameter as well as the query
+  const results = await client.fetch<QueryResult>(query);
+
+  const first = results[0];
+
+  console.log(first.title); // "Title"
+  console.log(first.author); // { name: 'Example', bio: '...' }
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+```
+
+## Typed Client (⚠️ Experimental)
+
+> **Status:** ⚠️ Experimental
+>
+> The client is currently experimental. Its API may change in the future.
 
 The Sanity Codegen client is a very simple Sanity client that utilizes the generated types for great DX.
 
@@ -91,8 +181,6 @@ export default createClient<Documents>({
   previewMode: true,
   // (optional) only required if your dataset is private or if you want to use preview mode
   token: '...',
-  // by default sanity-codegen caches responses in memory. this can be disabled if desired
-  // disabledCache: true,
   //
   // (optional) enables the usage of `apicdn.sanity.io`. this is recommended
   // if you plan on using this in browsers. don't use this with preview mode
@@ -100,31 +188,6 @@ export default createClient<Documents>({
   // useCdn: true,
 });
 ```
-
-### Schema Codegen Options
-
-If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
-
-```ts
-export default {
-  name: 'myDocument',
-  type: 'document',
-  fields: [
-    {
-      name: 'aRequiredField',
-      type: 'string',
-      // 👇👇👇
-      codegen: { required: true },
-      validation: (Rule) => Rule.required(),
-      // 👆👆👆
-    },
-  ],
-};
-```
-
-This will tell the codegen to remove the optional `?` modifier on the field.
-
-> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
 
 ### Client Usage
 
@@ -155,12 +218,6 @@ function expand<T>(ref: SanityReference<T>): Promise<R>;
  * provided by you.
  */
 function query<T = any>(query: string): Promise<T[]>;
-
-/**
- * Clears the in-memory cache. The cache can also be disabled when creating
- * the client
- */
-function clearCache(): void;
 
 /**
  * Flip whether or not this client is using preview mode or not. Useful for
