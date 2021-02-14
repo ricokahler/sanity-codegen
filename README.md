@@ -12,6 +12,10 @@ CLI handles a babel setup and shims out the Sanity part system to generate TypeS
 
 ### [Client — for optimized Sanity DX](https://github.com/ricokahler/sanity-codegen#client-for-optimized-sanity-dx)
 
+> **Status:** ⚠️ Experimental
+>
+> The client is currently experimental. Its API may change in the future.
+
 Sanity Codegen ships with a simple and tiny client that hooks up with your types.
 
 ![Client Demo](./client-demo.gif)
@@ -63,7 +67,11 @@ npx sanity-codegen
 
 > Running with `npx` runs the CLI in the context of your project's node_modules.
 
-## Client
+## Client (⚠️ Experimental)
+
+> **Status:** ⚠️ Experimental
+>
+> The client is currently experimental. Its API may change in the future.
 
 The Sanity Codegen client is a very simple Sanity client that utilizes the generated types for great DX.
 
@@ -206,6 +214,63 @@ export default BlogPost;
 If you're using Gatsby, we recommend you follow their guide for using [Gatsby without GraphQL](https://www.gatsbyjs.com/docs/how-to/querying-data/using-gatsby-without-graphql/#the-approach-fetch-data-and-use-gatsbys-createpages-api).
 
 > ⚠️ However note that this solution is not as nice as the Next.js alternative. [Please refer to this issue.](https://github.com/ricokahler/sanity-codegen/issues/31)
+
+## Usage with other clients (`@sanity/codegen` or `picosanity`)
+
+For more stable usage, you can use the generated types with the first party javascript client [`@sanity/client`](https://www.sanity.io/docs/js-client) (or the tiny alternative [`picosanity`](https://github.com/rexxars/picosanity)).
+
+Query for documents like normal but use the generated types to create the correct type for your query.
+
+```ts
+import sanityClient from '@sanity/client';
+import groq from 'groq';
+import type * as Schema from '../your-resulting-codegen';
+
+const client = sanityClient({
+  projectId: 'your-project-id',
+  dataset: 'bikeshop',
+  token: 'sanity-auth-token', // or leave blank to be anonymous user
+  useCdn: true, // `false` if you want to ensure fresh data
+});
+
+// Step 1: write a query
+const query = groq`
+  *[_type == 'blogPost'] {
+    // pick the title
+    title,
+    // then a full expansion of the author
+    author -> { ... },
+  }
+`;
+
+// Step 2: create a type for your query's result composed from the codegen types.
+//
+// Refer to Typescript's utility types for useful type helpers:
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
+//
+// And also intersections:
+// https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#intersection-types
+type QueryResult = Array<
+  Omit<Pick<Schema.BlogPost, 'title'>, 'author'> & {
+    author: Schema.Author;
+  }
+>;
+
+async function main() {
+  // Step 3: add the `QueryResult` as the type parameter as well as the query
+  const results = await client.fetch<QueryResult>(query);
+
+  const first = results[0];
+
+  console.log(first.title); // "Title"
+  console.log(first.author); // { name: 'Example', bio: '...' }
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+```
 
 ## API Usage
 
