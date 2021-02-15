@@ -288,3 +288,7 @@ generateTypes({
 ```
 
 However you may run into challenges with executing the code if your schema imports from the sanity parts system. [The CLI tries to help you with this.](https://github.com/ricokahler/sanity-codegen/blob/d4eb4a8ac5f6d27f709697ccdbd2a296d1e51dc2/src/cli.ts#L8-L40)
+
+## Related Projects
+
+- [`sanity-typed-queries`](https://github.com/danielroe/sanity-typed-queries) — Returns a query builder object that returns typed queries. Works without codegen.
