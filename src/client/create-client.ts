@@ -108,7 +108,8 @@ function createClient<Documents extends { _type: string; _id: string }>({
       }.sanity.io/v1/data/query/${dataset}?${searchParams.toString()}`,
       {
         // conditionally add the authorization header if the token is present
-        ...(preview && { headers: { Authorization: `Bearer ${token}` } }),
+        ...(token &&
+          !useCdn && { headers: { Authorization: `Bearer ${token}` } }),
       }
     );
 
