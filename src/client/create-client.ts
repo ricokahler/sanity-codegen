@@ -21,7 +21,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
   projectId,
   token,
   previewMode: _previewMode = false,
-  apiVersion = 'v1',
+  apiVersion = '1',
   fetch,
   useCdn,
 }: CreateClientOptions) {
@@ -107,7 +107,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     const response = await jsonFetch<SanityResult<T>>(
       `https://${projectId}.${
         useCdn ? 'apicdn' : 'api'
-      }.sanity.io/${apiVersion}/data/query/${dataset}?${searchParams.toString()}`,
+      }.sanity.io/v${apiVersion}/data/query/${dataset}?${searchParams.toString()}`,
       {
         // conditionally add the authorization header if the token is present
         ...(token &&
