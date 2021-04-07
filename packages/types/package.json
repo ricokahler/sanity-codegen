@@ -1,0 +1,32 @@
+{
+  "name": "@sanity-codegen/types",
+  "version": "1.0.0-alpha.0",
+  "keywords": [
+    "sanity",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/types",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen",
+    "directory": "packages/types"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": ":",
+    "test": ":",
+    "typecheck": "tsc",
+    "lint": ":",
+    "sort-package-json": "sort-package-json"
+  }
+}

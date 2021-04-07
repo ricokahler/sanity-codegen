@@ -10,5 +10,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '12.x'
-      - run: npm i
+      - run: yarn
       - run: npm run build

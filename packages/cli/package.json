@@ -1,0 +1,73 @@
+{
+  "name": "@sanity-codegen/cli",
+  "version": "1.0.0-alpha.0",
+  "description": "CLI for sanity-codegen",
+  "keywords": [
+    "oclif",
+    "sanity",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/cli",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen",
+    "directory": "packages/cli"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "sanity-codegen": "./bin/run"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "scripts": {
+    "prepack": "rm -rf lib && npm run build && oclif-dev manifest && oclif-dev readme",
+    "postpack": "rm -f oclif.manifest.json",
+    "build": "./scripts/build",
+    "test": "jest",
+    "version": "oclif-dev readme && git add README.md",
+    "sort-package-json": "sort-package-json",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "lint": "eslint --ext .ts,.js ./src"
+  },
+  "dependencies": {
+    "@oclif/command": "^1.8.0",
+    "@oclif/config": "^1.17.0",
+    "@oclif/plugin-help": "^3.2.2",
+    "common-tags": "^1.8.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.26.0",
+    "@types/common-tags": "^1.8.0",
+    "@types/node": "^10.17.56",
+    "globby": "^10.0.2",
+    "typescript": "^4.2.3"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "sanity-codegen",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "selfDependencies": [
+    "@sanity-codegen/schema-codegen"
+  ]
+}
