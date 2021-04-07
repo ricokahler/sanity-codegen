@@ -92,7 +92,7 @@ This will tell the codegen to remove the optional `?` modifier on the field.
 
 > **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
 
-## Usage with first-party client (`@sanity/codegen`)
+## Usage with first-party client (`@sanity/client`)
 
 For more stable usage, you can use the generated types with the first party javascript client [`@sanity/client`](https://www.sanity.io/docs/js-client) (or the tiny alternative [`picosanity`](https://github.com/rexxars/picosanity)).
 
