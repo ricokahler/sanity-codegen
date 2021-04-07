@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# order matters
+yarn workspace @sanity-codegen/schema-codegen run build
+yarn workspace @sanity-codegen/cli run build

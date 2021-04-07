@@ -3,6 +3,7 @@ const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 const { stripIndents } = require('common-tags');
 const semver = require('semver');
+const fetch = require('node-fetch').default;
 const fs = require('fs');
 const path = require('path');
 
@@ -62,7 +63,7 @@ async function analyzeCommits() {
     .map((parsed) => ({ ...parsed, score: getScore(parsed) }));
 
   const forcedVersion = parsedLines.reverse().find((i) => i.forcedVersion)
-    .forcedVersion;
+    ?.forcedVersion;
 
   const max = parsedLines
     .map((i) => i.score)
@@ -144,7 +145,10 @@ async function main() {
   const { stdout: buildOutput } = await exec('npm run build');
   console.log(buildOutput);
 
-  const { changelog, nextVersion } = await analyzeCommits();
+  const result = await analyzeCommits();
+  if (!result) return;
+
+  const { changelog, nextVersion } = result;
 
   // update package-jsons
   for (const p of packages) {
@@ -175,16 +179,40 @@ async function main() {
     );
   }
 
-  // publish release to github via API
-
   // publish new versions to NPM
   for (const p of packages) {
-    const { stdout } = await exec('npm publish --dry-run', {
+    await fs.promises.writeFile(
+      path.resolve(__dirname, `../packages/${p}/.npmrc`),
+      `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`
+    );
+    const { stdout } = await exec('npm publish --access public --tag alpha', {
       cwd: path.resolve(__dirname, `../packages/${p}`),
     });
 
     console.log(stdout);
   }
+
+  // publish release to github via API
+  await fetch(
+    'https://api.github.com/repos/ricokahler/sanity-codegen/releases',
+    {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        authorization: `Basic ${Buffer.from(
+          `ricokahler:${process.env.GITHUB_TOKEN}`
+        ).toString('base64')}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: `v${nextVersion}`,
+        tag_name: `v${nextVersion}`,
+        target_commitish: 'alpha',
+        body: changelog,
+        prerelease: true,
+      }),
+    }
+  );
 }
 
 main().catch((e) => {
