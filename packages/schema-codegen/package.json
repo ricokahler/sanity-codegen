@@ -1,0 +1,57 @@
+{
+  "name": "@sanity-codegen/schema-codegen",
+  "version": "1.0.0-alpha.0",
+  "keywords": [
+    "sanity",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/schema-codegen",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen",
+    "directory": "packages/schema-codegen"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./no-op": "./no-op.js",
+    "./schema-creator-shim": "./schema-creator-shim.js",
+    "./schema-type-shim": "./schema-type-shim.js"
+  },
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": "./scripts/build",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "test": "jest",
+    "sort-package-json": "sort-package-json",
+    "lint": "eslint --ext .ts,.js ./src"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.13.8",
+    "@babel/plugin-proposal-numeric-separator": "^7.12.13",
+    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
+    "@babel/preset-env": "^7.13.12",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-typescript": "^7.13.0",
+    "@babel/register": "^7.13.8",
+    "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "prettier": "^2.2.1"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "selfDependencies": [
+    "@sanity-codegen/types"
+  ]
+}

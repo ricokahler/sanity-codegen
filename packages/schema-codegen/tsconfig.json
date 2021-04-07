@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "strict": true,
+    "target": "esnext"
+  },
+  "include": ["./src", "./ambient.d.ts"]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "sanity-codegen",
+  "version": "1.0.0-alpha.0",
+  "description": "Generate TypeScript types for your Sanity.io projects",
+  "keywords": [
+    "sanity",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "scripts": {
+    "build": ":",
+    "test": ":",
+    "lint": ":",
+    "typecheck": ":",
+    "sort-package-json": "sort-package-json"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "selfDependencies": [
+    "@sanity-codegen/schema-codegen",
+    "@sanity-codegen/cli",
+    "@sanity-codegen/types"
+  ]
+}

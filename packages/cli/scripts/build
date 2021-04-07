@@ -1,0 +1,12 @@
+#!/bin/bash
+
+rm -rf ./lib
+
+npx tsc
+
+npx babel                           \
+  -x .js,.ts                        \
+  --ignore /**/*.test.ts,/**/*.d.ts \
+  --out-dir ./lib                   \
+  --root-mode upward                \
+  ./src

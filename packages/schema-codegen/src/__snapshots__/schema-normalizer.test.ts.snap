@@ -1,0 +1,1288 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`normalizer accepts a \`block\` type within inline objects 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "wysiwyg",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "markDefs": Array [],
+          "name": null,
+          "of": Array [
+            Object {
+              "codegen": Object {
+                "required": false,
+              },
+              "definitionType": "primitive",
+              "description": null,
+              "fields": Array [
+                Object {
+                  "codegen": Object {
+                    "required": false,
+                  },
+                  "definition": Object {
+                    "codegen": Object {
+                      "required": false,
+                    },
+                    "definitionType": "primitive",
+                    "description": null,
+                    "hasValidation": false,
+                    "hidden": false,
+                    "list": null,
+                    "name": "name",
+                    "readOnly": false,
+                    "title": "Name",
+                    "type": "string",
+                  },
+                  "description": "",
+                  "hasValidation": false,
+                  "hidden": false,
+                  "name": "name",
+                  "readOnly": false,
+                  "title": "Name",
+                },
+              ],
+              "hasValidation": false,
+              "hidden": false,
+              "name": "inlineObject",
+              "readOnly": false,
+              "title": "InlineObject",
+              "type": "object",
+            },
+          ],
+          "readOnly": false,
+          "title": null,
+          "type": "block",
+        },
+      ],
+      "readOnly": false,
+      "title": "Wysiwyg",
+      "type": "array",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "wysiwyg",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "markDefs": Array [],
+          "name": null,
+          "of": Array [
+            Object {
+              "codegen": Object {
+                "required": false,
+              },
+              "definitionType": "primitive",
+              "description": null,
+              "fields": Array [
+                Object {
+                  "codegen": Object {
+                    "required": false,
+                  },
+                  "definition": Object {
+                    "codegen": Object {
+                      "required": false,
+                    },
+                    "definitionType": "primitive",
+                    "description": null,
+                    "hasValidation": false,
+                    "hidden": false,
+                    "list": null,
+                    "name": "name",
+                    "readOnly": false,
+                    "title": "Name",
+                    "type": "string",
+                  },
+                  "description": "",
+                  "hasValidation": false,
+                  "hidden": false,
+                  "name": "name",
+                  "readOnly": false,
+                  "title": "Name",
+                },
+              ],
+              "hasValidation": false,
+              "hidden": false,
+              "name": "inlineObject",
+              "readOnly": false,
+              "title": "InlineObject",
+              "type": "object",
+            },
+          ],
+          "readOnly": false,
+          "title": null,
+          "type": "block",
+        },
+      ],
+      "readOnly": false,
+      "title": "Wysiwyg",
+      "type": "array",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "wysiwyg",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "markDefs": Array [],
+          "name": null,
+          "of": null,
+          "readOnly": false,
+          "title": null,
+          "type": "block",
+        },
+      ],
+      "readOnly": false,
+      "title": "Wysiwyg",
+      "type": "array",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts a block type with nested of types 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "arrayTesting",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "markDefs": Array [],
+          "name": null,
+          "of": Array [
+            Object {
+              "codegen": Object {
+                "required": false,
+              },
+              "definitionType": "primitive",
+              "description": null,
+              "hasValidation": false,
+              "hidden": false,
+              "list": null,
+              "name": null,
+              "readOnly": false,
+              "title": null,
+              "type": "string",
+            },
+          ],
+          "readOnly": false,
+          "title": null,
+          "type": "block",
+        },
+      ],
+      "readOnly": false,
+      "title": "ArrayTesting",
+      "type": "array",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts a number or string with or without list options 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": Array [
+        Object {
+          "title": "A",
+          "value": "a",
+        },
+        Object {
+          "title": "B",
+          "value": "b",
+        },
+        Object {
+          "title": "C",
+          "value": "c",
+        },
+      ],
+      "name": "dropdown",
+      "readOnly": false,
+      "title": "Dropdown",
+      "type": "string",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": Array [
+        Object {
+          "title": "E",
+          "value": "e",
+        },
+        Object {
+          "title": "F",
+          "value": "f",
+        },
+        Object {
+          "title": "G",
+          "value": "g",
+        },
+      ],
+      "name": "dropdownNoTitle",
+      "readOnly": false,
+      "title": "DropdownNoTitle",
+      "type": "string",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": Array [
+        Object {
+          "title": "1",
+          "value": 1,
+        },
+        Object {
+          "title": "2",
+          "value": 2,
+        },
+        Object {
+          "title": "3",
+          "value": 3,
+        },
+      ],
+      "name": "numberDropdown",
+      "readOnly": false,
+      "title": "NumberDropdown",
+      "type": "number",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "alias",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "dropdownField",
+            "readOnly": false,
+            "title": "DropdownField",
+            "type": "dropdown",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "dropdownField",
+          "readOnly": false,
+          "title": "DropdownField",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "alias",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "numberDropdownField",
+            "readOnly": false,
+            "title": "NumberDropdownField",
+            "type": "numberDropdown",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "numberDropdownField",
+          "readOnly": false,
+          "title": "NumberDropdownField",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "foo",
+            "readOnly": false,
+            "title": "Foo",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "foo",
+          "readOnly": false,
+          "title": "Foo",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "bar",
+            "readOnly": false,
+            "title": "Bar",
+            "type": "number",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "bar",
+          "readOnly": false,
+          "title": "Bar",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "someObject",
+      "readOnly": false,
+      "title": "SomeObject",
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts a reference type 1`] = `
+Object {
+  "documentTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "title",
+            "readOnly": false,
+            "title": "Title",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "title",
+          "readOnly": false,
+          "title": "Title",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "actor",
+            "readOnly": false,
+            "title": "Actor",
+            "to": Array [
+              Object {
+                "codegen": Object {
+                  "required": false,
+                },
+                "definitionType": "alias",
+                "description": null,
+                "hasValidation": false,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "type": "actor",
+              },
+            ],
+            "type": "reference",
+            "weak": false,
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "actor",
+          "readOnly": false,
+          "title": "Actor",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "movie",
+      "readOnly": false,
+      "title": "Movie",
+      "type": "document",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "name",
+            "readOnly": false,
+            "title": "Name",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "name",
+          "readOnly": false,
+          "title": "Name",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "actor",
+      "readOnly": false,
+      "title": "Actor",
+      "type": "document",
+    },
+  ],
+  "topLevelTypes": Array [],
+}
+`;
+
+exports[`normalizer accepts an image and file type with or without fields 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": null,
+      "hasValidation": false,
+      "hidden": false,
+      "name": "myImage",
+      "readOnly": false,
+      "title": "MyImage",
+      "type": "image",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "description",
+            "readOnly": false,
+            "title": "Description",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "description",
+          "readOnly": false,
+          "title": "Description",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "myFile",
+      "readOnly": false,
+      "title": "MyFile",
+      "type": "file",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts and normalizes a field with a nested object 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "fields": Array [
+              Object {
+                "codegen": Object {
+                  "required": false,
+                },
+                "definition": Object {
+                  "codegen": Object {
+                    "required": false,
+                  },
+                  "definitionType": "primitive",
+                  "description": null,
+                  "hasValidation": false,
+                  "hidden": false,
+                  "list": null,
+                  "name": "name",
+                  "readOnly": false,
+                  "title": "Name",
+                  "type": "string",
+                },
+                "description": "",
+                "hasValidation": false,
+                "hidden": false,
+                "name": "name",
+                "readOnly": false,
+                "title": "Name",
+              },
+            ],
+            "hasValidation": false,
+            "hidden": false,
+            "name": "actor",
+            "readOnly": false,
+            "title": "Actor",
+            "type": "object",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "actor",
+          "readOnly": false,
+          "title": "Actor",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "movie",
+      "readOnly": false,
+      "title": "Movie",
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts and normalizes a field with a top-level reference 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "name",
+            "readOnly": false,
+            "title": "Name",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "name",
+          "readOnly": false,
+          "title": "Name",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "actor",
+      "readOnly": false,
+      "title": "Actor",
+      "type": "object",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "alias",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "actor",
+            "readOnly": false,
+            "title": "Actor",
+            "type": "actor",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "actor",
+          "readOnly": false,
+          "title": "Actor",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "movie",
+      "readOnly": false,
+      "title": "Movie",
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts and normalizes array types 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "myArray",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "list": null,
+          "name": null,
+          "readOnly": false,
+          "title": null,
+          "type": "string",
+        },
+      ],
+      "readOnly": false,
+      "title": "MyArray",
+      "type": "array",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "inlineObjects",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "primitive",
+          "description": null,
+          "fields": Array [
+            Object {
+              "codegen": Object {
+                "required": false,
+              },
+              "definition": Object {
+                "codegen": Object {
+                  "required": false,
+                },
+                "definitionType": "primitive",
+                "description": null,
+                "hasValidation": false,
+                "hidden": false,
+                "list": null,
+                "name": "foo",
+                "readOnly": false,
+                "title": "Foo",
+                "type": "string",
+              },
+              "description": "",
+              "hasValidation": false,
+              "hidden": false,
+              "name": "foo",
+              "readOnly": false,
+              "title": "Foo",
+            },
+          ],
+          "hasValidation": false,
+          "hidden": false,
+          "name": null,
+          "readOnly": false,
+          "title": null,
+          "type": "object",
+        },
+      ],
+      "readOnly": false,
+      "title": "InlineObjects",
+      "type": "array",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "list": null,
+      "name": "topLevelType",
+      "of": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definitionType": "alias",
+          "description": null,
+          "hasValidation": false,
+          "hidden": false,
+          "name": null,
+          "readOnly": false,
+          "title": null,
+          "type": "actor",
+        },
+      ],
+      "readOnly": false,
+      "title": "TopLevelType",
+      "type": "array",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "name",
+            "readOnly": false,
+            "title": "Name",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "name",
+          "readOnly": false,
+          "title": "Name",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "actor",
+      "readOnly": false,
+      "title": "Actor",
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`normalizer accepts basic primitives types 1`] = `
+Object {
+  "documentTypes": Array [],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "hasValidation": false,
+      "hidden": false,
+      "name": "boolean",
+      "readOnly": false,
+      "title": "Boolean",
+      "type": "boolean",
+    },
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "date",
+            "readOnly": false,
+            "title": "Date",
+            "type": "date",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "date",
+          "readOnly": false,
+          "title": "Date",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "datetime",
+            "readOnly": false,
+            "title": "Datetime",
+            "type": "datetime",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "datetime",
+          "readOnly": false,
+          "title": "Datetime",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "geopoint",
+            "readOnly": false,
+            "title": "Geopoint",
+            "type": "geopoint",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "geopoint",
+          "readOnly": false,
+          "title": "Geopoint",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "slug",
+            "readOnly": false,
+            "title": "Slug",
+            "type": "slug",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "slug",
+          "readOnly": false,
+          "title": "Slug",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "text",
+            "readOnly": false,
+            "title": "Text",
+            "type": "text",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "text",
+          "readOnly": false,
+          "title": "Text",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "name": "url",
+            "readOnly": false,
+            "title": "Url",
+            "type": "url",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "url",
+          "readOnly": false,
+          "title": "Url",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "myObject",
+      "readOnly": false,
+      "title": "MyObject",
+      "type": "object",
+    },
+  ],
+}
+`;
+
+exports[`normalizer takes in a sanity schema and returns a normalized, json-serializable representation 1`] = `
+Object {
+  "documentTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "title",
+            "readOnly": false,
+            "title": "Title",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "title",
+          "readOnly": false,
+          "title": "Title",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "yearReleased",
+            "readOnly": false,
+            "title": "YearReleased",
+            "type": "number",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "yearReleased",
+          "readOnly": false,
+          "title": "YearReleased",
+        },
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "actors",
+            "of": Array [
+              Object {
+                "codegen": Object {
+                  "required": false,
+                },
+                "definitionType": "alias",
+                "description": null,
+                "hasValidation": false,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "type": "actor",
+              },
+            ],
+            "readOnly": false,
+            "title": "Actors",
+            "type": "array",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "actors",
+          "readOnly": false,
+          "title": "Actors",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "movie",
+      "readOnly": false,
+      "title": "Movie",
+      "type": "document",
+    },
+  ],
+  "topLevelTypes": Array [
+    Object {
+      "codegen": Object {
+        "required": false,
+      },
+      "definitionType": "primitive",
+      "description": null,
+      "fields": Array [
+        Object {
+          "codegen": Object {
+            "required": false,
+          },
+          "definition": Object {
+            "codegen": Object {
+              "required": false,
+            },
+            "definitionType": "primitive",
+            "description": null,
+            "hasValidation": false,
+            "hidden": false,
+            "list": null,
+            "name": "name",
+            "readOnly": false,
+            "title": "Name",
+            "type": "string",
+          },
+          "description": "",
+          "hasValidation": false,
+          "hidden": false,
+          "name": "name",
+          "readOnly": false,
+          "title": "Name",
+        },
+      ],
+      "hasValidation": false,
+      "hidden": false,
+      "name": "actor",
+      "readOnly": false,
+      "title": "Actor",
+      "type": "object",
+    },
+  ],
+}
+`;
