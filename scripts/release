@@ -84,7 +84,7 @@ async function analyzeCommits() {
   const breakingChanges =
     breakingChangesMessages &&
     stripIndents`
-      ## Breaking Changes 😅
+      ## 😅 Breaking Changes
 
       ${breakingChangesMessages}
     `;
@@ -95,7 +95,7 @@ async function analyzeCommits() {
   const features =
     feat &&
     stripIndents`
-      ## Features ✨
+      ## ✨ Features
       
       ${feat.map(getMessage).join('\n')}
     `;
@@ -103,7 +103,7 @@ async function analyzeCommits() {
   const bugFixes =
     fix &&
     stripIndents`
-      ## Bug Fixes 🐛
+      ## 🐛 Bug Fixes
       
       ${fix.map(getMessage).join('\n')}
     `;
@@ -111,7 +111,7 @@ async function analyzeCommits() {
   const performance =
     perf &&
     stripIndents`
-      ## Performance 🚀
+      ## 🚀 Performance
       
       ${perf.map(getMessage).join('\n')}
     `;
