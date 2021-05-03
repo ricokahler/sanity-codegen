@@ -3,3 +3,4 @@ dist
 lib
 coverage
 .DS_Store
+yarn-error.log
