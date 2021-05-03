@@ -26,7 +26,7 @@ const getMessage = ({ scope, message, hash }) =>
 
 async function analyzeCommits() {
   const { stdout } = await exec(
-    'git log $(git describe --tags --abbrev=0)..HEAD --pretty=oneline'
+    'git log $(git describe --tags --abbrev=0)..HEAD --pretty=oneline',
   );
 
   const parsedLines = (
@@ -35,7 +35,7 @@ async function analyzeCommits() {
         .split('\n')
         .filter(Boolean)
         .map(async (line) => {
-          const match = /(\w+)(?:\((\w+)\))?:\s(.+)/.exec(line);
+          const match = /(\w+)(?:\(([\w-]+)\))?:\s(.+)/.exec(line);
           if (!match) return null;
 
           const [, type, scope, message] = match;
@@ -56,7 +56,7 @@ async function analyzeCommits() {
             fullMessage,
             forcedVersion,
           };
-        })
+        }),
     )
   )
     .filter(Boolean)
@@ -117,7 +117,7 @@ async function analyzeCommits() {
     `;
 
   const { stdout: currentVersion } = await exec(
-    'git describe --tags --abbrev=0'
+    'git describe --tags --abbrev=0',
   );
 
   // TODO: uncomment when out of alpha
@@ -137,7 +137,7 @@ async function analyzeCommits() {
 
 async function main() {
   const packages = await fs.promises.readdir(
-    path.resolve(__dirname, '../packages')
+    path.resolve(__dirname, '../packages'),
   );
 
   // build
@@ -146,6 +146,7 @@ async function main() {
   console.log(buildOutput);
 
   const result = await analyzeCommits();
+  console.log(result);
   if (!result) return;
 
   const { changelog, nextVersion } = result;
@@ -153,7 +154,7 @@ async function main() {
   // update package-jsons
   for (const p of packages) {
     const buffer = await fs.promises.readFile(
-      path.resolve(__dirname, `../packages/${p}/package.json`)
+      path.resolve(__dirname, `../packages/${p}/package.json`),
     );
     const packageJson = JSON.parse(buffer.toString());
 
@@ -174,8 +175,8 @@ async function main() {
           }),
         },
         null,
-        2
-      )}\n`
+        2,
+      )}\n`,
     );
   }
 
@@ -183,7 +184,7 @@ async function main() {
   for (const p of packages) {
     await fs.promises.writeFile(
       path.resolve(__dirname, `../packages/${p}/.npmrc`),
-      `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`
+      `//registry.npmjs.org/:_authToken=${process.env.NPM_TOKEN}`,
     );
     const { stdout } = await exec('npm publish --access public --tag alpha', {
       cwd: path.resolve(__dirname, `../packages/${p}`),
@@ -200,7 +201,7 @@ async function main() {
       headers: {
         accept: 'application/json',
         authorization: `Basic ${Buffer.from(
-          `ricokahler:${process.env.GITHUB_TOKEN}`
+          `ricokahler:${process.env.GITHUB_TOKEN}`,
         ).toString('base64')}`,
         'content-type': 'application/json',
       },
@@ -211,7 +212,7 @@ async function main() {
         body: changelog,
         prerelease: true,
       }),
-    }
+    },
   );
 }
 
