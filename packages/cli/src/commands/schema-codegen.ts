@@ -84,7 +84,7 @@ export default class SchemaCodegen extends Command {
     const config: SanityCodegenConfig | null = await (async () => {
       const configPath = await findFile(
         'sanity-codegen.config',
-        flags.configPath
+        flags.configPath,
       );
 
       const configValue = configPath && require(configPath);
@@ -98,7 +98,7 @@ export default class SchemaCodegen extends Command {
           return require.resolve(path.resolve(process.cwd(), args.schemaPath));
         } catch {
           throw new Error(
-            `Could not resolve \`schemaPath\` "${args.schemaPath}" provided via CLI args.`
+            `Could not resolve \`schemaPath\` "${args.schemaPath}" provided via CLI args.`,
           );
         }
       }
@@ -106,11 +106,11 @@ export default class SchemaCodegen extends Command {
       if (config?.schemaPath) {
         try {
           return require.resolve(
-            path.resolve(process.cwd(), config.schemaPath)
+            path.resolve(process.cwd(), config.schemaPath),
           );
         } catch {
           throw new Error(
-            `Could not resolve \`schemaPath\` "${config.schemaPath}" provided via the config.`
+            `Could not resolve \`schemaPath\` "${config.schemaPath}" provided via the config.`,
           );
         }
       }
@@ -138,14 +138,14 @@ export default class SchemaCodegen extends Command {
 
           // parts doesn't contain `part:@sanity/base/schema`
           const schemaPart = parts.find(
-            (part) => part.name === 'part:@sanity/base/schema'
+            (part) => part.name === 'part:@sanity/base/schema',
           );
           if (!schemaPart) {
             throw new Error();
           }
 
           return require.resolve(
-            path.resolve(path.dirname(sanityJsonPath), schemaPart.path)
+            path.resolve(path.dirname(sanityJsonPath), schemaPart.path),
           );
         } catch {
           throw new Error('Failed to get schema path from `sanity.json`');
@@ -159,11 +159,11 @@ export default class SchemaCodegen extends Command {
       if (flags.babelrcPath) {
         try {
           return require.resolve(
-            path.resolve(process.cwd(), flags.babelrcPath)
+            path.resolve(process.cwd(), flags.babelrcPath),
           );
         } catch {
           throw new Error(
-            `Could not resolve \`babelrcPath\` "${args.babelrcPath}" provided via CLI args.`
+            `Could not resolve \`babelrcPath\` "${args.babelrcPath}" provided via CLI args.`,
           );
         }
       }
@@ -171,11 +171,11 @@ export default class SchemaCodegen extends Command {
       if (config?.babelrcPath) {
         try {
           return require.resolve(
-            path.resolve(process.cwd(), config.babelrcPath)
+            path.resolve(process.cwd(), config.babelrcPath),
           );
         } catch {
           throw new Error(
-            `Could not resolve \`babelrcPath\` "${config.babelrcPath}" provided via the config.`
+            `Could not resolve \`babelrcPath\` "${config.babelrcPath}" provided via the config.`,
           );
         }
       }
@@ -210,9 +210,9 @@ export default class SchemaCodegen extends Command {
     await fs.promises.writeFile(
       path.resolve(
         process.cwd(),
-        flags.outputPath || config?.outputPath || 'schema.d.ts'
+        flags.outputPath || config?.outputPath || 'schema.d.ts',
       ),
-      result
+      result,
     );
   }
 }
