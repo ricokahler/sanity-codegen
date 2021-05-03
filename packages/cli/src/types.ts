@@ -1,6 +1,6 @@
 export interface SanityCodegenConfig
   extends Omit<
-    import('@sanity-codegen/schema-codegen').GenerateTypesOptions,
+    import('@sanity-codegen/schema-codegen').GenerateSchemaTypesOptions,
     'types'
   > {
   /**

@@ -1,6 +1,6 @@
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 
-export interface GenerateTypesOptions {
+export interface GenerateSchemaTypesOptions {
   schema: Sanity.SchemaDef.Schema;
   /**
    * Optionally provide a function that generates the typescript type identifer
@@ -47,12 +47,12 @@ function defaultGenerateTypeName(sanityTypeName: string) {
  *
  * @param param0 options
  */
-export async function generateTypes({
+export async function generateSchemaTypes({
   schema: { documentTypes, topLevelTypes },
   generateTypeName = defaultGenerateTypeName,
   prettierResolveConfigOptions,
   prettierResolveConfigPath,
-}: GenerateTypesOptions) {
+}: GenerateSchemaTypesOptions) {
   function convertType(t: Sanity.SchemaDef.Def, parents: Segment[]): string {
     switch (t.definitionType) {
       case 'alias': {
@@ -231,7 +231,7 @@ export async function generateTypes({
     }),
     documentTypes.length
       ? `
-        type Documents = ${documentTypes
+        type Document = ${documentTypes
           .filter(
             (t): t is Sanity.SchemaDef.Document & { name: string } => !!t.name
           )

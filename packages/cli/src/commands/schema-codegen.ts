@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs';
 import {
   schemaExtractor,
-  generateTypes,
+  generateSchemaTypes,
   defaultBabelOptions,
 } from '@sanity-codegen/schema-codegen';
 import { findFile } from '../find-file';
@@ -200,7 +200,7 @@ export default class SchemaCodegen extends Command {
       cwd: path.resolve(flags.cwd || config?.cwd || process.cwd()),
     });
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema,
       generateTypeName: config?.generateTypeName,
       prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
