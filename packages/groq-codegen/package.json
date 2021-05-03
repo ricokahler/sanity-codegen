@@ -1,0 +1,50 @@
+{
+  "name": "@sanity-codegen/groq-codegen",
+  "version": "1.0.0-alpha.0",
+  "keywords": [
+    "sanity",
+    "groq",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/groq-codegen",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen",
+    "directory": "packages/groq-codegen"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "exports": {
+    ".": "./index.js"
+  },
+  "types": "./index.d.ts",
+  "scripts": {
+    "build": "./scripts/build",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "test": "jest",
+    "sort-package-json": "sort-package-json",
+    "lint": "eslint --ext .ts,.js ./src"
+  },
+  "dependencies": {
+    "@babel/core": "^7.13.15",
+    "@babel/types": "^7.13.14",
+    "groq-js": "^0.2.0"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "selfDependencies": [
+    "@sanity-codegen/types"
+  ],
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
