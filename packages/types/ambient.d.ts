@@ -73,4 +73,9 @@ declare namespace Sanity {
   }
 
   type Keyed<T> = T extends object ? T & { _key: string } : T;
+
+  type SafeIndexedAccess<
+    T extends { [key: string]: any } | undefined,
+    K extends string
+  > = T extends undefined ? NonNullable<T>[K] | undefined : NonNullable<T>[K];
 }
