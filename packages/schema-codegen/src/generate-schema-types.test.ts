@@ -1,4 +1,4 @@
-import { generateTypes } from './generate-types';
+import { generateSchemaTypes } from './generate-schema-types';
 import { schemaNormalizer } from './schema-normalizer';
 
 describe('generate-types', () => {
@@ -59,7 +59,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -146,7 +148,7 @@ describe('generate-types', () => {
             geopoint?: Sanity.Geopoint;
           }
 
-          type Documents = Foo;
+          type Document = Foo;
         }
       }
       "
@@ -183,7 +185,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -207,7 +211,7 @@ describe('generate-types', () => {
             choicesNumbers: 1 | 2 | 3;
           }
 
-          type Documents = Foo;
+          type Document = Foo;
         }
       }
       "
@@ -228,7 +232,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result.includes('name?: string')).toBe(true);
     expect(result).toMatchInlineSnapshot(`
@@ -248,7 +254,7 @@ describe('generate-types', () => {
             name?: string;
           }
 
-          type Documents = Foo;
+          type Document = Foo;
         }
       }
       "
@@ -300,7 +306,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -339,7 +347,7 @@ describe('generate-types', () => {
             };
           }
 
-          type Documents = TestDocument;
+          type Document = TestDocument;
         }
       }
       "
@@ -396,7 +404,7 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema: schemaNormalizer([foo, bar]),
     });
 
@@ -509,7 +517,7 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema: schemaNormalizer([foo, bar, baz]),
     });
 
@@ -564,7 +572,7 @@ describe('generate-types', () => {
             baz: string;
           }
 
-          type Documents = Foo | Bar | Baz;
+          type Document = Foo | Bar | Baz;
         }
       }
       "
@@ -577,7 +585,9 @@ describe('generate-types', () => {
       name: 'fooSlug',
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -631,7 +641,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -662,7 +674,7 @@ describe('generate-types', () => {
             >;
           }
 
-          type Documents = Foo;
+          type Document = Foo;
         }
       }
       "
@@ -686,7 +698,9 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({ schema: schemaNormalizer([foo]) });
+    const result = await generateSchemaTypes({
+      schema: schemaNormalizer([foo]),
+    });
 
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types=\\"@sanity-codegen/types\\" />
@@ -705,7 +719,7 @@ describe('generate-types', () => {
             description: Array<Sanity.Keyed<Sanity.Block>>;
           }
 
-          type Documents = Foo;
+          type Document = Foo;
         }
       }
       "
@@ -750,7 +764,7 @@ describe('generate-types', () => {
       fields: [{ name: 'name', type: 'string' }],
     };
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema: schemaNormalizer([foo, bar, baz]),
     });
 
@@ -805,7 +819,7 @@ describe('generate-types', () => {
             name?: string;
           }
 
-          type Documents = Foo | Bar | Baz;
+          type Document = Foo | Bar | Baz;
         }
       }
       "
@@ -832,7 +846,7 @@ describe('generate-types', () => {
       fields: [{ name: 'name', type: 'string' }],
     };
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema: schemaNormalizer([foo, bar]),
     });
 
@@ -862,7 +876,7 @@ describe('generate-types', () => {
             name?: string;
           };
 
-          type Documents = FooWithHyphen;
+          type Document = FooWithHyphen;
         }
       }
       "
@@ -881,7 +895,7 @@ describe('generate-types', () => {
       ],
     };
 
-    const result = await generateTypes({
+    const result = await generateSchemaTypes({
       schema: schemaNormalizer([foo]),
     });
 
@@ -922,11 +936,11 @@ describe('generate-types', () => {
     let caught = false;
 
     try {
-      await generateTypes({ schema: schemaNormalizer([foo]) });
+      await generateSchemaTypes({ schema: schemaNormalizer([foo]) });
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
-        `[Error: Expected type \`foo.document\` to have property \`fields\` with at least one field.]`
+        `[Error: Expected type \`foo.document\` to have property \`fields\` with at least one field.]`,
       );
     }
 
