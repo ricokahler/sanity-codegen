@@ -68,6 +68,7 @@
     ]
   },
   "selfDependencies": [
-    "@sanity-codegen/schema-codegen"
+    "@sanity-codegen/schema-codegen",
+    "@sanity-codegen/groq-codegen"
   ]
 }
