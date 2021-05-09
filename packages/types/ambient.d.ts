@@ -76,6 +76,6 @@ declare namespace Sanity {
 
   type SafeIndexedAccess<
     T extends { [key: string]: any } | undefined,
-    K extends string
+    K extends keyof NonNullable<T>
   > = T extends undefined ? NonNullable<T>[K] | undefined : NonNullable<T>[K];
 }
