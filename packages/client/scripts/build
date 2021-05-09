@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -rf ./dist
+npx tsc
+npx rollup -c
