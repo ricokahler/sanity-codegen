@@ -7,6 +7,6 @@ yarn workspace @sanity-codegen/groq-codegen run build
 
 # then the rest of them are fine
 yarn workspace @sanity-codegen/cli run build
-# yarn workspace @sanity-codegen/client run build
+yarn workspace @sanity-codegen/client run build
 
 # note: `@sanity-codegen/types` and `sanity-codegen` don't require a build step

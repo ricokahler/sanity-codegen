@@ -33,6 +33,7 @@
   },
   "selfDependencies": [
     "@sanity-codegen/schema-codegen",
+    "@sanity-codegen/groq-codegen",
     "@sanity-codegen/cli",
     "@sanity-codegen/types"
   ]
