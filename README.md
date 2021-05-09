@@ -2,6 +2,10 @@
 
 > Generate TypeScript types from your Sanity schemas
 
+> ## 👋 A new version is approaching!
+>
+> There are a lot of new features (include GROQ codegen!) and changes coming to this lib soon. See [this issue](https://github.com/ricokahler/sanity-codegen/issues/5) for the 1.0 roadmap and for ways you can help contribute.
+
 ## Demos
 
 ### CLI — generate types in seconds
