@@ -2,113 +2,63 @@
 
 The following is a sub-package of [`sanity-codegen`](https://github.com/ricokahler/sanity-codegen).
 
-This package includes APIs to programmatically generate types from [GROQ](https://github.com/sanity-io/GROQ) — a query language and execution engine made at Sanity, Inc, for filtering and projecting JSON documents.
+This package includes APIs to programmatically generate types from [GROQ](https://github.com/sanity-io/GROQ).
 
-> 👋 **NOTE:** You don't have to use this package directly. It's only meant for users who want to use `sanity-codegen` programmatically. The [CLI](../cli) is the preferred way to use Sanity Codegen.
+> 👋 **NOTE:** You don't have to use this package directly. It's only meant for users who want to use `sanity-codegen` programmatically. The [CLI](../cli) is the preferred way to use Sanity Codegen and its setup and usage is much more streamlined.
 
 ## Installation
 
 ```
-npm install --save-dev @sanity-codegen/groq-codegen
+# NOTE: the alpha is required at this time
+npm install --save-dev @sanity-codegen/groq-codegen@alpha
 ```
 
 or
 
 ```
-yarn add --dev @sanity-codegen/groq-codegen
+# NOTE: the alpha is required at this time
+yarn add --dev @sanity-codegen/groq-codegen@alpha
 ```
 
 ## Usage
 
-This package is meant to be used alongside of `@sanity-codegen/schema-codegen` and `@sanity-codegen/types`. Generating the types from GROQ does not actually require any schema codegen dependencies, however the outputted TypeScript does.
+This package will parse TypeScript (or JavaScript) files for usages of [`@sanity-codegen/client`](../client) and will return the resulting TypeScript in a single source file as a string.
 
-For example:
-
-```groq
-// example input query:
-*[_type == "book"] { "author": author.name, ... }
-```
+In order for a GROQ query to plucked and parsed by this package, the query expression in code must match the following shape:
 
 ```ts
-// example typescript codegen output:
-type Query = ({
-  author: Sanity.SafeIndexedAccess<
-    Sanity.SafeIndexedAccess<
-      Extract<Sanity.Schema.Document[][number], { _type: 'book' }>[][number],
-      'author'
-    >,
-    'name'
-  >;
-} & Omit<
-  Extract<Sanity.Schema.Document[][number], { _type: 'book' }>[][number],
-  'author'
->)[];
+query('QueryKey', groq`*[_type == 'foo']`);
 ```
 
-You'll notice that the resulting output references the namespace `Sanity.`. This namespace refers to a global ambient namespace that [`@sanity-codegen/schema-codegen`](../packages/schema-codegen) generates. If you're using the CLI, this would be the `schema.d.ts` file.
+In particular:
 
-> 👋 **NOTE:** The GROQ codegen is simply a 1-to-1 translation of your GROQ query to a TypeScript type. During the codegen, it will _not_ error if your query queries for an invalid property, however, the resulting TypeScript type should contain an error.
->
-> By design, the GROQ codegen defers much error checking to TypeScript.
+1. The query must be contained inside of a function call (any identifier can be used).
+2. The first argument of that function call must be a string literal. This string literal is called the **query key**. Query keys are used to uniquely identify a query.
+3. The second argument must be a tagged template literal with the tag being exactly `groq`.
 
-In order to generate TypeScript types, import `generateGroqTypes` and then use `generate` from `@babel/generator` to print the TS Type node to a string.
+If any source file contains a groq query in the form described above, Sanity Codegen will attempt to parse it and generate TypeScript types for it.
+
+---
+
+The most simple way to use this package is via `generateGroqTypes`:
 
 ```ts
+import fs from 'fs';
 import { generateGroqTypes } from '@sanity-codegen/groq-codegen';
-import generate from '@babel/generator';
-
-const { code } = generate(generateGroqTypes({ query }));
-
-console.log(`type Query = ${code}`);
-```
-
-You'll most likely need to combine this with the output of the [schema code generator](../packages/schema-codegen).
-
-```ts
-import { generateGroqTypes } from '@sanity-codegen/groq-codegen';
-import generate from '@babel/generator';
-import {
-  schemaNormalizer,
-  generateSchemaTypes,
-} from '@sanity-codegen/schema-codegen';
-
-interface Params {
-  query: string;
-  schema: any[];
-}
-
-async function getTypeOutput({ query, schema }: Params) {
-  const { code } = generate(generateGroqTypes({ query }));
-  const schemaTypes = await generateSchemaTypes({
-    schema: schemaNormalizer(schema),
-  });
-
-  return `
-// schema types
-${schemaTypes}
-
-// query type
-${`type Query = ${code}`}
-`;
-}
 
 async function main() {
-  const types = await getTypeOutput({
-    query: '*[_type == "movie"] { title }',
-    schema: [
-      {
-        type: 'document',
-        name: 'movie',
-        title: 'Movie',
-        fields: [
-          { name: 'title', type: 'string' },
-          { name: 'releaseYear', type: 'number' },
-        ],
-      },
-    ],
+  // `generateGroqTypes` starts with a blob of filenames.
+  //
+  // 1. every file matched is parsed for GROQ queries
+  // 2. every query found is ran through a GROQ-to-TS transform
+  // 3. the resulting types are printed as strings and joined together in one
+  //    big typescript source file
+  const codegenResult = await generateGroqTypes({
+    filenames: './src/**/*.{js,ts,tsx}',
   });
 
-  console.log(types);
+  // write the result to an ambient types (*.d.ts) file
+  await fs.promises.writeFile('./queries.d.ts', codegenResult);
 }
 
 main().catch((e) => {
@@ -117,67 +67,179 @@ main().catch((e) => {
 });
 ```
 
-The following will be `console.log`ed:
+The result of the above code will look something like this:
+
+`queries.d.ts`
 
 ```ts
-// schema types
 /// <reference types="@sanity-codegen/types" />
 
 declare namespace Sanity {
-  namespace Schema {
+  namespace Queries {
+    type BookAuthor = Sanity.SafeIndexedAccess<
+      Extract<Sanity.Schema.Document[][number], { _type: 'book' }>[][number],
+      'author'
+    >;
+
+    type BookTitles = Sanity.SafeIndexedAccess<
+      Extract<Sanity.Schema.Document[][number], { _type: 'book' }>[][number],
+      'title'
+    >[];
+
     /**
-     * Movie
+     * A keyed type of all the codegen'ed queries. This type is used for
+     * TypeScript meta programming purposes only.
      */
-    interface Movie extends Sanity.Document {
-      _type: 'movie';
-
-      /**
-       * Title - `string`
-       */
-      title?: string;
-
-      /**
-       * ReleaseYear - `number`
-       */
-      releaseYear?: number;
-    }
-
-    type Document = Movie;
+    type QueryMap = {
+      BookAuthor: BookAuthor;
+      BookTitles: BookTitles;
+    };
   }
 }
-
-// query type
-type Query = {
-  title: Sanity.SafeIndexedAccess<
-    Extract<
-      Sanity.Schema.Document[][number],
-      {
-        _type: 'movie';
-      }
-    >[][number],
-    'title'
-  >;
-}[];
 ```
 
-See [here](../packages/schema-codegen) for more details on the schema code generator.
+For each query found (in this case, just 2), a type will be created inside the namespace `Sanity.Queries` using the query key as the type name.
+
+Each query type is also included in the `QueryMap` type. This type is utilized in the `@sanity-codegen/client` to match the query key provided in the client function call to the resulting generated type.
+
+This orchestration between client and parser/plucker makes it so that query function calls will automatically reference the GROQ codegen result without needing to specify any types manually.
+
+For example, if everything is set up correctly, the following call will be typed after the GROQ codegen runs.
+
+```ts
+import { sanity, groq } from './some-configured-client';
+
+export async function someFunction() {
+  const bookAuthors = await sanity.query(
+    'BookAuthors',
+    groq`*[_type == 'book'].author`,
+  );
+
+  return bookAuthors;
+}
+```
+
+Notice how there are no type annotations to be seen 😎. See the [client docs](../packages/client) for more details.
+
+> 👋 **NOTE:** However, if you need to reference any query types, you can do so via the `Sanity.Queries` namespace, e.g. `Sanity.Queries.BookAuthors`.
+
+- See [here](../packages/schema-codegen) for more details on the schema code generator.
+- See [here](../packages/client) for more details on the client.
+
+> 👋 **NOTE:** The GROQ codegen is only a 1-to-1 translation of your GROQ query to a TypeScript type. During the codegen, it will _not_ error if your query queries for an invalid property.
+>
+> By design, GROQ codegen defers error checking to TypeScript and its primary job is to transform GROQ to TypeScript.
 
 ## Reference
+
+This package contains also more granular functions to better fit your use case. See the functions below.
+
+### `pluckGroqFromFiles()`
+
+```ts
+export interface PluckGroqFromFilesOptions {
+  /**
+   * Specify a glob, powered by [`glob`](https://github.com/isaacs/node-glob),
+   * or a function that returns a list of paths.
+   */
+  filenames: string | (() => Promise<string[]>);
+  /**
+   * Specify the current working direction used to resolve relative filenames.
+   * By default this is `process.env.cwd()`
+   */
+  cwd?: string;
+  /**
+   * Specify the max amount of files you want the pluck function to attempt to
+   * read concurrently. Defaults to 50.
+   */
+  maxConcurrency?: number;
+}
+
+/**
+ * Goes through each specified file and statically plucks groq queries and their
+ * corresponding query keys. @see `pluckGroqFromSource` for more info.
+ */
+export declare function pluckGroqFromFiles(
+  options: PluckGroqFromFilesOptions,
+): Promise<{ queryKey: string; query: string }[]>;
+```
+
+### `pluckGroqFromSource()`
+
+````ts
+/**
+ * Given a source file as a string, this function will extract the queries and
+ * their corresponding query keys.
+ *
+ * In order for a GROQ query to be plucked/extracted, the expression must match
+ * the form:
+ *
+ * ```ts
+ * anyCallExpression('QueryKey', groq`*[_type == 'foo']`)
+ * ```
+ *
+ * The first argument of the call expression must be a string literal and the
+ * second argument must be a tagged template literal expression with the tag
+ * begin exactly `groq`. The 3rd argument (i.e. query parameters) does not need
+ * to be present.
+ *
+ * Note: in contrast to the schema codegen extractor, the babel set up for this
+ * extractor is relatively standard. It also utilizes the
+ * [`rootMode`](https://babeljs.io/docs/en/options#rootmode)
+ * `'upward-optional'` to allow for top-level configuration to pass down.
+ */
+export declare function pluckGroqFromSource(
+  source: string,
+  filename?: string,
+): { queryKey: string; query: string }[];
+````
+
+### `transformGroqToTypescript()`
+
+```ts
+export interface TransformGroqToTypescriptOptions {
+  /**
+   * The groq query to generate a TypeScript type for
+   */
+  query: string;
+}
+/**
+ * Given a GROQ query, returns a babel TSType node
+ */
+export declare function transformGroqToTypescript(
+  options: TransformGroqToTypescriptOptions,
+): t.TSType;
+```
 
 ### `generateGroqTypes()`
 
 ```ts
-interface GenerateGroqTypesOptions {
+import { ResolveConfigOptions } from 'prettier';
+import { PluckGroqFromFilesOptions } from '@sanity-codegen/groq-codegen';
+
+interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
   /**
-   * The query to generate a TypeScript type for
+   * This option is fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
    */
-  query: string;
+  prettierResolveConfigPath?: string;
+  /**
+   * This options is also fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
+  prettierResolveConfigOptions?: ResolveConfigOptions;
 }
 
 /**
- * Given a GROQ query, returns a babel TSType node
+ * Given a selection of filenames, this will pluck matching GROQ queries
+ * (@see `pluckGroqFromFiles`) and then run them through a GROQ-to-TypeScript
+ * transform.
+ *
+ * The result of each plucked query is put together into one source string.
  */
-export declare function generateGroqTypes({
-  query,
-}: GenerateGroqTypesOptions): t.TSType;
+export declare function generateGroqTypes(
+  options: GenerateGroqTypesOptions,
+): Promise<string>;
 ```

@@ -1,247 +1,83 @@
-import { parse } from 'groq-js';
-import * as t from '@babel/types';
+import generate from '@babel/generator';
+import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
+import { transformGroqToTypescript } from './transform-groq-to-typescript';
+import {
+  pluckGroqFromFiles,
+  PluckGroqFromFilesOptions,
+} from './pluck-groq-from-files';
 
-/**
- * Normalizes a transform for arrays by checking if the input node is an array.
- * If it is, it'll perform the operation on the unwrapped array expression then
- * re-wrap with an array type
- * (e.g. `Operation<InputNode[number]>[]`).
- *
- * If the input node is not an array, it'll just perform the operation on the
- * input node (e.g. `Operation<InputNode>`)
- */
-function normalizeArrayTransform(
-  inputNode: any,
-  operation: (node: any) => any,
-) {
-  if (t.isTSArrayType(inputNode)) {
-    return t.tsArrayType(
-      operation(t.tsIndexedAccessType(inputNode, t.tsNumberKeyword())),
-    );
-  }
-
-  return operation(inputNode);
-}
-
-/**
- * A helper that returns a type reference to the `Sanity.SafeIndexedAccess`
- * type helper made in `@sanity-codegen/types`. The purposes of this is to
- * transform attribute access types in groq that consider `undefined`
- */
-function safeIndexedAccess(objectType: any, stringLiteralValue: string) {
-  return t.tsTypeReference(
-    t.tsQualifiedName(
-      t.identifier('Sanity'),
-      t.identifier('SafeIndexedAccess'),
-    ),
-    t.tsTypeParameterInstantiation([
-      objectType,
-      t.tsLiteralType(t.stringLiteral(stringLiteralValue)),
-    ]),
-  );
-}
-
-interface GenerateGroqTypesOptions {
+interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
   /**
-   * The query to generate a TypeScript type for
+   * This option is fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
    */
-  query: string;
+  prettierResolveConfigPath?: string;
+  /**
+   * This options is also fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
+  prettierResolveConfigOptions?: ResolveConfigOptions;
 }
 
 /**
- * Given a GROQ query, returns a babel TSType node
+ * Given a selection of filenames, this will pluck matching GROQ queries
+ * (@see `pluckGroqFromFiles`) and then run them through a GROQ-to-TypeScript
+ * transform.
+ *
+ * The result of each plucked query is put together into one source string.
  */
-export function generateGroqTypes({ query }: GenerateGroqTypesOptions) {
-  const root = parse(query);
+export async function generateGroqTypes({
+  prettierResolveConfigOptions,
+  prettierResolveConfigPath,
+  ...pluckOptions
+}: GenerateGroqTypesOptions) {
+  const extractedQueries = await pluckGroqFromFiles(pluckOptions);
 
-  interface TransformParams {
-    scope: any;
-    parentScope: any;
-    node: any;
-  }
+  const codegenResults = extractedQueries
+    .map(({ queryKey, query }) => {
+      const typescriptNode = transformGroqToTypescript({ query });
+      // seems like the types to babel are mismatched
+      // @ts-expect-error
+      const codegen = generate(typescriptNode).code;
 
-  function transform({ scope, parentScope, node }: TransformParams): t.TSType {
-    switch (node.type) {
-      case 'Attribute': {
-        const base = transform({
-          scope,
-          parentScope,
-          node: node.base,
-        });
+      return {
+        queryKey,
+        codegen: `type ${queryKey} = ${codegen}`,
+      };
+    })
+    .sort((a, b) => a.queryKey.localeCompare(b.queryKey));
 
-        // Sanity.SafeIndexedAccess<Transform<Base>, 'name'>
-        return normalizeArrayTransform(base, (n) =>
-          safeIndexedAccess(n, node.name),
-        );
-      }
+  const finalCodegen = `
+    /// <reference types="@sanity-codegen/types" />
 
-      case 'Filter': {
-        const extractSubject = (() => {
-          const { base } = node;
+    declare namespace Sanity {
+      namespace Queries {
+        ${codegenResults.map((i) => i.codegen).join('\n')}
 
-          switch (base.type) {
-            case 'Star': {
-              // input:  *[_type == 'movie']
-              // output: Scope
-              return scope;
-            }
-            case 'Identifier': {
-              // input:  actors[name == 'leo']
-              // output: Sanity.SafeIndexedAccess<Scope, 'actors'>
-              return safeIndexedAccess(scope, base.name);
-            }
-            default: {
-              // TODO: better error messages
-              throw new Error('Unsupported');
-            }
-          }
-        })();
-
-        // Extract<ExtractSubject, Transform<Query>>
-        return normalizeArrayTransform(extractSubject, (n) =>
-          t.tsTypeReference(
-            t.identifier('Extract'),
-            t.tsTypeParameterInstantiation([
-              n,
-              transform({
-                scope,
-                parentScope,
-                node: node.query,
-              }),
-            ]),
-          ),
-        );
-      }
-
-      case 'OpCall': {
-        // if the op call is type equality
-        if (node.op === '==' && node.left.name === '_type') {
-          // then return { _type: 'book' }
-          return t.tsTypeLiteral([
-            t.tsPropertySignature(
-              t.identifier('_type'),
-              t.tsTypeAnnotation(
-                t.tsLiteralType(t.stringLiteral(node.right.value)),
-              ),
-            ),
-          ]);
-        }
-
-        return t.tsUnknownKeyword();
-      }
-
-      case 'Projection': {
-        if (node.query.type !== 'Object') {
-          throw new Error('unsupported');
-        }
-
-        const { attributes } = node.query;
-        const base = transform({ scope, parentScope, node: node.base });
-
-        // input:
-        // `{ firstProperty, secondProperty, ... }`
-        //
-        // output:
-        //
-        // ```
-        // {
-        //   firstProperty: Transform<AttributeValue>,
-        //   secondProperty: Transform<AttributeValue>,
-        // } & Omit<Base, 'firstProperty' | 'secondProperty'>
-        // ```
-        return normalizeArrayTransform(base, (n) => {
-          const hasSplat = attributes.some(
-            (attribute) => attribute.type === 'ObjectSplat',
-          );
-
-          // { firstProperty: Transform<AttributeValue> }
-          const objectAttributesTypeLiteral = t.tsTypeLiteral(
-            attributes
-              .filter((attribute) => attribute.type === 'ObjectAttribute')
-              .map((attribute) => {
-                return t.tsPropertySignature(
-                  t.identifier(attribute.key.value),
-                  t.tsTypeAnnotation(
-                    transform({
-                      scope: n,
-                      parentScope: scope,
-                      node: attribute.value,
-                    }),
-                  ),
-                );
-              }),
-          );
-
-          if (hasSplat) {
-            // { firstProperty: Transform<AttributeValue> } & Omit<Base, 'firstProperty'>
-            return t.tsIntersectionType([
-              objectAttributesTypeLiteral,
-              t.tsTypeReference(
-                t.identifier('Omit'),
-                t.tsTypeParameterInstantiation([
-                  n,
-                  t.tsUnionType(
-                    attributes
-                      .filter(
-                        (attribute) => attribute.type === 'ObjectAttribute',
-                      )
-                      .map((attribute) =>
-                        t.tsLiteralType(t.stringLiteral(attribute.key.value)),
-                      ),
-                  ),
-                ]),
-              ),
-            ]);
-          }
-
-          return objectAttributesTypeLiteral;
-        });
-      }
-
-      case 'Identifier': {
-        return normalizeArrayTransform(scope, (n) =>
-          safeIndexedAccess(n, node.name),
-        );
-      }
-
-      case 'Parenthesis': {
-        // TODO: is there more to this? (why is this in the AST?)
-        return transform({ scope, parentScope, node: node.base });
-      }
-
-      case 'And': {
-        return t.tsIntersectionType([
-          transform({ scope, parentScope, node: node.left }),
-          transform({ scope, parentScope, node: node.right }),
-        ]);
-      }
-
-      case 'Or': {
-        return t.tsUnionType([
-          transform({ scope, parentScope, node: node.left }),
-          transform({ scope, parentScope, node: node.right }),
-        ]);
-      }
-
-      default: {
-        throw new Error(`"${node.type}" not implemented yet`);
+        /**
+         * A keyed type of all the codegen'ed queries. This type is used for
+         * TypeScript meta programming purposes only.
+         */
+        type QueryMap = {
+          ${codegenResults
+            .map((i) => `${i.queryKey}: ${i.queryKey};`)
+            .join('\n')}
+        };
       }
     }
-  }
+  `;
 
-  // Sanity.Schema.Document[]
-  const rootScope = t.tsArrayType(
-    t.tsTypeReference(
-      t.tsQualifiedName(
-        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Schema')),
-        t.identifier('Document'),
-      ),
-    ),
-  );
+  const resolvedConfig = prettierResolveConfigPath
+    ? await resolveConfig(
+        prettierResolveConfigPath,
+        prettierResolveConfigOptions,
+      )
+    : null;
 
-  return transform({
-    node: root,
-    parentScope: null,
-    scope: rootScope,
+  return format(finalCodegen, {
+    ...resolvedConfig,
+    parser: 'typescript',
   });
 }

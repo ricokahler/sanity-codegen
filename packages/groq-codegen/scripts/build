@@ -4,9 +4,9 @@ rm -rf ./dist
 
 npx tsc
 
-npx babel                           \
-  -x .js,.ts                        \
-  --ignore /**/*.test.ts,/**/*.d.ts \
-  --out-dir ./dist                  \
-  --root-mode upward                \
+npx babel                                                     \
+  -x .js,.ts                                                  \
+  --ignore /**/*.test.ts,/**/*.d.ts,**/__example-files__/**/* \
+  --out-dir ./dist                                            \
+  --root-mode upward                                          \
   ./src
