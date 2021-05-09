@@ -296,3 +296,4 @@ However you may run into challenges with executing the code if your schema impor
 ## Related Projects
 
 - [`sanity-typed-queries`](https://github.com/danielroe/sanity-typed-queries) — Returns a query builder object that returns typed queries. Works without codegen.
+- [`groq-types`](https://github.com/JoviDeCroock/groq-types) — Another GROQ codegen lib 😎
