@@ -116,15 +116,21 @@ export function transformGroqToTypescript({
       }
 
       case 'OpCall': {
-        // if the op call is type equality
-        if (node.op === '==' && node.left.name === '_type') {
+        if (
+          // if the op call is type equality and
+          node.op === '==' &&
+          // if any side of this equality is `_type`
+          [node.left.name, node.right.name].includes('_type')
+        ) {
           // then return { _type: 'book' }
+
+          const typeLiteral =
+            node.left.name === '_type' ? node.right.value : node.left.value;
+
           return t.tsTypeLiteral([
             t.tsPropertySignature(
               t.identifier('_type'),
-              t.tsTypeAnnotation(
-                t.tsLiteralType(t.stringLiteral(node.right.value)),
-              ),
+              t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(typeLiteral))),
             ),
           ]);
         }
@@ -139,7 +145,13 @@ export function transformGroqToTypescript({
           parentScope,
         });
 
-        return t.tsIndexedAccessType(base, t.tsNumberKeyword());
+        return t.tsTypeReference(
+          t.tsQualifiedName(
+            t.identifier('Sanity'),
+            t.identifier('ArrayElementAccess'),
+          ),
+          t.tsTypeParameterInstantiation([base]),
+        );
       }
 
       case 'Projection': {

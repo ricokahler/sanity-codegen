@@ -74,8 +74,17 @@ declare namespace Sanity {
 
   type Keyed<T> = T extends object ? T & { _key: string } : T;
 
+  // TODO: possibly move these into a Codegen namespace into the codegen package
+  type UndefinedToNull<T> = T extends null | undefined
+    ? NonNullable<T> | null
+    : NonNullable<T>;
+
   type SafeIndexedAccess<
-    T extends { [key: string]: any } | undefined,
+    T extends { [key: string]: any } | null | undefined,
     K extends keyof NonNullable<T>
-  > = T extends undefined ? NonNullable<T>[K] | undefined : NonNullable<T>[K];
+  > = T extends null | undefined
+    ? UndefinedToNull<NonNullable<T>[K]> | null
+    : UndefinedToNull<NonNullable<T>[K]>;
+
+  type ArrayElementAccess<T extends any[]> = T[number] | null;
 }

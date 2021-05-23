@@ -14,12 +14,14 @@ describe('generateGroqTypes', () => {
       declare namespace Sanity {
         namespace Queries {
           type BookAuthor = Sanity.SafeIndexedAccess<
-            Extract<
-              Sanity.Schema.Document[][number],
-              {
-                _type: \\"book\\";
-              }
-            >[][number],
+            Sanity.ArrayElementAccess<
+              Extract<
+                Sanity.Schema.Document[][number],
+                {
+                  _type: \\"book\\";
+                }
+              >[]
+            >,
             \\"author\\"
           >;
           type BookTitles = Sanity.SafeIndexedAccess<

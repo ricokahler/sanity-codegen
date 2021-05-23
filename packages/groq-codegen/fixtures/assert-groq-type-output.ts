@@ -12,12 +12,14 @@ interface Params {
   query: string;
   schema: any[];
   expectedType: string;
+  debug?: boolean;
 }
 
 export async function assertGroqTypeOutput({
   schema,
   query,
   expectedType,
+  debug,
 }: Params) {
   const compilerOptions: ts.CompilerOptions = {
     strict: true,
@@ -77,8 +79,21 @@ export async function assertGroqTypeOutput({
 
   const emitResult = program.emit();
 
+  if (debug) {
+    console.log(
+      prettier.format(
+        `
+          ${schemaCode}
+
+          ${queryCode}
+        `,
+        { parser: 'typescript', singleQuote: true },
+      ),
+    );
+  }
+
   if (emitResult.emitSkipped) {
-    throw new Error('emit skipped');
+    throw new Error('Emit skipped');
   }
 
   const diagnostics = [

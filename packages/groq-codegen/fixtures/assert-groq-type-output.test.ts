@@ -16,7 +16,7 @@ describe('assertGroqTypeOutput', () => {
         },
       ],
       query: `*[_type == 'fooObj'].foo`,
-      expectedType: `Array<string | undefined>`,
+      expectedType: `Array<string | null>`,
     });
 
     expect(types).toMatchInlineSnapshot(`
@@ -58,11 +58,11 @@ describe('assertGroqTypeOutput', () => {
         [Error: GROQ assertion failed.
 
         Argument of type 'ExpectedType' is not assignable to parameter of type 'QueryType'.
-        Type 'number' is not assignable to type 'string | undefined'.
+        Type 'number' is not assignable to type 'string | null'.
 
         Argument of type 'QueryType' is not assignable to parameter of type 'ExpectedType'.
-        Type 'string | undefined' is not assignable to type 'number'.
-        Type 'undefined' is not assignable to type 'number'.]
+        Type 'string | null' is not assignable to type 'number'.
+        Type 'null' is not assignable to type 'number'.]
       `);
     }
 
