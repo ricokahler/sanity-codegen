@@ -10,5 +10,5 @@
     "target": "esnext"
   },
   "include": ["./src"],
-  "exclude": ["**/__example-files__/**/*"]
+  "exclude": ["**/__example-files__/**/*", "**/*.test.ts", "**/fixtures/**/*"]
 }
