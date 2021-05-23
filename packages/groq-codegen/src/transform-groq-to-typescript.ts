@@ -1,4 +1,5 @@
 import { parse } from 'groq-js';
+import * as Groq from 'groq-js/dist/nodeTypes';
 import * as t from '@babel/types';
 
 /**
@@ -54,12 +55,12 @@ export interface TransformGroqToTypescriptOptions {
 export function transformGroqToTypescript({
   query,
 }: TransformGroqToTypescriptOptions) {
-  const root = parse(query);
+  const root: Groq.SyntaxNode = parse(query);
 
   interface TransformParams {
-    scope: any;
-    parentScope: any;
-    node: any;
+    scope: t.TSType;
+    parentScope: t.TSType | null;
+    node: Groq.SyntaxNode;
   }
 
   function transform({ scope, parentScope, node }: TransformParams): t.TSType {
@@ -116,21 +117,40 @@ export function transformGroqToTypescript({
       }
 
       case 'OpCall': {
+        const typeName = (() => {
+          if (
+            node.left.type === 'Identifier' &&
+            node.left.name === '_type' &&
+            node.right.type === 'Value' &&
+            typeof node.right.value === 'string'
+          ) {
+            return node.right.value;
+          }
+
+          if (
+            node.right.type === 'Identifier' &&
+            node.right.name === '_type' &&
+            node.left.type === 'Value' &&
+            typeof node.left.value === 'string'
+          ) {
+            return node.left.value;
+          }
+
+          return null;
+        })();
+
         if (
           // if the op call is type equality and
+          // @ts-expect-error: `==` is missing from the first party types
           node.op === '==' &&
-          // if any side of this equality is `_type`
-          [node.left.name, node.right.name].includes('_type')
+          !!typeName
         ) {
           // then return { _type: 'book' }
-
-          const typeLiteral =
-            node.left.name === '_type' ? node.right.value : node.left.value;
 
           return t.tsTypeLiteral([
             t.tsPropertySignature(
               t.identifier('_type'),
-              t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(typeLiteral))),
+              t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(typeName))),
             ),
           ]);
         }
@@ -181,7 +201,10 @@ export function transformGroqToTypescript({
           // { firstProperty: Transform<AttributeValue> }
           const objectAttributesTypeLiteral = t.tsTypeLiteral(
             attributes
-              .filter((attribute) => attribute.type === 'ObjectAttribute')
+              .filter(
+                (attribute): attribute is Groq.ObjectAttributeNode =>
+                  attribute.type === 'ObjectAttribute',
+              )
               .map((attribute) => {
                 return t.tsPropertySignature(
                   t.identifier(attribute.key.value),
@@ -207,7 +230,8 @@ export function transformGroqToTypescript({
                   t.tsUnionType(
                     attributes
                       .filter(
-                        (attribute) => attribute.type === 'ObjectAttribute',
+                        (attribute): attribute is Groq.ObjectAttributeNode =>
+                          attribute.type === 'ObjectAttribute',
                       )
                       .map((attribute) =>
                         t.tsLiteralType(t.stringLiteral(attribute.key.value)),
