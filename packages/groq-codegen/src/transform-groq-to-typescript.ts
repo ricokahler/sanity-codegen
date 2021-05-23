@@ -59,9 +59,19 @@ export function transformGroqToTypescript({
 
   interface TransformParams {
     scope: t.TSType;
-    parentScope: t.TSType | null;
+    parentScope: t.TSType;
     node: Groq.SyntaxNode;
   }
+
+  // Sanity.Schema.Document[]
+  const everythingScope = t.tsArrayType(
+    t.tsTypeReference(
+      t.tsQualifiedName(
+        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Schema')),
+        t.identifier('Document'),
+      ),
+    ),
+  );
 
   function transform({ scope, parentScope, node }: TransformParams): t.TSType {
     switch (node.type) {
@@ -86,7 +96,7 @@ export function transformGroqToTypescript({
             case 'Star': {
               // input:  *[_type == 'movie']
               // output: Scope
-              return scope;
+              return everythingScope;
             }
             case 'Identifier': {
               // input:  actors[name == 'leo']
@@ -175,13 +185,19 @@ export function transformGroqToTypescript({
       }
 
       case 'Projection': {
-        if (node.query.type !== 'Object') {
-          throw new Error('unsupported');
-        }
+        return transform({
+          scope: transform({
+            parentScope,
+            scope,
+            node: node.base,
+          }),
+          parentScope: scope,
+          node: node.query,
+        });
+      }
 
-        const { attributes } = node.query;
-        const base = transform({ scope, parentScope, node: node.base });
-
+      case 'Object': {
+        const { attributes } = node;
         // input:
         // `{ firstProperty, secondProperty, ... }`
         //
@@ -193,7 +209,7 @@ export function transformGroqToTypescript({
         //   secondProperty: Transform<AttributeValue>,
         // } & Omit<Base, 'firstProperty' | 'secondProperty'>
         // ```
-        return normalizeArrayTransform(base, (n) => {
+        return normalizeArrayTransform(scope, (n) => {
           const hasSplat = attributes.some(
             (attribute) => attribute.type === 'ObjectSplat',
           );
@@ -272,24 +288,15 @@ export function transformGroqToTypescript({
       }
 
       default: {
-        throw new Error(`"${node.type}" not implemented yet`);
+        console.warn(`"${node.type}" not implemented yet`);
+        return t.tsUnknownKeyword();
       }
     }
   }
 
-  // Sanity.Schema.Document[]
-  const rootScope = t.tsArrayType(
-    t.tsTypeReference(
-      t.tsQualifiedName(
-        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Schema')),
-        t.identifier('Document'),
-      ),
-    ),
-  );
-
   return transform({
     node: root,
-    parentScope: null,
-    scope: rootScope,
+    parentScope: t.tsUnknownKeyword(),
+    scope: t.tsUnknownKeyword(),
   });
 }
