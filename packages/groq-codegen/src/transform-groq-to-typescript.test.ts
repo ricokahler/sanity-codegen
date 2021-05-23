@@ -1,14 +1,8 @@
-import { transformGroqToTypescript } from './transform-groq-to-typescript';
-import generate from '@babel/generator';
-import prettier from 'prettier';
-import {
-  schemaNormalizer,
-  generateSchemaTypes,
-} from '@sanity-codegen/schema-codegen';
+import { assertGroqTypeOutput } from '../fixtures/assert-groq-type-output';
 
 describe('generateGroqTypes', () => {
   test('attribute access', async () => {
-    const types = await getTypeOutput({
+    const types = await assertGroqTypeOutput({
       schema: [
         {
           type: 'document',
@@ -23,45 +17,14 @@ describe('generateGroqTypes', () => {
           ],
         },
       ],
-      query: '*[_type == "book"].author.name',
+      query: `*[_type == "book"].author.name`,
+      expectedType: `
+        Array<string | undefined>
+      `,
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "
-      // schema types
-      /// <reference types=\\"@sanity-codegen/types\\" />
-
-      declare namespace Sanity {
-        namespace Schema {
-          /**
-           * Book
-           */
-          interface Book extends Sanity.Document {
-            _type: 'book';
-
-            /**
-             * Title - \`string\`
-             */
-            title?: string;
-
-            /**
-             * Author - \`object\`
-             */
-            author?: {
-              /**
-               * Name - \`string\`
-               */
-              name?: string;
-            };
-          }
-
-          type Document = Book;
-        }
-      }
-
-
-      // query type
-      type Query = Sanity.SafeIndexedAccess<
+      "type Query = Sanity.SafeIndexedAccess<
         Sanity.SafeIndexedAccess<
           Extract<
             Sanity.Schema.Document[][number],
@@ -72,16 +35,12 @@ describe('generateGroqTypes', () => {
           'author'
         >[][number],
         'name'
-      >[];
-
-
-      let query: Query = undefined as any;
-      "
+      >[];"
     `);
   });
 
   test('element access', async () => {
-    const types = await getTypeOutput({
+    const types = await assertGroqTypeOutput({
       schema: [
         {
           type: 'document',
@@ -96,45 +55,12 @@ describe('generateGroqTypes', () => {
           ],
         },
       ],
-      query: '*[_type == "book"][0].author',
+      query: `*[_type == "book"][0].author`,
+      expectedType: `{ name?: string | undefined; } | undefined`,
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "
-      // schema types
-      /// <reference types=\\"@sanity-codegen/types\\" />
-
-      declare namespace Sanity {
-        namespace Schema {
-          /**
-           * Book
-           */
-          interface Book extends Sanity.Document {
-            _type: 'book';
-
-            /**
-             * Title - \`string\`
-             */
-            title?: string;
-
-            /**
-             * Author - \`object\`
-             */
-            author?: {
-              /**
-               * Name - \`string\`
-               */
-              name?: string;
-            };
-          }
-
-          type Document = Book;
-        }
-      }
-
-
-      // query type
-      type Query = Sanity.SafeIndexedAccess<
+      "type Query = Sanity.SafeIndexedAccess<
         Extract<
           Sanity.Schema.Document[][number],
           {
@@ -142,16 +68,12 @@ describe('generateGroqTypes', () => {
           }
         >[][number],
         'author'
-      >;
-
-
-      let query: Query = undefined as any;
-      "
+      >;"
     `);
   });
 
   test('simple projection', async () => {
-    const types = await getTypeOutput({
+    const types = await assertGroqTypeOutput({
       schema: [
         {
           type: 'document',
@@ -171,46 +93,26 @@ describe('generateGroqTypes', () => {
           ],
         },
       ],
-      query:
-        '*[_type == "book"] { title, "authorName": author.name, "authorAlias": author }',
+      query: `
+        *[_type == "book"] {
+          title,
+          "authorName": author.name,
+          "authorAlias": author
+        }
+      `,
+      expectedType: `
+        Array<{
+          title: string;
+          authorName: string | undefined;
+          authorAlias: {
+            name?: string | undefined;
+          } | undefined;
+        }>
+      `,
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "
-      // schema types
-      /// <reference types=\\"@sanity-codegen/types\\" />
-
-      declare namespace Sanity {
-        namespace Schema {
-          /**
-           * Book
-           */
-          interface Book extends Sanity.Document {
-            _type: 'book';
-
-            /**
-             * Title - \`string\`
-             */
-            title: string;
-
-            /**
-             * Author - \`object\`
-             */
-            author?: {
-              /**
-               * Name - \`string\`
-               */
-              name?: string;
-            };
-          }
-
-          type Document = Book;
-        }
-      }
-
-
-      // query type
-      type Query = {
+      "type Query = {
         title: Sanity.SafeIndexedAccess<
           Extract<
             Sanity.Schema.Document[][number],
@@ -241,16 +143,12 @@ describe('generateGroqTypes', () => {
           >[][number],
           'author'
         >;
-      }[];
-
-
-      let query: Query = undefined as any;
-      "
+      }[];"
     `);
   });
 
   test('projection with splat', async () => {
-    const types = await getTypeOutput({
+    const types = await assertGroqTypeOutput({
       schema: [
         {
           type: 'document',
@@ -270,45 +168,16 @@ describe('generateGroqTypes', () => {
           ],
         },
       ],
-      query: '*[_type == "book"] { "author": author.name, ... }',
+      query: `*[_type == "book"] { "author": author.name, ... }`,
+      expectedType: `
+        Array<
+          Omit<Sanity.Schema.Book, 'author'> & { author: string | undefined; }
+        >
+      `,
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "
-      // schema types
-      /// <reference types=\\"@sanity-codegen/types\\" />
-
-      declare namespace Sanity {
-        namespace Schema {
-          /**
-           * Book
-           */
-          interface Book extends Sanity.Document {
-            _type: 'book';
-
-            /**
-             * Title - \`string\`
-             */
-            title: string;
-
-            /**
-             * Author - \`object\`
-             */
-            author?: {
-              /**
-               * Name - \`string\`
-               */
-              name?: string;
-            };
-          }
-
-          type Document = Book;
-        }
-      }
-
-
-      // query type
-      type Query = ({
+      "type Query = ({
         author: Sanity.SafeIndexedAccess<
           Sanity.SafeIndexedAccess<
             Extract<
@@ -329,16 +198,12 @@ describe('generateGroqTypes', () => {
           }
         >[][number],
         'author'
-      >)[];
-
-
-      let query: Query = undefined as any;
-      "
+      >)[];"
     `);
   });
 
   test('filters with && and ||', async () => {
-    const types = await getTypeOutput({
+    const types = await assertGroqTypeOutput({
       schema: [
         {
           type: 'document',
@@ -369,62 +234,14 @@ describe('generateGroqTypes', () => {
           ],
         },
       ],
-      query: '*[(_type == "book" || _type == "movie") && writer.name == "foo"]',
+      query: `*[(_type == "book" || _type == "movie") && writer.name == "foo"]`,
+      expectedType: `
+        Array<Sanity.Schema.Book | Sanity.Schema.Movie>
+      `,
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "
-      // schema types
-      /// <reference types=\\"@sanity-codegen/types\\" />
-
-      declare namespace Sanity {
-        namespace Schema {
-          /**
-           * Book
-           */
-          interface Book extends Sanity.Document {
-            _type: 'book';
-
-            /**
-             * Title - \`string\`
-             */
-            title: string;
-
-            /**
-             * Writer - \`object\`
-             */
-            writer?: {
-              /**
-               * Name - \`string\`
-               */
-              name?: string;
-            };
-          }
-
-          /**
-           * Movie
-           */
-          interface Movie extends Sanity.Document {
-            _type: 'movie';
-
-            /**
-             * Writer - \`object\`
-             */
-            writer?: {
-              /**
-               * Name - \`number\`
-               */
-              name?: number;
-            };
-          }
-
-          type Document = Book | Movie;
-        }
-      }
-
-
-      // query type
-      type Query = Extract<
+      "type Query = Extract<
         Sanity.Schema.Document[][number],
         (
           | {
@@ -435,37 +252,7 @@ describe('generateGroqTypes', () => {
             }
         ) &
           unknown
-      >[];
-
-
-      let query: Query = undefined as any;
-      "
+      >[];"
     `);
   });
 });
-
-interface Params {
-  query: string;
-  schema: any[];
-}
-
-async function getTypeOutput({ query, schema }: Params) {
-  // seems like the types to babel are mismatched
-  // @ts-expect-error
-  const { code } = generate(transformGroqToTypescript({ query }));
-  const schemaTypes = await generateSchemaTypes({
-    schema: schemaNormalizer(schema),
-  });
-
-  const prettierOptions = { parser: 'typescript', singleQuote: true };
-
-  return `
-// schema types
-${prettier.format(schemaTypes, prettierOptions)}
-
-// query type
-${prettier.format(`type Query = ${code}`, prettierOptions)}
-
-let query: Query = undefined as any;
-`;
-}
