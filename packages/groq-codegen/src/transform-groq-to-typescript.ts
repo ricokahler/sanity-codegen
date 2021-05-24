@@ -42,6 +42,291 @@ function safeIndexedAccess(objectType: any, stringLiteralValue: string) {
   );
 }
 
+export interface TransformGroqAstToTsAstParams {
+  /**
+   * A type that represents everything i.e. all documents. This is typically
+   * `Sanity.Schema.Document[]`
+   */
+  everything: t.TSType;
+  /**
+   * The type that represents the current scope (as defined by the
+   * [GROQ spec](https://sanity-io.github.io/GROQ/draft/#sec-Scope)).
+   * This is used to derive types that refer to the current scope where
+   * applicable,
+   */
+  scope: t.TSType;
+  /**
+   * Similar to the `scope` but refers to the scope one layer above the current
+   * scope. This is used to derive types that refer to that parent scope.
+   */
+  parentScope: t.TSType;
+  /**
+   * The input GROQ syntax AST node you wish to convert to a `TSType`
+   */
+  node: Groq.SyntaxNode;
+}
+
+/**
+ * A lower-level API (when compared to `transformGroqToTypescript`) that takes
+ * in a GROQ AST (and some extra context) and returns a TS type AST node.
+ */
+export function transformGroqAstToTsAst({
+  scope,
+  parentScope,
+  node,
+  everything,
+}: TransformGroqAstToTsAstParams): t.TSType {
+  switch (node.type) {
+    case 'Attribute': {
+      const base = transformGroqAstToTsAst({
+        everything,
+        scope,
+        parentScope,
+        node: node.base,
+      });
+
+      // Sanity.SafeIndexedAccess<Transform<Base>, 'name'>
+      return normalizeArrayTransform(base, (n) =>
+        safeIndexedAccess(n, node.name),
+      );
+    }
+
+    case 'Filter': {
+      const extractSubject = (() => {
+        const { base } = node;
+
+        switch (base.type) {
+          case 'Star': {
+            // input:  *[_type == 'movie']
+            // output: Scope
+            return everything;
+          }
+          case 'Identifier': {
+            // input:  actors[name == 'leo']
+            // output: Sanity.SafeIndexedAccess<Scope, 'actors'>
+            return safeIndexedAccess(scope, base.name);
+          }
+          default: {
+            // TODO: better error messages
+            throw new Error('Unsupported');
+          }
+        }
+      })();
+
+      // Extract<ExtractSubject, Transform<Query>>
+      return normalizeArrayTransform(extractSubject, (n) =>
+        t.tsTypeReference(
+          t.identifier('Extract'),
+          t.tsTypeParameterInstantiation([
+            n,
+            transformGroqAstToTsAst({
+              everything,
+              scope,
+              parentScope,
+              node: node.query,
+            }),
+          ]),
+        ),
+      );
+    }
+
+    case 'OpCall': {
+      const typeName = (() => {
+        if (
+          node.left.type === 'Identifier' &&
+          node.left.name === '_type' &&
+          node.right.type === 'Value' &&
+          typeof node.right.value === 'string'
+        ) {
+          return node.right.value;
+        }
+
+        if (
+          node.right.type === 'Identifier' &&
+          node.right.name === '_type' &&
+          node.left.type === 'Value' &&
+          typeof node.left.value === 'string'
+        ) {
+          return node.left.value;
+        }
+
+        return null;
+      })();
+
+      if (
+        // if the op call is type equality and
+        // @ts-expect-error: `==` is missing from the first party types
+        node.op === '==' &&
+        !!typeName
+      ) {
+        // then return { _type: 'book' }
+
+        return t.tsTypeLiteral([
+          t.tsPropertySignature(
+            t.identifier('_type'),
+            t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(typeName))),
+          ),
+        ]);
+      }
+
+      return t.tsUnknownKeyword();
+    }
+
+    case 'Element': {
+      const base = transformGroqAstToTsAst({
+        everything,
+        node: node.base,
+        scope,
+        parentScope,
+      });
+
+      return t.tsTypeReference(
+        t.tsQualifiedName(
+          t.identifier('Sanity'),
+          t.identifier('ArrayElementAccess'),
+        ),
+        t.tsTypeParameterInstantiation([base]),
+      );
+    }
+
+    case 'Projection': {
+      return transformGroqAstToTsAst({
+        everything,
+        scope: transformGroqAstToTsAst({
+          everything,
+          parentScope,
+          scope,
+          node: node.base,
+        }),
+        parentScope: scope,
+        node: node.query,
+      });
+    }
+
+    case 'Object': {
+      const { attributes } = node;
+      // input:
+      // `{ firstProperty, secondProperty, ... }`
+      //
+      // output:
+      //
+      // ```
+      // {
+      //   firstProperty: Transform<AttributeValue>,
+      //   secondProperty: Transform<AttributeValue>,
+      // } & Omit<Base, 'firstProperty' | 'secondProperty'>
+      // ```
+      return normalizeArrayTransform(scope, (n) => {
+        const hasSplat = attributes.some(
+          (attribute) => attribute.type === 'ObjectSplat',
+        );
+
+        // { firstProperty: Transform<AttributeValue> }
+        const objectAttributesTypeLiteral = t.tsTypeLiteral(
+          attributes
+            .filter(
+              (attribute): attribute is Groq.ObjectAttributeNode =>
+                attribute.type === 'ObjectAttribute',
+            )
+            .map((attribute) => {
+              return t.tsPropertySignature(
+                t.identifier(attribute.key.value),
+                t.tsTypeAnnotation(
+                  transformGroqAstToTsAst({
+                    everything,
+                    scope: n,
+                    parentScope: scope,
+                    node: attribute.value,
+                  }),
+                ),
+              );
+            }),
+        );
+
+        if (hasSplat) {
+          // { firstProperty: Transform<AttributeValue> } & Omit<Base, 'firstProperty'>
+          return t.tsIntersectionType([
+            objectAttributesTypeLiteral,
+            t.tsTypeReference(
+              t.identifier('Omit'),
+              t.tsTypeParameterInstantiation([
+                n,
+                t.tsUnionType(
+                  attributes
+                    .filter(
+                      (attribute): attribute is Groq.ObjectAttributeNode =>
+                        attribute.type === 'ObjectAttribute',
+                    )
+                    .map((attribute) =>
+                      t.tsLiteralType(t.stringLiteral(attribute.key.value)),
+                    ),
+                ),
+              ]),
+            ),
+          ]);
+        }
+
+        return objectAttributesTypeLiteral;
+      });
+    }
+
+    case 'Identifier': {
+      return normalizeArrayTransform(scope, (n) =>
+        safeIndexedAccess(n, node.name),
+      );
+    }
+
+    case 'Parenthesis': {
+      // TODO: is there more to this? (why is this in the AST?)
+      return transformGroqAstToTsAst({
+        everything,
+        scope,
+        parentScope,
+        node: node.base,
+      });
+    }
+
+    case 'And': {
+      return t.tsIntersectionType([
+        transformGroqAstToTsAst({
+          everything,
+          scope,
+          parentScope,
+          node: node.left,
+        }),
+        transformGroqAstToTsAst({
+          everything,
+          scope,
+          parentScope,
+          node: node.right,
+        }),
+      ]);
+    }
+
+    case 'Or': {
+      return t.tsUnionType([
+        transformGroqAstToTsAst({
+          everything,
+          scope,
+          parentScope,
+          node: node.left,
+        }),
+        transformGroqAstToTsAst({
+          everything,
+          scope,
+          parentScope,
+          node: node.right,
+        }),
+      ]);
+    }
+
+    default: {
+      console.warn(`"${node.type}" not implemented yet`);
+      return t.tsUnknownKeyword();
+    }
+  }
+}
+
 export interface TransformGroqToTypescriptOptions {
   /**
    * The query to generate a TypeScript type for
@@ -57,14 +342,8 @@ export function transformGroqToTypescript({
 }: TransformGroqToTypescriptOptions) {
   const root: Groq.SyntaxNode = parse(query);
 
-  interface TransformParams {
-    scope: t.TSType;
-    parentScope: t.TSType;
-    node: Groq.SyntaxNode;
-  }
-
   // Sanity.Schema.Document[]
-  const everythingScope = t.tsArrayType(
+  const everything = t.tsArrayType(
     t.tsTypeReference(
       t.tsQualifiedName(
         t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Schema')),
@@ -73,228 +352,8 @@ export function transformGroqToTypescript({
     ),
   );
 
-  function transform({ scope, parentScope, node }: TransformParams): t.TSType {
-    switch (node.type) {
-      case 'Attribute': {
-        const base = transform({
-          scope,
-          parentScope,
-          node: node.base,
-        });
-
-        // Sanity.SafeIndexedAccess<Transform<Base>, 'name'>
-        return normalizeArrayTransform(base, (n) =>
-          safeIndexedAccess(n, node.name),
-        );
-      }
-
-      case 'Filter': {
-        const extractSubject = (() => {
-          const { base } = node;
-
-          switch (base.type) {
-            case 'Star': {
-              // input:  *[_type == 'movie']
-              // output: Scope
-              return everythingScope;
-            }
-            case 'Identifier': {
-              // input:  actors[name == 'leo']
-              // output: Sanity.SafeIndexedAccess<Scope, 'actors'>
-              return safeIndexedAccess(scope, base.name);
-            }
-            default: {
-              // TODO: better error messages
-              throw new Error('Unsupported');
-            }
-          }
-        })();
-
-        // Extract<ExtractSubject, Transform<Query>>
-        return normalizeArrayTransform(extractSubject, (n) =>
-          t.tsTypeReference(
-            t.identifier('Extract'),
-            t.tsTypeParameterInstantiation([
-              n,
-              transform({
-                scope,
-                parentScope,
-                node: node.query,
-              }),
-            ]),
-          ),
-        );
-      }
-
-      case 'OpCall': {
-        const typeName = (() => {
-          if (
-            node.left.type === 'Identifier' &&
-            node.left.name === '_type' &&
-            node.right.type === 'Value' &&
-            typeof node.right.value === 'string'
-          ) {
-            return node.right.value;
-          }
-
-          if (
-            node.right.type === 'Identifier' &&
-            node.right.name === '_type' &&
-            node.left.type === 'Value' &&
-            typeof node.left.value === 'string'
-          ) {
-            return node.left.value;
-          }
-
-          return null;
-        })();
-
-        if (
-          // if the op call is type equality and
-          // @ts-expect-error: `==` is missing from the first party types
-          node.op === '==' &&
-          !!typeName
-        ) {
-          // then return { _type: 'book' }
-
-          return t.tsTypeLiteral([
-            t.tsPropertySignature(
-              t.identifier('_type'),
-              t.tsTypeAnnotation(t.tsLiteralType(t.stringLiteral(typeName))),
-            ),
-          ]);
-        }
-
-        return t.tsUnknownKeyword();
-      }
-
-      case 'Element': {
-        const base = transform({
-          node: node.base,
-          scope,
-          parentScope,
-        });
-
-        return t.tsTypeReference(
-          t.tsQualifiedName(
-            t.identifier('Sanity'),
-            t.identifier('ArrayElementAccess'),
-          ),
-          t.tsTypeParameterInstantiation([base]),
-        );
-      }
-
-      case 'Projection': {
-        return transform({
-          scope: transform({
-            parentScope,
-            scope,
-            node: node.base,
-          }),
-          parentScope: scope,
-          node: node.query,
-        });
-      }
-
-      case 'Object': {
-        const { attributes } = node;
-        // input:
-        // `{ firstProperty, secondProperty, ... }`
-        //
-        // output:
-        //
-        // ```
-        // {
-        //   firstProperty: Transform<AttributeValue>,
-        //   secondProperty: Transform<AttributeValue>,
-        // } & Omit<Base, 'firstProperty' | 'secondProperty'>
-        // ```
-        return normalizeArrayTransform(scope, (n) => {
-          const hasSplat = attributes.some(
-            (attribute) => attribute.type === 'ObjectSplat',
-          );
-
-          // { firstProperty: Transform<AttributeValue> }
-          const objectAttributesTypeLiteral = t.tsTypeLiteral(
-            attributes
-              .filter(
-                (attribute): attribute is Groq.ObjectAttributeNode =>
-                  attribute.type === 'ObjectAttribute',
-              )
-              .map((attribute) => {
-                return t.tsPropertySignature(
-                  t.identifier(attribute.key.value),
-                  t.tsTypeAnnotation(
-                    transform({
-                      scope: n,
-                      parentScope: scope,
-                      node: attribute.value,
-                    }),
-                  ),
-                );
-              }),
-          );
-
-          if (hasSplat) {
-            // { firstProperty: Transform<AttributeValue> } & Omit<Base, 'firstProperty'>
-            return t.tsIntersectionType([
-              objectAttributesTypeLiteral,
-              t.tsTypeReference(
-                t.identifier('Omit'),
-                t.tsTypeParameterInstantiation([
-                  n,
-                  t.tsUnionType(
-                    attributes
-                      .filter(
-                        (attribute): attribute is Groq.ObjectAttributeNode =>
-                          attribute.type === 'ObjectAttribute',
-                      )
-                      .map((attribute) =>
-                        t.tsLiteralType(t.stringLiteral(attribute.key.value)),
-                      ),
-                  ),
-                ]),
-              ),
-            ]);
-          }
-
-          return objectAttributesTypeLiteral;
-        });
-      }
-
-      case 'Identifier': {
-        return normalizeArrayTransform(scope, (n) =>
-          safeIndexedAccess(n, node.name),
-        );
-      }
-
-      case 'Parenthesis': {
-        // TODO: is there more to this? (why is this in the AST?)
-        return transform({ scope, parentScope, node: node.base });
-      }
-
-      case 'And': {
-        return t.tsIntersectionType([
-          transform({ scope, parentScope, node: node.left }),
-          transform({ scope, parentScope, node: node.right }),
-        ]);
-      }
-
-      case 'Or': {
-        return t.tsUnionType([
-          transform({ scope, parentScope, node: node.left }),
-          transform({ scope, parentScope, node: node.right }),
-        ]);
-      }
-
-      default: {
-        console.warn(`"${node.type}" not implemented yet`);
-        return t.tsUnknownKeyword();
-      }
-    }
-  }
-
-  return transform({
+  return transformGroqAstToTsAst({
+    everything,
     node: root,
     parentScope: t.tsUnknownKeyword(),
     scope: t.tsUnknownKeyword(),

@@ -243,3 +243,42 @@ export declare function generateGroqTypes(
   options: GenerateGroqTypesOptions,
 ): Promise<string>;
 ```
+
+### `transformGroqAstToTsAst()`
+
+```ts
+interface TransformGroqAstToTsAstParams {
+  /**
+   * A type that represents everything i.e. all documents. This is typically
+   * `Sanity.Schema.Document[]`
+   */
+  everything: t.TSType;
+  /**
+   * The type that represents the current scope (as defined by the
+   * [GROQ spec](https://sanity-io.github.io/GROQ/draft/#sec-Scope)).
+   * This is used to derive types that refer to the current scope where
+   * applicable,
+   */
+  scope: t.TSType;
+  /**
+   * Similar to the `scope` but refers to the scope one layer above the current
+   * scope. This is used to derive types that refer to that parent scope.
+   */
+  parentScope: t.TSType;
+  /**
+   * The input GROQ syntax AST node you wish to convert to a `TSType`
+   */
+  node: Groq.SyntaxNode;
+}
+
+/**
+ * A lower-level API (when compared to `transformGroqToTypescript`) that takes
+ * in a GROQ AST (and some extra context) and returns a TS type AST node.
+ */
+export declare function transformGroqAstToTsAst({
+  scope,
+  parentScope,
+  node,
+  everything,
+}: TransformGroqAstToTsAstParams): t.TSType;
+```
