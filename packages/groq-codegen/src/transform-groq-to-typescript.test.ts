@@ -465,3 +465,161 @@ describe('Object/Projection', () => {
     `);
   });
 });
+
+describe('Deref', () => {
+  it('dereferences reference types', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'author', type: 'reference', to: [{ type: 'author' }] },
+          ],
+        },
+        {
+          name: 'author',
+          type: 'document',
+          fields: [{ name: 'name', type: 'string' }],
+        },
+      ],
+      query: `*[_type == 'book'] { author-> }`,
+      expectedType: `
+        Array<{
+          author: {
+            _type: 'author';
+            _createdAt: string;
+            _id: string;
+            _updatedAt: string;
+            _rev: string;
+            name?: string
+          } | null;
+        }>
+      `,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = {
+        author: Sanity.ReferenceType<
+          Sanity.SafeIndexedAccess<
+            Extract<
+              Sanity.Schema.Document[][number],
+              {
+                _type: 'book';
+              }
+            >[][number],
+            'author'
+          >
+        >;
+      }[];"
+    `);
+  });
+
+  it('dereferences reference types keeping non-nullables', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            {
+              name: 'author',
+              type: 'reference',
+              to: [{ type: 'author' }],
+              // this should remove `null` from the type
+              codegen: { required: true },
+            },
+          ],
+        },
+        {
+          name: 'author',
+          type: 'document',
+          fields: [{ name: 'name', type: 'string' }],
+        },
+      ],
+      query: `*[_type == 'book'] { author-> }`,
+      expectedType: `
+        Array<{
+          author: {
+            _type: 'author';
+            _createdAt: string;
+            _id: string;
+            _updatedAt: string;
+            _rev: string;
+            name?: string
+          };
+        }>
+      `,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = {
+        author: Sanity.ReferenceType<
+          Sanity.SafeIndexedAccess<
+            Extract<
+              Sanity.Schema.Document[][number],
+              {
+                _type: 'book';
+              }
+            >[][number],
+            'author'
+          >
+        >;
+      }[];"
+    `);
+  });
+
+  it('works with nested projections', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            {
+              name: 'author',
+              type: 'reference',
+              to: [{ type: 'author' }],
+              // this should remove `null` from the type
+              codegen: { required: true },
+            },
+          ],
+        },
+        {
+          name: 'author',
+          type: 'document',
+          fields: [{ name: 'name', type: 'string' }],
+        },
+      ],
+      query: `*[_type == 'book'] { author->{ name } }`,
+      expectedType: `
+        Array<{
+          author: {
+            name: string | null
+          };
+        }>
+      `,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = {
+        author: {
+          name: Sanity.SafeIndexedAccess<
+            Sanity.ReferenceType<
+              Sanity.SafeIndexedAccess<
+                Extract<
+                  Sanity.Schema.Document[][number],
+                  {
+                    _type: 'book';
+                  }
+                >[][number],
+                'author'
+              >
+            >,
+            'name'
+          >;
+        };
+      }[];"
+    `);
+  });
+});

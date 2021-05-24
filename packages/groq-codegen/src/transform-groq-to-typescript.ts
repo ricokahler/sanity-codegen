@@ -320,6 +320,23 @@ export function transformGroqAstToTsAst({
       ]);
     }
 
+    case 'Deref': {
+      return t.tsTypeReference(
+        t.tsQualifiedName(
+          t.identifier('Sanity'),
+          t.identifier('ReferenceType'),
+        ),
+        t.tsTypeParameterInstantiation([
+          transformGroqAstToTsAst({
+            everything,
+            scope,
+            parentScope,
+            node: node.base,
+          }),
+        ]),
+      );
+    }
+
     default: {
       console.warn(`"${node.type}" not implemented yet`);
       return t.tsUnknownKeyword();

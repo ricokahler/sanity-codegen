@@ -83,8 +83,14 @@ declare namespace Sanity {
     T extends { [key: string]: any } | null | undefined,
     K extends keyof NonNullable<T>
   > = T extends null | undefined
-    ? UndefinedToNull<NonNullable<T>[K]> | null
+    ? SafeIndexedAccess<NonNullable<T>, K> | null
     : UndefinedToNull<NonNullable<T>[K]>;
 
   type ArrayElementAccess<T extends any[]> = T[number] | null;
+
+  type ReferenceType<T> = T extends null | undefined
+    ? ReferenceType<NonNullable<T>> | null
+    : T extends Sanity.Reference<infer U>
+    ? UndefinedToNull<U>
+    : never;
 }
