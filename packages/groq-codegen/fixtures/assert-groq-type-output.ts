@@ -7,6 +7,8 @@ import {
 import ts from 'typescript';
 import { transformGroqToTypescript } from '../src/transform-groq-to-typescript';
 import { stripIndent, stripIndents } from 'common-tags';
+import fs from 'fs';
+import path from 'path';
 
 interface Params {
   query: string;
@@ -29,6 +31,8 @@ export async function assertGroqTypeOutput({
     module: ts.ModuleKind.ESNext,
     moduleResolution: ts.ModuleResolutionKind.NodeJs,
     noEmit: true,
+    // TODO: maybe this will it speed it up?
+    // incremental: true,
   };
 
   // seems like the types to babel are mismatched
@@ -80,12 +84,17 @@ export async function assertGroqTypeOutput({
   const emitResult = program.emit();
 
   if (debug) {
-    console.log(
+    fs.promises.writeFile(
+      path.resolve(__dirname, '../src/__debug-output.ts'),
       prettier.format(
-        `
+        stripIndent`
+          /*\n${stripIndent(query)}\n*/
+          
           ${schemaCode}
 
           ${queryCode}
+
+          declare const query: Sanity.Queries.QueryType;
         `,
         { parser: 'typescript', singleQuote: true },
       ),
