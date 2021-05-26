@@ -15,24 +15,24 @@ describe('generateGroqTypes', () => {
         namespace Queries {
           type BookAuthor = Sanity.SafeIndexedAccess<
             Sanity.ArrayElementAccess<
-              Extract<
-                Sanity.Schema.Document[][number],
+              Sanity.MultiExtract<
+                Sanity.Schema.Document[],
                 {
                   _type: \\"book\\";
                 }
-              >[]
+              >
             >,
             \\"author\\"
           >;
           type BookTitles = Sanity.SafeIndexedAccess<
-            Extract<
-              Sanity.Schema.Document[][number],
+            Sanity.MultiExtract<
+              Sanity.Schema.Document[],
               {
                 _type: \\"book\\";
               }
-            >[][number],
+            >,
             \\"title\\"
-          >[];
+          >;
 
           /**
            * A keyed type of all the codegen'ed queries. This type is used for

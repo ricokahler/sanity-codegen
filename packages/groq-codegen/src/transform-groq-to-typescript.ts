@@ -3,28 +3,6 @@ import * as Groq from 'groq-js/dist/nodeTypes';
 import * as t from '@babel/types';
 
 /**
- * Normalizes a transform for arrays by checking if the input node is an array.
- * If it is, it'll perform the operation on the unwrapped array expression then
- * re-wrap with an array type
- * (e.g. `Operation<InputNode[number]>[]`).
- *
- * If the input node is not an array, it'll just perform the operation on the
- * input node (e.g. `Operation<InputNode>`)
- */
-function normalizeArrayTransform(
-  inputNode: any,
-  operation: (node: any) => any,
-) {
-  if (t.isTSArrayType(inputNode)) {
-    return t.tsArrayType(
-      operation(t.tsIndexedAccessType(inputNode, t.tsNumberKeyword())),
-    );
-  }
-
-  return operation(inputNode);
-}
-
-/**
  * A helper that returns a type reference to the `Sanity.SafeIndexedAccess`
  * type helper made in `@sanity-codegen/types`. The purposes of this is to
  * transform attribute access types in groq that consider `undefined`
@@ -86,47 +64,33 @@ export function transformGroqAstToTsAst({
       });
 
       // Sanity.SafeIndexedAccess<Transform<Base>, 'name'>
-      return normalizeArrayTransform(base, (n) =>
-        safeIndexedAccess(n, node.name),
-      );
+      return safeIndexedAccess(base, node.name);
+    }
+
+    case 'Star': {
+      return everything;
     }
 
     case 'Filter': {
-      const extractSubject = (() => {
-        const { base } = node;
-
-        switch (base.type) {
-          case 'Star': {
-            // input:  *[_type == 'movie']
-            // output: Scope
-            return everything;
-          }
-          case 'Identifier': {
-            // input:  actors[name == 'leo']
-            // output: Sanity.SafeIndexedAccess<Scope, 'actors'>
-            return safeIndexedAccess(scope, base.name);
-          }
-          default: {
-            // TODO: better error messages
-            throw new Error('Unsupported');
-          }
-        }
-      })();
+      const extractSubject = transformGroqAstToTsAst({
+        everything,
+        scope,
+        parentScope,
+        node: node.base,
+      });
 
       // Extract<ExtractSubject, Transform<Query>>
-      return normalizeArrayTransform(extractSubject, (n) =>
-        t.tsTypeReference(
-          t.identifier('Extract'),
-          t.tsTypeParameterInstantiation([
-            n,
-            transformGroqAstToTsAst({
-              everything,
-              scope,
-              parentScope,
-              node: node.query,
-            }),
-          ]),
-        ),
+      return t.tsTypeReference(
+        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('MultiExtract')),
+        t.tsTypeParameterInstantiation([
+          extractSubject,
+          transformGroqAstToTsAst({
+            everything,
+            scope,
+            parentScope,
+            node: node.query,
+          }),
+        ]),
       );
     }
 
@@ -205,75 +169,44 @@ export function transformGroqAstToTsAst({
 
     case 'Object': {
       const { attributes } = node;
-      // input:
-      // `{ firstProperty, secondProperty, ... }`
-      //
-      // output:
-      //
-      // ```
-      // {
-      //   firstProperty: Transform<AttributeValue>,
-      //   secondProperty: Transform<AttributeValue>,
-      // } & Omit<Base, 'firstProperty' | 'secondProperty'>
-      // ```
-      return normalizeArrayTransform(scope, (n) => {
-        const hasSplat = attributes.some(
-          (attribute) => attribute.type === 'ObjectSplat',
-        );
 
-        // { firstProperty: Transform<AttributeValue> }
-        const objectAttributesTypeLiteral = t.tsTypeLiteral(
-          attributes
-            .filter(
-              (attribute): attribute is Groq.ObjectAttributeNode =>
-                attribute.type === 'ObjectAttribute',
-            )
-            .map((attribute) => {
-              return t.tsPropertySignature(
-                t.identifier(attribute.key.value),
-                t.tsTypeAnnotation(
-                  transformGroqAstToTsAst({
-                    everything,
-                    scope: n,
-                    parentScope: scope,
-                    node: attribute.value,
-                  }),
-                ),
-              );
-            }),
-        );
+      const hasSplat = attributes.some(
+        (attribute) => attribute.type === 'ObjectSplat',
+      );
 
-        if (hasSplat) {
-          // { firstProperty: Transform<AttributeValue> } & Omit<Base, 'firstProperty'>
-          return t.tsIntersectionType([
-            objectAttributesTypeLiteral,
-            t.tsTypeReference(
-              t.identifier('Omit'),
-              t.tsTypeParameterInstantiation([
-                n,
-                t.tsUnionType(
-                  attributes
-                    .filter(
-                      (attribute): attribute is Groq.ObjectAttributeNode =>
-                        attribute.type === 'ObjectAttribute',
-                    )
-                    .map((attribute) =>
-                      t.tsLiteralType(t.stringLiteral(attribute.key.value)),
-                    ),
-                ),
-              ]),
-            ),
-          ]);
-        }
-
-        return objectAttributesTypeLiteral;
-      });
+      return t.tsTypeReference(
+        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('ObjectMap')),
+        t.tsTypeParameterInstantiation([
+          scope,
+          t.tsTypeLiteral(
+            attributes
+              .filter(
+                (attribute): attribute is Groq.ObjectAttributeNode =>
+                  attribute.type === 'ObjectAttribute',
+              )
+              .map((attribute) => {
+                return t.tsPropertySignature(
+                  t.identifier(attribute.key.value),
+                  t.tsTypeAnnotation(
+                    transformGroqAstToTsAst({
+                      everything,
+                      scope: scope,
+                      parentScope: scope,
+                      node: attribute.value,
+                    }),
+                  ),
+                );
+              }),
+          ),
+          t.tsLiteralType(
+            t.stringLiteral(hasSplat ? 'with_splat' : 'without_splat'),
+          ),
+        ]),
+      );
     }
 
     case 'Identifier': {
-      return normalizeArrayTransform(scope, (n) =>
-        safeIndexedAccess(n, node.name),
-      );
+      return safeIndexedAccess(scope, node.name);
     }
 
     case 'Parenthesis': {

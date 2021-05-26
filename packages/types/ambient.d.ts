@@ -79,18 +79,48 @@ declare namespace Sanity {
     ? NonNullable<T> | null
     : NonNullable<T>;
 
+  // TODO: clean up nullable chaining
   type SafeIndexedAccess<
-    T extends { [key: string]: any } | null | undefined,
-    K extends keyof NonNullable<T>
-  > = T extends null | undefined
-    ? SafeIndexedAccess<NonNullable<T>, K> | null
-    : UndefinedToNull<NonNullable<T>[K]>;
+    T extends { [key: string]: any } | null,
+    K extends string
+  > = T extends NonNullable<T>
+    ? T extends any[]
+      ? Sanity.SafeIndexedAccess<T[number], K>[]
+      : UndefinedToNull<NonNullable<T>[K]>
+    : SafeIndexedAccess<NonNullable<T>, K> | null;
+
+  /** like normal extract expect works on array types */
+  type MultiExtract<T, U> = T extends any[]
+    ? Extract<T[number], U>[]
+    : Extract<T, U>;
 
   type ArrayElementAccess<T extends any[]> = T[number] | null;
 
-  type ReferenceType<T> = T extends null | undefined
-    ? ReferenceType<NonNullable<T>> | null
-    : T extends Sanity.Reference<infer U>
-    ? UndefinedToNull<U>
-    : never;
+  type ReferenceType<T> = T extends NonNullable<T>
+    ? T extends any[]
+      ? ReferenceType<T[number]>[]
+      : T extends Sanity.Reference<infer U>
+      ? UndefinedToNull<U>
+      : never
+    : ReferenceType<NonNullable<T>> | null;
+
+  type ObjectMap<
+    Scope,
+    Map extends { [key: string]: any },
+    WithSplat extends 'with_splat' | 'without_splat'
+  > = Scope extends NonNullable<Scope>
+    ? Scope extends any[]
+      ? Array<
+          {
+            [K in keyof Map]: Map[K][number];
+          } &
+            (WithSplat extends 'with_splat'
+              ? Omit<Scope[number], keyof Map>
+              : unknown)
+        >
+      : {
+          [K in keyof Map]: Map[K];
+        } &
+          (WithSplat extends 'with_splat' ? Omit<Scope, keyof Map> : unknown)
+    : ObjectMap<NonNullable<Scope>, Map, WithSplat> | null;
 }
