@@ -22,11 +22,13 @@ describe('Filter', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.MultiExtract<
-        Sanity.Schema.Document[],
-        {
-          _type: 'book';
-        }
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.MultiExtract<
+          Sanity.Schema.Document[],
+          {
+            _type: 'book';
+          }
+        >
       >;"
     `);
   });
@@ -68,17 +70,19 @@ describe('Filter', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.MultiExtract<
-        Sanity.Schema.Document[],
-        (
-          | {
-              _type: 'book';
-            }
-          | {
-              _type: 'movie';
-            }
-        ) &
-          unknown
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.MultiExtract<
+          Sanity.Schema.Document[],
+          (
+            | {
+                _type: 'book';
+              }
+            | {
+                _type: 'movie';
+              }
+          ) &
+            unknown
+        >
       >;"
     `);
   });
@@ -108,17 +112,19 @@ describe('Attribute', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.SafeIndexedAccess<
-        Sanity.SafeIndexedAccess<
-          Sanity.MultiExtract<
-            Sanity.Schema.Document[],
-            {
-              _type: 'book';
-            }
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.IndexedAccess<
+          Sanity.IndexedAccess<
+            Sanity.MultiExtract<
+              Sanity.Schema.Document[],
+              {
+                _type: 'book';
+              }
+            >,
+            'author'
           >,
-          'author'
-        >,
-        'name'
+          'name'
+        >
       >;"
     `);
   });
@@ -155,17 +161,19 @@ describe('Attribute', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.SafeIndexedAccess<
-        Sanity.SafeIndexedAccess<
-          Sanity.MultiExtract<
-            Sanity.Schema.Document[],
-            {
-              _type: 'book';
-            }
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.IndexedAccess<
+          Sanity.IndexedAccess<
+            Sanity.MultiExtract<
+              Sanity.Schema.Document[],
+              {
+                _type: 'book';
+              }
+            >,
+            'author'
           >,
-          'author'
-        >,
-        'name'
+          'name'
+        >
       >;"
     `);
   });
@@ -203,17 +211,19 @@ describe('Attribute', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.SafeIndexedAccess<
-        Sanity.SafeIndexedAccess<
-          Sanity.MultiExtract<
-            Sanity.Schema.Document[],
-            {
-              _type: 'book';
-            }
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.IndexedAccess<
+          Sanity.IndexedAccess<
+            Sanity.MultiExtract<
+              Sanity.Schema.Document[],
+              {
+                _type: 'book';
+              }
+            >,
+            'author'
           >,
-          'author'
-        >,
-        'name'
+          'name'
+        >
       >;"
     `);
   });
@@ -241,12 +251,14 @@ describe('Element', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ArrayElementAccess<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
-          {
-            _type: 'book';
-          }
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ArrayElementAccess<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >
         >
       >;"
     `);
@@ -278,17 +290,19 @@ describe('Object/Projection', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        unknown,
-        {
-          books: Sanity.MultiExtract<
-            Sanity.Schema.Document[],
-            {
-              _type: 'book';
-            }
-          >;
-        },
-        'without_splat'
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          unknown,
+          {
+            books: Sanity.MultiExtract<
+              Sanity.Schema.Document[],
+              {
+                _type: 'book';
+              }
+            >;
+          },
+          'without_splat'
+        >
       >;"
     `);
   });
@@ -334,34 +348,46 @@ describe('Object/Projection', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
           {
-            _type: 'book';
-          }
-        >,
-        {
-          title: Sanity.SafeIndexedAccess<
-            Sanity.MultiExtract<
-              Sanity.Schema.Document[],
-              {
-                _type: 'book';
-              }
-            >,
-            'title'
-          >;
-          nonRequired: Sanity.SafeIndexedAccess<
-            Sanity.MultiExtract<
-              Sanity.Schema.Document[],
-              {
-                _type: 'book';
-              }
-            >,
-            'nonRequired'
-          >;
-          authorName: Sanity.SafeIndexedAccess<
-            Sanity.SafeIndexedAccess<
+            title: Sanity.IndexedAccess<
+              Sanity.MultiExtract<
+                Sanity.Schema.Document[],
+                {
+                  _type: 'book';
+                }
+              >,
+              'title'
+            >;
+            nonRequired: Sanity.IndexedAccess<
+              Sanity.MultiExtract<
+                Sanity.Schema.Document[],
+                {
+                  _type: 'book';
+                }
+              >,
+              'nonRequired'
+            >;
+            authorName: Sanity.IndexedAccess<
+              Sanity.IndexedAccess<
+                Sanity.MultiExtract<
+                  Sanity.Schema.Document[],
+                  {
+                    _type: 'book';
+                  }
+                >,
+                'author'
+              >,
+              'name'
+            >;
+            authorAlias: Sanity.IndexedAccess<
               Sanity.MultiExtract<
                 Sanity.Schema.Document[],
                 {
@@ -369,20 +395,10 @@ describe('Object/Projection', () => {
                 }
               >,
               'author'
-            >,
-            'name'
-          >;
-          authorAlias: Sanity.SafeIndexedAccess<
-            Sanity.MultiExtract<
-              Sanity.Schema.Document[],
-              {
-                _type: 'book';
-              }
-            >,
-            'author'
-          >;
-        },
-        'without_splat'
+            >;
+          },
+          'without_splat'
+        >
       >;"
     `);
   });
@@ -440,37 +456,39 @@ describe('Object/Projection', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
           {
-            _type: 'book';
-          }
-        >,
-        {
-          author: Sanity.SafeIndexedAccess<
-            Sanity.SafeIndexedAccess<
+            author: Sanity.IndexedAccess<
+              Sanity.IndexedAccess<
+                Sanity.MultiExtract<
+                  Sanity.Schema.Document[],
+                  {
+                    _type: 'book';
+                  }
+                >,
+                'author'
+              >,
+              'name'
+            >;
+            nonRequiredA: Sanity.IndexedAccess<
               Sanity.MultiExtract<
                 Sanity.Schema.Document[],
                 {
                   _type: 'book';
                 }
               >,
-              'author'
-            >,
-            'name'
-          >;
-          nonRequiredA: Sanity.SafeIndexedAccess<
-            Sanity.MultiExtract<
-              Sanity.Schema.Document[],
-              {
-                _type: 'book';
-              }
-            >,
-            'nonRequiredA'
-          >;
-        },
-        'with_splat'
+              'nonRequiredA'
+            >;
+          },
+          'with_splat'
+        >
       >;"
     `);
   });
@@ -509,27 +527,29 @@ describe('Deref', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
           {
-            _type: 'book';
-          }
-        >,
-        {
-          author: Sanity.ReferenceType<
-            Sanity.SafeIndexedAccess<
-              Sanity.MultiExtract<
-                Sanity.Schema.Document[],
-                {
-                  _type: 'book';
-                }
-              >,
-              'author'
-            >
-          >;
-        },
-        'without_splat'
+            author: Sanity.ReferenceType<
+              Sanity.IndexedAccess<
+                Sanity.MultiExtract<
+                  Sanity.Schema.Document[],
+                  {
+                    _type: 'book';
+                  }
+                >,
+                'author'
+              >
+            >;
+          },
+          'without_splat'
+        >
       >;"
     `);
   });
@@ -572,27 +592,29 @@ describe('Deref', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
           {
-            _type: 'book';
-          }
-        >,
-        {
-          author: Sanity.ReferenceType<
-            Sanity.SafeIndexedAccess<
-              Sanity.MultiExtract<
-                Sanity.Schema.Document[],
-                {
-                  _type: 'book';
-                }
-              >,
-              'author'
-            >
-          >;
-        },
-        'without_splat'
+            author: Sanity.ReferenceType<
+              Sanity.IndexedAccess<
+                Sanity.MultiExtract<
+                  Sanity.Schema.Document[],
+                  {
+                    _type: 'book';
+                  }
+                >,
+                'author'
+              >
+            >;
+          },
+          'without_splat'
+        >
       >;"
     `);
   });
@@ -630,46 +652,286 @@ describe('Deref', () => {
     });
 
     expect(types).toMatchInlineSnapshot(`
-      "type Query = Sanity.ObjectMap<
-        Sanity.MultiExtract<
-          Sanity.Schema.Document[],
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
           {
-            _type: 'book';
-          }
-        >,
+            author: Sanity.ObjectMap<
+              Sanity.ReferenceType<
+                Sanity.IndexedAccess<
+                  Sanity.MultiExtract<
+                    Sanity.Schema.Document[],
+                    {
+                      _type: 'book';
+                    }
+                  >,
+                  'author'
+                >
+              >,
+              {
+                name: Sanity.IndexedAccess<
+                  Sanity.ReferenceType<
+                    Sanity.IndexedAccess<
+                      Sanity.MultiExtract<
+                        Sanity.Schema.Document[],
+                        {
+                          _type: 'book';
+                        }
+                      >,
+                      'author'
+                    >
+                  >,
+                  'name'
+                >;
+              },
+              'without_splat'
+            >;
+          },
+          'without_splat'
+        >
+      >;"
+    `);
+  });
+});
+
+describe('Mapper', () => {
+  it('transforms to SafeIndexedAccess', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
         {
-          author: Sanity.ObjectMap<
-            Sanity.ReferenceType<
-              Sanity.SafeIndexedAccess<
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            {
+              name: 'authors',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'author',
+                  fields: [{ name: 'name', type: 'string' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      query: `
+        *[_type == 'book'] {
+          title,
+          authors[],
+          'names': authors[].name,
+        }
+      `,
+      expectedType: `Array<{
+        title: string | null;
+        authors: Array<{
+          _key: string;
+          _type: 'author';
+          name?: string;
+        } | null>;
+        names: Array<string | null>;
+      }>`,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
+          {
+            title: Sanity.IndexedAccess<
+              Sanity.MultiExtract<
+                Sanity.Schema.Document[],
+                {
+                  _type: 'book';
+                }
+              >,
+              'title'
+            >;
+            authors: Sanity.Mapper<
+              Sanity.IndexedAccess<
                 Sanity.MultiExtract<
                   Sanity.Schema.Document[],
                   {
                     _type: 'book';
                   }
                 >,
-                'author'
+                'authors'
               >
-            >,
+            >;
+            names: Sanity.IndexedAccess<
+              Sanity.Mapper<
+                Sanity.IndexedAccess<
+                  Sanity.MultiExtract<
+                    Sanity.Schema.Document[],
+                    {
+                      _type: 'book';
+                    }
+                  >,
+                  'authors'
+                >
+              >,
+              'name'
+            >;
+          },
+          'without_splat'
+        >
+      >;"
+    `);
+  });
+
+  it('works with non-nullables', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
             {
-              name: Sanity.SafeIndexedAccess<
-                Sanity.ReferenceType<
-                  Sanity.SafeIndexedAccess<
-                    Sanity.MultiExtract<
-                      Sanity.Schema.Document[],
-                      {
-                        _type: 'book';
-                      }
-                    >,
-                    'author'
-                  >
-                >,
-                'name'
-              >;
+              name: 'authors',
+              type: 'array',
+              codegen: { required: true },
+              of: [
+                {
+                  type: 'object',
+                  name: 'author',
+                  codegen: { required: true },
+                  fields: [
+                    {
+                      name: 'name',
+                      type: 'string',
+                      codegen: { required: true },
+                    },
+                  ],
+                },
+              ],
             },
-            'without_splat'
-          >;
+          ],
         },
-        'without_splat'
+      ],
+      query: `
+        *[_type == 'book'] {
+          'names': authors[].name,
+          authors[]
+        }
+      `,
+      expectedType: `Array<{
+        names: string[];
+        authors: Array<{
+          _key: string;
+          _type: 'author';
+          name: string;
+        }>
+      }>`,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.ObjectMap<
+          Sanity.MultiExtract<
+            Sanity.Schema.Document[],
+            {
+              _type: 'book';
+            }
+          >,
+          {
+            names: Sanity.IndexedAccess<
+              Sanity.Mapper<
+                Sanity.IndexedAccess<
+                  Sanity.MultiExtract<
+                    Sanity.Schema.Document[],
+                    {
+                      _type: 'book';
+                    }
+                  >,
+                  'authors'
+                >
+              >,
+              'name'
+            >;
+            authors: Sanity.Mapper<
+              Sanity.IndexedAccess<
+                Sanity.MultiExtract<
+                  Sanity.Schema.Document[],
+                  {
+                    _type: 'book';
+                  }
+                >,
+                'authors'
+              >
+            >;
+          },
+          'without_splat'
+        >
+      >;"
+    `);
+  });
+
+  it('flattens the result', async () => {
+    const types = await assertGroqTypeOutput({
+      schema: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            {
+              name: 'authors',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'author',
+                  fields: [
+                    {
+                      name: 'name',
+                      type: 'string',
+                    },
+                    {
+                      name: 'foo',
+                      type: 'string',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      query: `
+        *[_type == 'book'].authors[].name
+      `,
+      expectedType: `Array<string | null>`,
+    });
+
+    expect(types).toMatchInlineSnapshot(`
+      "type Query = Sanity.UnwrapMapper<
+        Sanity.IndexedAccess<
+          Sanity.Mapper<
+            Sanity.IndexedAccess<
+              Sanity.MultiExtract<
+                Sanity.Schema.Document[],
+                {
+                  _type: 'book';
+                }
+              >,
+              'authors'
+            >
+          >,
+          'name'
+        >
       >;"
     `);
   });

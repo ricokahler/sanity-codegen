@@ -7,12 +7,9 @@ import * as t from '@babel/types';
  * type helper made in `@sanity-codegen/types`. The purposes of this is to
  * transform attribute access types in groq that consider `undefined`
  */
-function safeIndexedAccess(objectType: any, stringLiteralValue: string) {
+function indexedAccess(objectType: any, stringLiteralValue: string) {
   return t.tsTypeReference(
-    t.tsQualifiedName(
-      t.identifier('Sanity'),
-      t.identifier('SafeIndexedAccess'),
-    ),
+    t.tsQualifiedName(t.identifier('Sanity'), t.identifier('IndexedAccess')),
     t.tsTypeParameterInstantiation([
       objectType,
       t.tsLiteralType(t.stringLiteral(stringLiteralValue)),
@@ -63,8 +60,8 @@ export function transformGroqAstToTsAst({
         node: node.base,
       });
 
-      // Sanity.SafeIndexedAccess<Transform<Base>, 'name'>
-      return safeIndexedAccess(base, node.name);
+      // Sanity.IndexedAccess<Transform<Base>, 'name'>
+      return indexedAccess(base, node.name);
     }
 
     case 'Star': {
@@ -206,7 +203,7 @@ export function transformGroqAstToTsAst({
     }
 
     case 'Identifier': {
-      return safeIndexedAccess(scope, node.name);
+      return indexedAccess(scope, node.name);
     }
 
     case 'Parenthesis': {
@@ -270,6 +267,20 @@ export function transformGroqAstToTsAst({
       );
     }
 
+    case 'Mapper': {
+      return t.tsTypeReference(
+        t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Mapper')),
+        t.tsTypeParameterInstantiation([
+          transformGroqAstToTsAst({
+            everything,
+            scope,
+            parentScope,
+            node: node.base,
+          }),
+        ]),
+      );
+    }
+
     default: {
       console.warn(`"${node.type}" not implemented yet`);
       return t.tsUnknownKeyword();
@@ -291,7 +302,6 @@ export function transformGroqToTypescript({
   query,
 }: TransformGroqToTypescriptOptions) {
   const root: Groq.SyntaxNode = parse(query);
-
   // Sanity.Schema.Document[]
   const everything = t.tsArrayType(
     t.tsTypeReference(
@@ -302,10 +312,15 @@ export function transformGroqToTypescript({
     ),
   );
 
-  return transformGroqAstToTsAst({
-    everything,
-    node: root,
-    parentScope: t.tsUnknownKeyword(),
-    scope: t.tsUnknownKeyword(),
-  });
+  return t.tsTypeReference(
+    t.tsQualifiedName(t.identifier('Sanity'), t.identifier('UnwrapMapper')),
+    t.tsTypeParameterInstantiation([
+      transformGroqAstToTsAst({
+        everything,
+        node: root,
+        parentScope: t.tsUnknownKeyword(),
+        scope: t.tsUnknownKeyword(),
+      }),
+    ]),
+  );
 }

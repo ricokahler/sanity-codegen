@@ -79,15 +79,23 @@ declare namespace Sanity {
     ? NonNullable<T> | null
     : NonNullable<T>;
 
+  type _Flatten<T> = T extends any[]
+    ? _Flatten<Extract<T[number], any[]>[number]> | Exclude<T[number], any[]>
+    : T;
+
+  type Flatten<T> = _Flatten<T>[];
+
   // TODO: clean up nullable chaining
-  type SafeIndexedAccess<
+  type IndexedAccess<
     T extends { [key: string]: any } | null,
     K extends string
   > = T extends NonNullable<T>
-    ? T extends any[]
-      ? Sanity.SafeIndexedAccess<T[number], K>[]
+    ? T extends Mapper<infer U>
+      ? Mapper<Sanity.IndexedAccess<U, K>>
+      : T extends any[]
+      ? Flatten<Sanity.IndexedAccess<T[number], K>[]>
       : UndefinedToNull<NonNullable<T>[K]>
-    : SafeIndexedAccess<NonNullable<T>, K> | null;
+    : IndexedAccess<NonNullable<T>, K> | null;
 
   /** like normal extract expect works on array types */
   type MultiExtract<T, U> = T extends any[]
@@ -112,15 +120,25 @@ declare namespace Sanity {
     ? Scope extends any[]
       ? Array<
           {
-            [K in keyof Map]: Map[K][number];
+            [K in keyof Map]: Map[K] extends Mapper<infer U>
+              ? U
+              : Map[K][number];
           } &
             (WithSplat extends 'with_splat'
               ? Omit<Scope[number], keyof Map>
               : unknown)
         >
       : {
-          [K in keyof Map]: Map[K];
+          [K in keyof Map]: Map[K] extends Mapper<infer U> ? U : Map[K];
         } &
           (WithSplat extends 'with_splat' ? Omit<Scope, keyof Map> : unknown)
     : ObjectMap<NonNullable<Scope>, Map, WithSplat> | null;
+
+  enum NominalMapperType {
+    _ = '',
+  }
+
+  type Mapper<T> = T & NominalMapperType;
+
+  type UnwrapMapper<T> = T extends Mapper<infer U> ? UnwrapMapper<U> : T;
 }

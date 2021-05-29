@@ -94,6 +94,8 @@ export async function assertGroqTypeOutput({
 
           ${queryCode}
 
+          type ExpectedType = ${stripIndent(expectedType)};
+
           declare const query: Sanity.Queries.QueryType;
         `,
         { parser: 'typescript', singleQuote: true },
