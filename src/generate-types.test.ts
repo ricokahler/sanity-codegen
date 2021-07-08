@@ -1374,4 +1374,85 @@ describe('generate-types', () => {
 
     expect(caught).toBe(true);
   });
+
+  it('allows for type names with dots', async () => {
+    const muxType = {
+      title: 'Video blog post',
+      name: 'videoBlogPost',
+      type: 'document' as const,
+      fields: [
+        { title: 'Title', name: 'title', type: 'string' },
+        {
+          title: 'Video file',
+          name: 'video',
+          type: 'mux.video',
+        },
+      ],
+    };
+
+    const result = await generateTypes({ types: [muxType] });
+
+    expect(result).toMatchInlineSnapshot(`
+      "import type {
+        SanityReference,
+        SanityKeyedReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
+        SanityKeyed,
+      } from \\"sanity-codegen\\";
+
+      export type {
+        SanityReference,
+        SanityKeyedReference,
+        SanityAsset,
+        SanityImage,
+        SanityFile,
+        SanityGeoPoint,
+        SanityBlock,
+        SanityDocument,
+        SanityImageCrop,
+        SanityImageHotspot,
+        SanityKeyed,
+      };
+
+      /**
+       * Video blog post
+       *
+       *
+       */
+      export interface VideoBlogPost extends SanityDocument {
+        _type: \\"videoBlogPost\\";
+
+        /**
+         * Title — \`string\`
+         *
+         *
+         */
+        title?: string;
+
+        /**
+         * Video file — \`mux.video\`
+         *
+         *
+         */
+        video?: MuxVideo;
+      }
+
+      export type Documents = VideoBlogPost;
+
+      /**
+       * This interface is a stub. It was referenced in your sanity schema but
+       * the definition was not actually found. Future versions of
+       * sanity-codegen will let you type this explicity.
+       */
+      type MuxVideo = any;
+      "
+    `);
+  });
 });

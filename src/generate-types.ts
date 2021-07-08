@@ -76,11 +76,14 @@ type Parent = { node: Node; path: string | number };
 function validatePropertyName(
   sanityTypeName: string,
   parents: Parent[],
-  params: { allowHyphen: boolean }
+  params: { allowHyphen: boolean; allowPeriod: boolean }
 ) {
-  const regex = params.allowHyphen
-    ? /^[A-Z][A-Z0-9_-]*$/i
-    : /^[A-Z][A-Z0-9_]*$/i;
+  const regex = new RegExp(
+    `^[A-Z][A-Z0-9_${params.allowPeriod ? '\\.' : ''}${
+      params.allowHyphen ? '-' : ''
+    }]*$`,
+    'i'
+  );
 
   if (!regex.test(sanityTypeName)) {
     throw new Error(
@@ -100,6 +103,7 @@ function defaultGenerateTypeName(sanityTypeName: string) {
     // If using snake_case, remove underscores and convert to uppercase the letter following them.
     .replace(/(_[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
     .replace(/(-[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
+    .replace(/(\.[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
     .substring(1)}`;
 
   return typeName;
@@ -149,7 +153,7 @@ async function generateTypes({
 
   function createTypeName(
     sanityTypeName: string,
-    params: { allowHyphen: boolean }
+    params: { allowHyphen: boolean; allowPeriod: boolean }
   ) {
     validatePropertyName(sanityTypeName, [], params);
 
@@ -164,7 +168,7 @@ async function generateTypes({
    */
   function getTypeName(
     sanityTypeName: string,
-    params: { allowHyphen: boolean }
+    params: { allowHyphen: boolean; allowPeriod: boolean }
   ) {
     validatePropertyName(sanityTypeName, [], params);
 
@@ -330,7 +334,7 @@ async function generateTypes({
       return 'string';
     }
 
-    return getTypeName(obj.type, { allowHyphen: true });
+    return getTypeName(obj.type, { allowHyphen: true, allowPeriod: true });
   }
 
   function convertField(field: Field, parents: Parent[]) {
@@ -345,7 +349,10 @@ async function generateTypes({
       );
     }
 
-    validatePropertyName(field.name, parents, { allowHyphen: false });
+    validatePropertyName(field.name, parents, {
+      allowHyphen: false,
+      allowPeriod: false,
+    });
 
     return `
       /**
@@ -375,6 +382,7 @@ async function generateTypes({
      */
     export interface ${createTypeName(name, {
       allowHyphen: true,
+      allowPeriod: false,
     })} extends SanityDocument {
         _type: '${name}';
         ${fields
@@ -429,6 +437,7 @@ async function generateTypes({
         return `
           export type ${createTypeName(type.name, {
             allowHyphen: false,
+            allowPeriod: false,
           })} = ${convertType(type, [])};
         `;
       }),
@@ -437,7 +446,9 @@ async function generateTypes({
   if (documentTypes.length) {
     typeStrings.push(`
       export type Documents = ${documentTypes
-        .map(({ name }) => getTypeName(name, { allowHyphen: true }))
+        .map(({ name }) =>
+          getTypeName(name, { allowHyphen: true, allowPeriod: false })
+        )
         .join(' | ')}
     `);
   }
