@@ -6,5 +6,5 @@
     "moduleResolution": "node",
     "strict": true
   },
-  "include": ["./index.d.ts", "./ambient.d.ts"]
+  "include": ["./index.d.ts", "./common.d.ts"]
 }
