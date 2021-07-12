@@ -1,5 +1,6 @@
-import { structureIsArray } from './structure-is-array';
+import { isStructureArray } from './is-structure-array';
 import { wrapArray } from './wrap-array';
+import { createStructure } from './create-structure';
 
 export function accessAttributeInStructure(
   node: Sanity.GroqCodegen.StructureNode,
@@ -8,12 +9,12 @@ export function accessAttributeInStructure(
   switch (node.type) {
     case 'And':
     case 'Or': {
-      return {
+      return createStructure({
         ...node,
         children: node.children.map((child) =>
           accessAttributeInStructure(child, attributeName),
         ),
-      };
+      });
     }
 
     case 'Object': {
@@ -21,13 +22,11 @@ export function accessAttributeInStructure(
         (property) => property.key === attributeName,
       );
 
-      if (!matchingProperty) return { type: 'Unknown' };
+      if (!matchingProperty) return { type: 'Unknown', hash: 'unknown' };
       return matchingProperty.value;
     }
     case 'Array': {
-      const nodeHadArray = structureIsArray(node);
-
-      return nodeHadArray
+      return isStructureArray(node)
         ? wrapArray(accessAttributeInStructure(node.of, attributeName))
         : accessAttributeInStructure(node.of, attributeName);
     }
@@ -36,7 +35,7 @@ export function accessAttributeInStructure(
     case 'Number':
     case 'String':
     case 'Unknown': {
-      return { type: 'Unknown' };
+      return { type: 'Unknown', hash: 'unknown' };
     }
     case 'Lazy': {
       // TODO: is this right?

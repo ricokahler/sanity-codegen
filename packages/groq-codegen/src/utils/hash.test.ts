@@ -1,25 +1,31 @@
-import { hash } from './hash';
+import { objectHash } from './hash';
 
 describe('hash', () => {
   it('returns a number', () => {
-    expect(hash('test')).toMatchInlineSnapshot(`"evp9vd"`);
-    expect(hash('test')).toBe(hash('test'));
+    expect(objectHash('test')).toMatchInlineSnapshot(`"evp9vd"`);
+    expect(objectHash('test')).toBe(objectHash('test'));
 
-    expect(hash(3)).toMatchInlineSnapshot(`"un7bpm"`);
-    expect(hash(3)).toBe(hash(3));
+    expect(objectHash(3)).toMatchInlineSnapshot(`"un7bpm"`);
+    expect(objectHash(3)).toBe(objectHash(3));
 
-    expect(hash(null)).toMatchInlineSnapshot(`"1r8fttm"`);
-    expect(hash(null)).toBe(hash(null));
+    expect(objectHash(null)).toMatchInlineSnapshot(`"1r8fttm"`);
+    expect(objectHash(null)).toBe(objectHash(null));
 
-    expect(hash(undefined)).toMatchInlineSnapshot(`"1pjqkvu"`);
-    expect(hash(undefined)).toBe(hash(undefined));
+    expect(objectHash(undefined)).toMatchInlineSnapshot(`"1pjqkvu"`);
+    expect(objectHash(undefined)).toBe(objectHash(undefined));
 
-    expect(hash({ foo: { bar: 'test' } })).toMatchInlineSnapshot(`"9c7am1"`);
-    expect(hash({ foo: { bar: 'test' } })).toBe(hash({ foo: { bar: 'test' } }));
+    expect(objectHash({ foo: { bar: 'test' } })).toMatchInlineSnapshot(
+      `"9c7am1"`,
+    );
+    expect(objectHash({ foo: { bar: 'test' } })).toBe(
+      objectHash({ foo: { bar: 'test' } }),
+    );
 
-    expect(hash({ bar: 'bar', baz: 'baz' })).toMatchInlineSnapshot(`"1t32967"`);
-    expect(hash({ bar: 'bar', baz: 'baz' })).toBe(
-      hash({ baz: 'baz', bar: 'bar' }),
+    expect(objectHash({ bar: 'bar', baz: 'baz' })).toMatchInlineSnapshot(
+      `"1t32967"`,
+    );
+    expect(objectHash({ bar: 'bar', baz: 'baz' })).toBe(
+      objectHash({ baz: 'baz', bar: 'bar' }),
     );
   });
 });

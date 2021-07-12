@@ -14,15 +14,21 @@ function stringHash(str: string) {
  * a very simple object hash function.
  * designed for low churn but not meant to be perfect
  */
-export function hash(obj: unknown) {
+export function objectHash(obj: unknown): string {
   if (typeof obj !== 'object') return stringHash(`__${typeof obj}_${obj}`);
   if (obj === null) return stringHash(`__null_${obj}`);
 
-  if (Array.isArray(obj)) return hash(obj.map(hash).join('_'));
+  if (Array.isArray(obj)) return objectHash(obj.map(objectHash).join('_'));
 
-  return hash(
+  return objectHash(
     Object.entries(obj)
-      .map(([k, v]) => [k, hash(v)])
+      .map(([k, v]) => [k, objectHash(v)])
       .sort(([a], [b]) => a.toString().localeCompare(b.toString(), 'en')),
+  );
+}
+
+export function unorderedHash(items: unknown[]) {
+  return objectHash(
+    items.map(objectHash).sort((a, b) => a.localeCompare(b, 'en')),
   );
 }

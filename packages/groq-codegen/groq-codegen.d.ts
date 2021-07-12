@@ -5,16 +5,22 @@ declare namespace Sanity {
     type LazyNode = {
       type: 'Lazy';
       get: () => StructureNode;
+      // Note: it's important that `Lazy`'s hash a function of the the lazy
+      // value to be pulled, otherwise, there may be weird behavior due
+      // collisions. See `transformSchemaToStructure`.
+      hash: string;
     };
 
     type AndNode = {
       type: 'And';
       children: StructureNode[];
+      hash: string;
     };
 
     type OrNode = {
       type: 'Or';
       children: StructureNode[];
+      hash: string;
     };
 
     type ArrayNode = {
@@ -22,6 +28,7 @@ declare namespace Sanity {
       canBeNull: boolean;
       canBeUndefined: boolean;
       of: StructureNode;
+      hash: string;
     };
 
     type ObjectNode = {
@@ -29,6 +36,7 @@ declare namespace Sanity {
       properties: Array<{ key: string; value: StructureNode }>;
       canBeNull: boolean;
       canBeUndefined: boolean;
+      hash: string;
     };
 
     type StringNode = {
@@ -36,6 +44,7 @@ declare namespace Sanity {
       canBeNull: boolean;
       canBeUndefined: boolean;
       value: string | null;
+      hash: string;
     };
 
     type NumberNode = {
@@ -43,12 +52,14 @@ declare namespace Sanity {
       canBeNull: boolean;
       canBeUndefined: boolean;
       value: number | null;
+      hash: string;
     };
 
     type BooleanNode = {
       type: 'Boolean';
       canBeNull: boolean;
       canBeUndefined: boolean;
+      hash: string;
     };
 
     type IntrinsicNode = {
@@ -56,6 +67,7 @@ declare namespace Sanity {
       intrinsicType: IntrinsicType;
       canBeNull: boolean;
       canBeUndefined: boolean;
+      hash: string;
     };
 
     type ReferenceNode = {
@@ -63,9 +75,10 @@ declare namespace Sanity {
       to: StructureNode;
       canBeNull: boolean;
       canBeUndefined: boolean;
+      hash: string;
     };
 
-    type UnknownNode = { type: 'Unknown' };
+    type UnknownNode = { type: 'Unknown'; hash: 'unknown' };
 
     type StructureNode =
       | LazyNode

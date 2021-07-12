@@ -1,10 +1,10 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
-import { narrowStructure } from './utils';
+import { narrowStructure, createStructure } from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 import {
   accessAttributeInStructure,
   unwrapArray,
-  structureIsArray,
+  isStructureArray,
   wrapArray,
   unwrapReferences,
 } from './utils';
@@ -57,7 +57,7 @@ export function transformGroqToStructure({
     }
 
     case 'This': {
-      return scope || { type: 'Unknown' };
+      return scope || createStructure({ type: 'Unknown' });
     }
 
     case 'OpCall': {
@@ -72,7 +72,7 @@ export function transformGroqToStructure({
       });
 
       if (baseResult.type === 'Unknown') {
-        return { type: 'Unknown' };
+        return createStructure({ type: 'Unknown' });
       }
 
       return unwrapArray(baseResult);
@@ -86,7 +86,7 @@ export function transformGroqToStructure({
         schema,
       });
 
-      const baseResultHadArray = structureIsArray(baseResult);
+      const baseResultHadArray = isStructureArray(baseResult);
 
       const exprResult = transformGroqToStructure({
         node: node.expr,
@@ -101,7 +101,7 @@ export function transformGroqToStructure({
     }
 
     case 'Object': {
-      return {
+      return createStructure({
         type: 'Object',
         canBeNull: false,
         canBeUndefined: false,
@@ -118,17 +118,17 @@ export function transformGroqToStructure({
               scopes,
             }),
           })),
-      };
+      });
     }
 
     case 'Or': {
-      return {
+      return createStructure({
         type: 'Or',
         children: [
           transformGroqToStructure({ node: node.left, scopes, schema }),
           transformGroqToStructure({ node: node.right, scopes, schema }),
         ],
-      };
+      });
     }
 
     case 'AccessAttribute': {
@@ -149,7 +149,7 @@ export function transformGroqToStructure({
         });
       }
 
-      if (!scope) return { type: 'Unknown' };
+      if (!scope) return createStructure({ type: 'Unknown' });
 
       return accessAttributeInStructure(scope, node.name);
     }

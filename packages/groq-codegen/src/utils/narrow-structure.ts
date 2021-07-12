@@ -1,4 +1,5 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
+import { createStructure } from './create-structure';
 
 // TODO: could include things like defined checks or narrow based on types
 // TODO: also think about functions and how they could affect narrowing
@@ -217,8 +218,11 @@ function narrow(
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'Lazy': {
-      // TODO: this may create infinite loops
-      return narrow(node.get(), filter);
+      return createStructure({
+        type: 'Lazy',
+        get: () => narrow(node.get(), filter),
+        hashInput: ['Narrow', node.hash],
+      });
     }
 
     case 'Reference': {
@@ -227,37 +231,37 @@ function narrow(
     }
 
     case 'Or': {
-      return {
+      return createStructure({
         ...node,
         children: node.children
           .filter((n) => accept(n, filter))
           .map((n) => narrow(n, filter)),
-      };
+      });
     }
 
     case 'And': {
-      return {
+      return createStructure({
         ...node,
         children: node.children.map((n) => narrow(n, filter)),
-      };
+      });
     }
 
     case 'Array': {
-      return {
+      return createStructure({
         ...node,
         of: narrow(node.of, filter),
-      };
+      });
     }
 
     case 'Object': {
-      return {
+      return createStructure({
         ...node,
         // TODO (future): the GROQ filter may remove some properties
         properties: node.properties.map(({ key, value }) => ({
           key,
           value: narrow(value, filter),
         })),
-      };
+      });
     }
 
     case 'Boolean':

@@ -1,4 +1,4 @@
-import { hash, markAsDefined } from './utils';
+import { markAsDefined, createStructure } from './utils';
 
 export interface TransformSchemaToStructureOptions {
   schema: Sanity.SchemaDef.Schema;
@@ -7,20 +7,18 @@ export interface TransformSchemaToStructureOptions {
 export function transformSchemaToStructure({
   schema,
 }: TransformSchemaToStructureOptions): Sanity.GroqCodegen.StructureNode {
-  return {
+  return createStructure({
     type: 'Array',
-    of: {
+    of: createStructure({
       type: 'Or',
       children: schema.documents.map((n) =>
         markAsDefined(transform(n, schema)),
       ),
-    },
+    }),
     canBeNull: false,
     canBeUndefined: false,
-  };
+  });
 }
-
-const referenceCache = new Map<string, Sanity.GroqCodegen.StructureNode>();
 
 function transform(
   node: Sanity.SchemaDef.SchemaNode,
@@ -34,31 +32,26 @@ function transform(
       ].find((n) => n.name === node.to);
 
       // TODO: could show warning
-      if (!referencedType) return { type: 'Unknown' };
+      if (!referencedType) return createStructure({ type: 'Unknown' });
 
-      return {
+      return createStructure({
         type: 'Lazy',
-        get: () => {
-          const key = hash({ schemaDef: node, referencedType });
-          if (referenceCache.has(key)) return referenceCache.get(key)!;
-
-          const result = transform(referencedType, schema);
-
-          referenceCache.set(key, result);
-          return result;
-        },
-      };
+        // Note that the hash inputs are a function of the resulting getter
+        // value. This is necessary to prevent caching behavior.
+        hashInput: ['TransformSchemaToStructure', referencedType.name],
+        get: () => transform(referencedType, schema),
+      });
     }
     case 'Array': {
-      return {
+      return createStructure({
         type: 'Array',
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-        of: {
+        of: createStructure({
           type: 'Or',
           children: node.of.map((n) => transform(n, schema)),
-        },
-      };
+        }),
+      });
     }
     case 'Block': {
       // TODO:
@@ -67,23 +60,23 @@ function transform(
       );
     }
     case 'Boolean': {
-      return {
+      return createStructure({
         type: 'Boolean',
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-      };
+      });
     }
     case 'Date':
     case 'Datetime':
     case 'String':
     case 'Text':
     case 'Url': {
-      return {
+      return createStructure({
         type: 'String',
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
         value: null,
-      };
+      });
     }
     case 'Object':
     case 'Document':
@@ -99,57 +92,57 @@ function transform(
       if (node.type === 'Document') {
         properties.push({
           key: '_type',
-          value: {
+          value: createStructure({
             type: 'String',
             canBeNull: false,
             canBeUndefined: false,
             value: node.name,
-          },
+          }),
         });
 
         properties.push({
           key: '_id',
-          value: {
+          value: createStructure({
             type: 'String',
             canBeNull: false,
             canBeUndefined: false,
             value: null,
-          },
+          }),
         });
       }
 
       if (node.type === 'File' || node.type === 'Image') {
         properties.push({
           key: 'asset',
-          value: {
+          value: createStructure({
             type: 'Intrinsic',
             intrinsicType: 'Asset',
             // TODO: is this right?
             canBeNull: false,
             canBeUndefined: false,
-          },
+          }),
         });
       }
 
       if (node.type === 'Image') {
         properties.push({
           key: 'crop',
-          value: {
+          value: createStructure({
             type: 'Intrinsic',
             intrinsicType: 'Crop',
             canBeNull: false,
             canBeUndefined: true,
-          },
+          }),
         });
 
         properties.push({
           key: 'hotspot',
-          value: {
+          value: createStructure({
             type: 'Intrinsic',
             intrinsicType: 'Hotspot',
             canBeNull: false,
             canBeUndefined: true,
-          },
+          }),
         });
       }
 
@@ -164,73 +157,73 @@ function transform(
         }
       }
 
-      return {
+      return createStructure({
         type: 'Object',
         properties,
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-      };
+      });
     }
 
     case 'Geopoint': {
-      return {
+      return createStructure({
         type: 'Intrinsic',
         intrinsicType: 'Geopoint',
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-      };
+      });
     }
 
     case 'Number': {
-      return {
+      return createStructure({
         type: 'Number',
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
         value: null,
-      };
+      });
     }
 
     case 'Reference': {
-      return {
+      return createStructure({
         type: 'Reference',
         // TODO: this creates repeated types inside of a `Sanity.Reference<{}>`.
         // the desired behavior is to have them named when unmodified
-        to: {
+        to: createStructure({
           type: 'Or',
           children: node.to.map((n) => transform(n, schema)),
-        },
+        }),
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-      };
+      });
     }
 
     case 'Slug': {
-      return {
+      return createStructure({
         type: 'Object',
         properties: [
           {
             key: 'slug',
-            value: {
+            value: createStructure({
               type: 'Object',
               properties: [
                 {
                   key: 'current',
-                  value: {
+                  value: createStructure({
                     type: 'String',
                     canBeNull: false,
                     canBeUndefined: false,
                     value: null,
-                  },
+                  }),
                 },
               ],
               canBeNull: false,
               canBeUndefined: false,
-            },
+            }),
           },
         ],
         canBeNull: false,
         canBeUndefined: !node.codegen.required,
-      };
+      });
     }
 
     default: {
