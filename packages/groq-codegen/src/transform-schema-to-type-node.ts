@@ -1,25 +1,18 @@
 import { hash } from './hash';
 
-export interface TransformSchemaToTypeNodeOptions {
-  schemaDef: Sanity.SchemaDef.Def;
-  schema: Sanity.SchemaDef.Schema;
-}
-
 const referenceCache = new Map<string, Sanity.Groq.TypeNode>();
 
-export function transformSchemaToTypeNode({
-  schema,
-  schemaDef,
-}: TransformSchemaToTypeNodeOptions): Sanity.Groq.TypeNode {
-  if (schemaDef.definitionType === 'alias') {
+function transform(
+  node: Sanity.SchemaDef.Def,
+  schema: Sanity.SchemaDef.Schema,
+): Sanity.Groq.TypeNode {
+  if (node.definitionType === 'alias') {
     const referencedType = [
       ...schema.topLevelTypes,
       ...schema.documentTypes,
-    ].find((x) => x.name === schemaDef.type);
+    ].find((n) => n.name === node.type);
 
-    if (!referencedType) {
-      return { type: 'Unknown', isArray: false };
-    }
+    if (!referencedType) return { type: 'Unknown', isArray: false };
 
     return {
       type: 'Alias',
@@ -28,13 +21,10 @@ export function transformSchemaToTypeNode({
       canBeNull: false,
       canBeUndefined: false,
       get: () => {
-        const key = hash({ schemaDef, referencedType });
+        const key = hash({ schemaDef: node, referencedType });
         if (referenceCache.has(key)) return referenceCache.get(key)!;
 
-        const result = transformSchemaToTypeNode({
-          schema,
-          schemaDef: referencedType,
-        });
+        const result = transform(referencedType, schema);
 
         referenceCache.set(key, result);
         return result;
@@ -42,10 +32,10 @@ export function transformSchemaToTypeNode({
     };
   }
 
-  switch (schemaDef.type) {
+  switch (node.type) {
     case 'array': {
-      const children = schemaDef.of.map((i) => ({
-        ...transformSchemaToTypeNode({ schema, schemaDef: i }),
+      const children = node.of.map((n) => ({
+        ...transform(n, schema),
         isArray: false,
       }));
 
@@ -63,14 +53,14 @@ export function transformSchemaToTypeNode({
     case 'block': {
       // TODO:
       throw new Error(
-        `Schema Definition Type "${schemaDef.type}" not implemented yet.`,
+        `Schema Definition Type "${node.type}" not implemented yet.`,
       );
     }
     case 'boolean': {
       return {
         type: 'Boolean',
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         isArray: false,
       };
     }
@@ -81,8 +71,8 @@ export function transformSchemaToTypeNode({
     case 'url': {
       return {
         type: 'String',
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         value: null,
         isArray: false,
       };
@@ -98,14 +88,14 @@ export function transformSchemaToTypeNode({
 
       const properties: ObjectProperties = [];
 
-      if (schemaDef.type === 'document') {
+      if (node.type === 'document') {
         properties.push({
           key: '_type',
           value: {
             type: 'String',
             canBeNull: false,
             canBeUndefined: false,
-            value: schemaDef.name,
+            value: node.name,
             isArray: false,
           },
         });
@@ -122,7 +112,7 @@ export function transformSchemaToTypeNode({
         });
       }
 
-      if (schemaDef.type === 'file' || schemaDef.type === 'image') {
+      if (node.type === 'file' || node.type === 'image') {
         properties.push({
           key: 'asset',
           value: {
@@ -135,7 +125,7 @@ export function transformSchemaToTypeNode({
         });
       }
 
-      if (schemaDef.type === 'image') {
+      if (node.type === 'image') {
         properties.push({
           key: 'crop',
           value: {
@@ -159,12 +149,9 @@ export function transformSchemaToTypeNode({
         });
       }
 
-      const fieldProperties = schemaDef.fields?.map((field) => ({
+      const fieldProperties = node.fields?.map((field) => ({
         key: field.name,
-        value: transformSchemaToTypeNode({
-          schemaDef: field.definition,
-          schema,
-        }),
+        value: transform(field.definition, schema),
       }));
 
       if (fieldProperties) {
@@ -186,8 +173,8 @@ export function transformSchemaToTypeNode({
       return {
         type: 'Intrinsic',
         intrinsicType: 'Geopoint',
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         isArray: false,
       };
     }
@@ -195,8 +182,8 @@ export function transformSchemaToTypeNode({
     case 'number': {
       return {
         type: 'Number',
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         value: null,
         isArray: false,
       };
@@ -209,16 +196,14 @@ export function transformSchemaToTypeNode({
         // the desired behavior is to have them named when unmodified
         to: {
           type: 'Or',
-          children: schemaDef.to.map((n) =>
-            transformSchemaToTypeNode({ schemaDef: n, schema }),
-          ),
+          children: node.to.map((n) => transform(n, schema)),
           isArray: false,
           // TODO: implement this
           canBeNull: false,
           canBeUndefined: false,
         },
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         isArray: false,
       };
     }
@@ -249,8 +234,8 @@ export function transformSchemaToTypeNode({
             },
           },
         ],
-        canBeNull: !schemaDef.codegen.required,
-        canBeUndefined: !schemaDef.codegen.required,
+        canBeNull: !node.codegen.required,
+        canBeUndefined: !node.codegen.required,
         isArray: false,
       };
     }
@@ -260,19 +245,19 @@ export function transformSchemaToTypeNode({
         // `schemaDef.type` should be never because we exhausted the list of
         // possible items
         // @ts-expect-error
-        `Schema Definition Type "${schemaDef.type}" not implemented yet.`,
+        `Schema Definition Type "${node.type}" not implemented yet.`,
       );
     }
   }
 }
 
-export function getEverything(
+export function transformSchemaToTypeNode(
   schema: Sanity.SchemaDef.Schema,
 ): Sanity.Groq.TypeNode {
   return {
     type: 'Or',
-    children: schema.documentTypes.map((i) => ({
-      ...transformSchemaToTypeNode({ schema, schemaDef: i }),
+    children: schema.documentTypes.map((n) => ({
+      ...transform(n, schema),
       isArray: false,
     })),
     isArray: true,
