@@ -1,11 +1,11 @@
 import { hash } from './hash';
 
-const referenceCache = new Map<string, Sanity.Groq.TypeNode>();
+const referenceCache = new Map<string, Sanity.GroqCodegen.StructureNode>();
 
 function transform(
   node: Sanity.SchemaDef.SchemaNode,
   schema: Sanity.SchemaDef.Schema,
-): Sanity.Groq.TypeNode {
+): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'RegistryReference': {
       const referencedType = [
@@ -13,14 +13,11 @@ function transform(
         ...schema.registeredTypes,
       ].find((n) => n.name === node.to);
 
-      if (!referencedType) return { type: 'Unknown', isArray: false };
+      // TODO: could show warning
+      if (!referencedType) return { type: 'Unknown' };
 
       return {
-        type: 'Alias',
-        isArray: false,
-        // TODO: this probably doesn't make sense
-        canBeNull: false,
-        canBeUndefined: false,
+        type: 'Lazy',
         get: () => {
           const key = hash({ schemaDef: node, referencedType });
           if (referenceCache.has(key)) return referenceCache.get(key)!;
@@ -33,20 +30,14 @@ function transform(
       };
     }
     case 'Array': {
-      const children = node.of.map((n) => ({
-        ...transform(n, schema),
-        isArray: false,
-      }));
-
-      if (children.length === 1) return children[0];
-
       return {
-        type: 'Or',
-        children: children,
-        isArray: true,
-        // TODO: implement this
+        type: 'Array',
         canBeNull: false,
-        canBeUndefined: false,
+        canBeUndefined: !node.codegen.required,
+        of: {
+          type: 'Or',
+          children: node.of.map((n) => transform(n, schema)),
+        },
       };
     }
     case 'Block': {
@@ -58,9 +49,8 @@ function transform(
     case 'Boolean': {
       return {
         type: 'Boolean',
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
-        isArray: false,
       };
     }
     case 'Date':
@@ -70,10 +60,9 @@ function transform(
     case 'Url': {
       return {
         type: 'String',
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
         value: null,
-        isArray: false,
       };
     }
     case 'Object':
@@ -81,7 +70,7 @@ function transform(
     case 'File':
     case 'Image': {
       type ObjectProperties = Extract<
-        Sanity.Groq.TypeNode,
+        Sanity.GroqCodegen.StructureNode,
         { type: 'Object' }
       >['properties'];
 
@@ -95,7 +84,6 @@ function transform(
             canBeNull: false,
             canBeUndefined: false,
             value: node.name,
-            isArray: false,
           },
         });
 
@@ -106,7 +94,6 @@ function transform(
             canBeNull: false,
             canBeUndefined: false,
             value: null,
-            isArray: false,
           },
         });
       }
@@ -117,9 +104,9 @@ function transform(
           value: {
             type: 'Intrinsic',
             intrinsicType: 'Asset',
+            // TODO: is this right?
             canBeNull: false,
             canBeUndefined: false,
-            isArray: false,
           },
         });
       }
@@ -132,7 +119,6 @@ function transform(
             intrinsicType: 'Crop',
             canBeNull: false,
             canBeUndefined: true,
-            isArray: false,
           },
         });
 
@@ -143,7 +129,6 @@ function transform(
             intrinsicType: 'Hotspot',
             canBeNull: false,
             canBeUndefined: true,
-            isArray: false,
           },
         });
       }
@@ -163,8 +148,7 @@ function transform(
         type: 'Object',
         properties,
         canBeNull: false,
-        canBeUndefined: false,
-        isArray: false,
+        canBeUndefined: !node.codegen.required,
       };
     }
 
@@ -172,19 +156,17 @@ function transform(
       return {
         type: 'Intrinsic',
         intrinsicType: 'Geopoint',
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
-        isArray: false,
       };
     }
 
     case 'Number': {
       return {
         type: 'Number',
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
         value: null,
-        isArray: false,
       };
     }
 
@@ -196,14 +178,9 @@ function transform(
         to: {
           type: 'Or',
           children: node.to.map((n) => transform(n, schema)),
-          isArray: false,
-          // TODO: implement this
-          canBeNull: false,
-          canBeUndefined: false,
         },
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
-        isArray: false,
       };
     }
 
@@ -223,19 +200,16 @@ function transform(
                     canBeNull: false,
                     canBeUndefined: false,
                     value: null,
-                    isArray: false,
                   },
                 },
               ],
               canBeNull: false,
               canBeUndefined: false,
-              isArray: false,
             },
           },
         ],
-        canBeNull: !node.codegen.required,
+        canBeNull: false,
         canBeUndefined: !node.codegen.required,
-        isArray: false,
       };
     }
 
@@ -250,18 +224,37 @@ function transform(
   }
 }
 
-export function transformSchemaToTypeNode(
+export function transformSchemaToStructure(
   schema: Sanity.SchemaDef.Schema,
-): Sanity.Groq.TypeNode {
+): Sanity.GroqCodegen.StructureNode {
   return {
-    type: 'Or',
-    children: schema.documents.map((n) => ({
-      ...transform(n, schema),
-      isArray: false,
-    })),
-    isArray: true,
-    // TODO: implement this
+    type: 'Array',
+    of: {
+      type: 'Or',
+      children: schema.documents.map((n) =>
+        markAsDefined(transform(n, schema)),
+      ),
+    },
     canBeNull: false,
     canBeUndefined: false,
   };
+}
+
+function markAsDefined(
+  node: Sanity.GroqCodegen.StructureNode,
+): Sanity.GroqCodegen.StructureNode {
+  switch (node.type) {
+    case 'And':
+    case 'Or': {
+      return { ...node, children: node.children.map(markAsDefined) };
+    }
+    case 'Lazy': {
+      // TODO: will this cause infinite loops?
+      return { type: 'Lazy', get: () => markAsDefined(node.get()) };
+    }
+    default: {
+      if ('canBeUndefined' in node) return { ...node, canBeUndefined: false };
+      return node;
+    }
+  }
 }

@@ -126,20 +126,20 @@ export function transformExprNodeToLogicExpr(
 
 // TODO: probably needs to be memoized
 function accept(
-  typeNode: Sanity.Groq.TypeNode,
+  node: Sanity.GroqCodegen.StructureNode,
   filter: LogicExprNode,
 ): boolean | null {
   switch (filter.type) {
     case 'And': {
       return filter.children
-        .map((child) => accept(typeNode, child))
+        .map((child) => accept(node, child))
         .filter((result): result is boolean => typeof result === 'boolean')
         .every((result) => result);
     }
     case 'Or': {
       return (
         filter.children
-          .map((child) => accept(typeNode, child))
+          .map((child) => accept(node, child))
           .filter((result): result is boolean => typeof result === 'boolean')
           // TODO: what happens when the filter removes all items?
           // is it okay that some returns false?
@@ -147,7 +147,7 @@ function accept(
       );
     }
     case 'Not': {
-      const result = accept(typeNode, filter.child);
+      const result = accept(node, filter.child);
       if (typeof result === 'boolean') return !result;
       return null;
     }
@@ -155,21 +155,21 @@ function accept(
       return filter.value;
     }
     case 'SingleVariableEquality': {
-      switch (typeNode.type) {
-        case 'Alias': {
+      switch (node.type) {
+        case 'Lazy': {
           throw new Error('TODO');
         }
         case 'Reference': {
           throw new Error('TODO');
         }
         case 'And': {
-          return typeNode.children
+          return node.children
             .map((child) => accept(child, filter))
             .filter((result): result is boolean => typeof result === 'boolean')
             .every((result) => result);
         }
         case 'Or': {
-          return typeNode.children
+          return node.children
             .map((child) => accept(child, filter))
             .filter((result): result is boolean => typeof result === 'boolean')
             .some((result) => result);
@@ -177,11 +177,12 @@ function accept(
         case 'Boolean':
         case 'Intrinsic':
         case 'Number':
-        case 'String': {
+        case 'String':
+        case 'Array': {
           return false;
         }
         case 'Object': {
-          return !!typeNode.properties.find((prop) => {
+          return !!node.properties.find((prop) => {
             return (
               prop.key === filter.variable &&
               (prop.value.type === 'String' || prop.value.type === 'Number') &&
@@ -194,7 +195,7 @@ function accept(
         }
         default: {
           // @ts-expect-error
-          throw new Error(`${typeNode.type} not implemented yet`);
+          throw new Error(`${node.type} not implemented yet`);
         }
       }
     }
@@ -211,24 +212,24 @@ function accept(
 }
 
 function narrow(
-  typeNode: Sanity.Groq.TypeNode,
+  node: Sanity.GroqCodegen.StructureNode,
   filter: LogicExprNode,
-): Sanity.Groq.TypeNode {
-  switch (typeNode.type) {
-    case 'Alias': {
+): Sanity.GroqCodegen.StructureNode {
+  switch (node.type) {
+    case 'Lazy': {
       // TODO: this may create infinite loops
-      return narrow(typeNode.get(), filter);
+      return narrow(node.get(), filter);
     }
 
     case 'Reference': {
       // TODO: think about this
-      return typeNode;
+      return node;
     }
 
     case 'Or': {
       return {
-        ...typeNode,
-        children: typeNode.children
+        ...node,
+        children: node.children
           .filter((n) => accept(n, filter))
           .map((n) => narrow(n, filter)),
       };
@@ -236,16 +237,23 @@ function narrow(
 
     case 'And': {
       return {
-        ...typeNode,
-        children: typeNode.children.map((n) => narrow(n, filter)),
+        ...node,
+        children: node.children.map((n) => narrow(n, filter)),
+      };
+    }
+
+    case 'Array': {
+      return {
+        ...node,
+        of: narrow(node.of, filter),
       };
     }
 
     case 'Object': {
       return {
-        ...typeNode,
+        ...node,
         // TODO (future): the GROQ filter may remove some properties
-        properties: typeNode.properties.map(({ key, value }) => ({
+        properties: node.properties.map(({ key, value }) => ({
           key,
           value: narrow(value, filter),
         })),
@@ -257,19 +265,19 @@ function narrow(
     case 'Number':
     case 'String':
     case 'Unknown': {
-      return typeNode;
+      return node;
     }
 
     default: {
       // TODO better comment
       // @ts-expect-error
-      throw new Error(typeNode.type);
+      throw new Error(node.type);
     }
   }
 }
 
 export function narrowTypeNode(
-  typeNode: Sanity.Groq.TypeNode,
+  typeNode: Sanity.GroqCodegen.StructureNode,
   filter: Groq.ExprNode,
 ) {
   return narrow(typeNode, transformExprNodeToLogicExpr(filter));

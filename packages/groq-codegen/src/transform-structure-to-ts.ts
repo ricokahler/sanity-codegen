@@ -9,29 +9,31 @@ import { hash } from './hash';
  * `TSType`s depending on the context
  */
 function transform(
-  node: Sanity.Groq.TypeNode,
-  next: (node: Sanity.Groq.TypeNode) => t.TSType,
+  node: Sanity.GroqCodegen.StructureNode,
+  next: (node: Sanity.GroqCodegen.StructureNode) => t.TSType,
 ): t.TSType {
+  let tsType: t.TSType;
+
   switch (node.type) {
     case 'And': {
-      const tsType = t.tsIntersectionType(node.children.map(next));
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsIntersectionType(node.children.map(next));
+      break;
     }
     case 'Boolean': {
-      const tsType = t.tsBooleanKeyword();
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsBooleanKeyword();
+      break;
     }
     case 'Intrinsic': {
       // TODO:
-      const tsType = t.tsUnknownKeyword();
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsUnknownKeyword();
+      break;
     }
     case 'Number': {
-      const tsType = t.tsNumberKeyword();
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsNumberKeyword();
+      break;
     }
     case 'Object': {
-      const tsType = t.tsTypeLiteral(
+      tsType = t.tsTypeLiteral(
         node.properties.map(({ key, value }) =>
           t.tsPropertySignature(
             t.stringLiteral(key),
@@ -39,32 +41,36 @@ function transform(
           ),
         ),
       );
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      break;
     }
     case 'Or': {
-      const tsType = t.tsUnionType(node.children.map(next));
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsUnionType(node.children.map(next));
+      break;
     }
     case 'String': {
-      const tsType = node.value
+      tsType = node.value
         ? t.tsLiteralType(t.stringLiteral(node.value))
         : t.tsStringKeyword();
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      break;
     }
     case 'Unknown': {
-      const tsType = t.tsUnknownKeyword();
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      tsType = t.tsUnknownKeyword();
+      break;
     }
-    case 'Alias': {
-      const tsType = next(node.get());
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+    case 'Lazy': {
+      tsType = next(node.get());
+      break;
     }
     case 'Reference': {
-      const tsType = t.tsTypeReference(
+      tsType = t.tsTypeReference(
         t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Reference')),
         t.tsTypeParameterInstantiation([next(node.to)]),
       );
-      return node.isArray ? t.tsArrayType(tsType) : tsType;
+      break;
+    }
+    case 'Array': {
+      tsType = t.tsArrayType(next(node.of));
+      break;
     }
     default: {
       // TODO: better comment
@@ -72,21 +78,30 @@ function transform(
       throw new Error(node.type);
     }
   }
+
+  // if ('canBeNull' in node || 'canBeUndefined' in node) {
+  //   const types: t.TSType[] = [tsType];
+  //   if (node.canBeNull) types.push(t.tsNullKeyword());
+  //   if (node.canBeUndefined) types.push(t.tSUndefinedKeyword());
+  //   tsType = t.tsUnionType(types);
+  // }
+
+  return tsType;
 }
 
-const idMap = new Map<Sanity.Groq.TypeNode, string>();
+const idMap = new Map<Sanity.GroqCodegen.StructureNode, string>();
 
-function getId(node: Sanity.Groq.TypeNode) {
+function getId(node: Sanity.GroqCodegen.StructureNode) {
   if (idMap.has(node)) return idMap.get(node)!;
   const id = `Ref_${hash(node)}`;
   idMap.set(node, id);
   return id;
 }
 
-function createAlias(node: Sanity.Groq.TypeNode) {
-  const visited = new Set<Sanity.Groq.TypeNode>();
+function createAlias(node: Sanity.GroqCodegen.StructureNode) {
+  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
 
-  const next = (n: Sanity.Groq.TypeNode) => {
+  const next = (n: Sanity.GroqCodegen.StructureNode) => {
     if (visited.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
     visited.add(n);
     return transform(n, next);
@@ -95,11 +110,13 @@ function createAlias(node: Sanity.Groq.TypeNode) {
   return next(node);
 }
 
-export function transformTypeNodeToTsType(node: Sanity.Groq.TypeNode) {
-  const visited = new Set<Sanity.Groq.TypeNode>();
-  const aliasTypes = new Map<Sanity.Groq.TypeNode, t.TSType>();
+export function transformStructureToTs(
+  node: Sanity.GroqCodegen.StructureNode,
+) {
+  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
+  const aliasTypes = new Map<Sanity.GroqCodegen.StructureNode, t.TSType>();
 
-  const next = (n: Sanity.Groq.TypeNode) => {
+  const next = (n: Sanity.GroqCodegen.StructureNode) => {
     if (aliasTypes.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
 
     if (visited.has(n)) {

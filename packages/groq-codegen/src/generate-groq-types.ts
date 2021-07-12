@@ -2,8 +2,8 @@ import * as t from '@babel/types';
 import generate from '@babel/generator';
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 import { parse } from 'groq-js';
-import { transformGroqToTypeNode } from './transform-groq-to-type-node';
-import { transformTypeNodeToTsType } from './transform-type-node-to-ts-type';
+import { transformGroqToStructure } from './transform-groq-to-structure';
+import { transformStructureToTs } from './transform-structure-to-ts';
 import {
   pluckGroqFromFiles,
   PluckGroqFromFilesOptions,
@@ -45,15 +45,13 @@ export async function generateGroqTypes({
 
   const { queries, references } = extractedQueries
     .map(({ queryKey, query }) => {
-      const typeNode = transformGroqToTypeNode({
+      const typeNode = transformGroqToStructure({
         node: parse(query),
         scopes: [],
         schema,
       });
 
-      return { queryKey, ...transformTypeNodeToTsType(typeNode) };
-
-      // const { query: queryNode, references } =
+      return { queryKey, ...transformStructureToTs(typeNode) };
     })
     .reduce<{
       queries: { [queryKey: string]: t.TSType };
