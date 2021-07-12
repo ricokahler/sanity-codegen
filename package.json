@@ -53,6 +53,6 @@
     "prettier": "^2.3.2",
     "semver": "^5.7.1",
     "sort-package-json": "^1.49.0",
-    "typescript": "4.2.3"
+    "typescript": "^4.3.5"
   }
 }

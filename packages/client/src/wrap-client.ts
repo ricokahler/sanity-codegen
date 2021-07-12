@@ -31,9 +31,11 @@ export function wrapClient<Client extends SanityClient>(client: Client) {
       return client.fetch(groqQuery, queryParams);
     }
 
-    const wrapped: Client & {
+    const wrapped = Object.defineProperty(client, 'query', {
+      get: () => query,
+    }) as Client & {
       query: typeof query;
-    } = Object.defineProperty(client, 'query', { get: () => query });
+    };
 
     return wrapped;
   }
