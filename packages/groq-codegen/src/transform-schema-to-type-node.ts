@@ -3,37 +3,36 @@ import { hash } from './hash';
 const referenceCache = new Map<string, Sanity.Groq.TypeNode>();
 
 function transform(
-  node: Sanity.SchemaDef.Def,
+  node: Sanity.SchemaDef.SchemaNode,
   schema: Sanity.SchemaDef.Schema,
 ): Sanity.Groq.TypeNode {
-  if (node.definitionType === 'alias') {
-    const referencedType = [
-      ...schema.topLevelTypes,
-      ...schema.documentTypes,
-    ].find((n) => n.name === node.type);
-
-    if (!referencedType) return { type: 'Unknown', isArray: false };
-
-    return {
-      type: 'Alias',
-      isArray: false,
-      // TODO: this probably doesn't make sense
-      canBeNull: false,
-      canBeUndefined: false,
-      get: () => {
-        const key = hash({ schemaDef: node, referencedType });
-        if (referenceCache.has(key)) return referenceCache.get(key)!;
-
-        const result = transform(referencedType, schema);
-
-        referenceCache.set(key, result);
-        return result;
-      },
-    };
-  }
-
   switch (node.type) {
-    case 'array': {
+    case 'RegistryReference': {
+      const referencedType = [
+        ...schema.documents,
+        ...schema.registeredTypes,
+      ].find((n) => n.name === node.to);
+
+      if (!referencedType) return { type: 'Unknown', isArray: false };
+
+      return {
+        type: 'Alias',
+        isArray: false,
+        // TODO: this probably doesn't make sense
+        canBeNull: false,
+        canBeUndefined: false,
+        get: () => {
+          const key = hash({ schemaDef: node, referencedType });
+          if (referenceCache.has(key)) return referenceCache.get(key)!;
+
+          const result = transform(referencedType, schema);
+
+          referenceCache.set(key, result);
+          return result;
+        },
+      };
+    }
+    case 'Array': {
       const children = node.of.map((n) => ({
         ...transform(n, schema),
         isArray: false,
@@ -50,13 +49,13 @@ function transform(
         canBeUndefined: false,
       };
     }
-    case 'block': {
+    case 'Block': {
       // TODO:
       throw new Error(
         `Schema Definition Type "${node.type}" not implemented yet.`,
       );
     }
-    case 'boolean': {
+    case 'Boolean': {
       return {
         type: 'Boolean',
         canBeNull: !node.codegen.required,
@@ -64,11 +63,11 @@ function transform(
         isArray: false,
       };
     }
-    case 'date':
-    case 'datetime':
-    case 'string':
-    case 'text':
-    case 'url': {
+    case 'Date':
+    case 'Datetime':
+    case 'String':
+    case 'Text':
+    case 'Url': {
       return {
         type: 'String',
         canBeNull: !node.codegen.required,
@@ -77,10 +76,10 @@ function transform(
         isArray: false,
       };
     }
-    case 'object':
-    case 'document':
-    case 'file':
-    case 'image': {
+    case 'Object':
+    case 'Document':
+    case 'File':
+    case 'Image': {
       type ObjectProperties = Extract<
         Sanity.Groq.TypeNode,
         { type: 'Object' }
@@ -88,7 +87,7 @@ function transform(
 
       const properties: ObjectProperties = [];
 
-      if (node.type === 'document') {
+      if (node.type === 'Document') {
         properties.push({
           key: '_type',
           value: {
@@ -112,7 +111,7 @@ function transform(
         });
       }
 
-      if (node.type === 'file' || node.type === 'image') {
+      if (node.type === 'File' || node.type === 'Image') {
         properties.push({
           key: 'asset',
           value: {
@@ -125,7 +124,7 @@ function transform(
         });
       }
 
-      if (node.type === 'image') {
+      if (node.type === 'Image') {
         properties.push({
           key: 'crop',
           value: {
@@ -169,7 +168,7 @@ function transform(
       };
     }
 
-    case 'geopoint': {
+    case 'Geopoint': {
       return {
         type: 'Intrinsic',
         intrinsicType: 'Geopoint',
@@ -179,7 +178,7 @@ function transform(
       };
     }
 
-    case 'number': {
+    case 'Number': {
       return {
         type: 'Number',
         canBeNull: !node.codegen.required,
@@ -189,7 +188,7 @@ function transform(
       };
     }
 
-    case 'reference': {
+    case 'Reference': {
       return {
         type: 'Reference',
         // TODO: this creates repeated types inside of a `Sanity.Reference<{}>`.
@@ -208,7 +207,7 @@ function transform(
       };
     }
 
-    case 'slug': {
+    case 'Slug': {
       return {
         type: 'Object',
         properties: [
@@ -256,7 +255,7 @@ export function transformSchemaToTypeNode(
 ): Sanity.Groq.TypeNode {
   return {
     type: 'Or',
-    children: schema.documentTypes.map((n) => ({
+    children: schema.documents.map((n) => ({
       ...transform(n, schema),
       isArray: false,
     })),
