@@ -1,9 +1,39 @@
 import * as t from '@babel/types';
-import { hash } from './hash';
+import { hash } from './utils';
+
+export interface TransformStructureToTsOptions {
+  structure: Sanity.GroqCodegen.StructureNode;
+}
+
+export function transformStructureToTs({
+  structure,
+}: TransformStructureToTsOptions) {
+  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
+  const aliasTypes = new Map<Sanity.GroqCodegen.StructureNode, t.TSType>();
+
+  const next = (n: Sanity.GroqCodegen.StructureNode) => {
+    if (aliasTypes.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
+
+    if (visited.has(n)) {
+      aliasTypes.set(n, createAlias(n));
+      return t.tsTypeReference(t.identifier(getId(n)));
+    }
+
+    visited.add(n);
+    return transform(n, next);
+  };
+
+  return {
+    query: next(structure),
+    references: Object.fromEntries(
+      Array.from(aliasTypes).map(([k, v]) => [getId(k), v]),
+    ),
+  };
+}
 
 /**
- * Internal transform function that takes in a `TypeNode` and a `next` function
- * and returns a `TSType`.
+ * Internal transform function that takes in a `StructureNode` and a `next`
+ * function and returns a `TSType`.
  *
  * The `next` function is used to intercept the traversal and return different
  * `TSType`s depending on the context
@@ -108,30 +138,4 @@ function createAlias(node: Sanity.GroqCodegen.StructureNode) {
   };
 
   return next(node);
-}
-
-export function transformStructureToTs(
-  node: Sanity.GroqCodegen.StructureNode,
-) {
-  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
-  const aliasTypes = new Map<Sanity.GroqCodegen.StructureNode, t.TSType>();
-
-  const next = (n: Sanity.GroqCodegen.StructureNode) => {
-    if (aliasTypes.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
-
-    if (visited.has(n)) {
-      aliasTypes.set(n, createAlias(n));
-      return t.tsTypeReference(t.identifier(getId(n)));
-    }
-
-    visited.add(n);
-    return transform(n, next);
-  };
-
-  return {
-    query: next(node),
-    references: Object.fromEntries(
-      Array.from(aliasTypes).map(([k, v]) => [getId(k), v]),
-    ),
-  };
 }

@@ -1,4 +1,24 @@
-import { hash } from './hash';
+import { hash, markAsDefined } from './utils';
+
+export interface TransformSchemaToStructureOptions {
+  schema: Sanity.SchemaDef.Schema;
+}
+
+export function transformSchemaToStructure({
+  schema,
+}: TransformSchemaToStructureOptions): Sanity.GroqCodegen.StructureNode {
+  return {
+    type: 'Array',
+    of: {
+      type: 'Or',
+      children: schema.documents.map((n) =>
+        markAsDefined(transform(n, schema)),
+      ),
+    },
+    canBeNull: false,
+    canBeUndefined: false,
+  };
+}
 
 const referenceCache = new Map<string, Sanity.GroqCodegen.StructureNode>();
 
@@ -220,41 +240,6 @@ function transform(
         // @ts-expect-error
         `Schema Definition Type "${node.type}" not implemented yet.`,
       );
-    }
-  }
-}
-
-export function transformSchemaToStructure(
-  schema: Sanity.SchemaDef.Schema,
-): Sanity.GroqCodegen.StructureNode {
-  return {
-    type: 'Array',
-    of: {
-      type: 'Or',
-      children: schema.documents.map((n) =>
-        markAsDefined(transform(n, schema)),
-      ),
-    },
-    canBeNull: false,
-    canBeUndefined: false,
-  };
-}
-
-function markAsDefined(
-  node: Sanity.GroqCodegen.StructureNode,
-): Sanity.GroqCodegen.StructureNode {
-  switch (node.type) {
-    case 'And':
-    case 'Or': {
-      return { ...node, children: node.children.map(markAsDefined) };
-    }
-    case 'Lazy': {
-      // TODO: will this cause infinite loops?
-      return { type: 'Lazy', get: () => markAsDefined(node.get()) };
-    }
-    default: {
-      if ('canBeUndefined' in node) return { ...node, canBeUndefined: false };
-      return node;
     }
   }
 }

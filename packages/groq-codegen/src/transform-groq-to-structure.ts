@@ -1,11 +1,15 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
-import { narrowTypeNode } from './narrow-type-node';
-import { accessAttributeInStructure } from './access-attribute-in-structure';
+import { narrowStructure } from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
-import { unwrapReferences } from './unwrap-references';
-import { hasArray, unwrapArray, wrapArray } from './utils';
+import {
+  accessAttributeInStructure,
+  unwrapArray,
+  structureIsArray,
+  wrapArray,
+  unwrapReferences,
+} from './utils';
 
-interface TransformGroqToTypeNodeOptions {
+export interface TransformGroqToStructureOptions {
   node: Groq.ExprNode;
   schema: Sanity.SchemaDef.Schema;
   scopes: Sanity.GroqCodegen.StructureNode[];
@@ -15,14 +19,14 @@ export function transformGroqToStructure({
   node,
   schema,
   scopes,
-}: TransformGroqToTypeNodeOptions): Sanity.GroqCodegen.StructureNode {
+}: TransformGroqToStructureOptions): Sanity.GroqCodegen.StructureNode {
   const scope = scopes[scopes.length - 1] as
     | Sanity.GroqCodegen.StructureNode
     | undefined;
 
   switch (node.type) {
     case 'Everything': {
-      return transformSchemaToStructure(schema);
+      return transformSchemaToStructure({ schema });
     }
 
     case 'Map': {
@@ -49,7 +53,7 @@ export function transformGroqToStructure({
         schema,
       });
 
-      return narrowTypeNode(baseResult, node.expr);
+      return narrowStructure(baseResult, node.expr);
     }
 
     case 'This': {
@@ -82,7 +86,7 @@ export function transformGroqToStructure({
         schema,
       });
 
-      const baseResultHadArray = hasArray(baseResult);
+      const baseResultHadArray = structureIsArray(baseResult);
 
       const exprResult = transformGroqToStructure({
         node: node.expr,

@@ -9,13 +9,13 @@ function print(query: string, schemaTypes: any[]) {
   const schema = schemaNormalizer(schemaTypes);
   const root = parse(query);
 
-  const typeNode = transformGroqToStructure({
+  const structure = transformGroqToStructure({
     node: root,
     schema,
     scopes: [],
   });
 
-  const result = transformStructureToTs(typeNode);
+  const result = transformStructureToTs({ structure });
 
   return prettier.format(
     `${`type Query = ${
@@ -34,7 +34,7 @@ function print(query: string, schemaTypes: any[]) {
   );
 }
 
-describe('transformGroqToTypeNode', () => {
+describe('transformGroqToStructure', () => {
   test('', () => {
     const result = print('*', [
       {
@@ -221,7 +221,7 @@ describe('transformGroqToTypeNode', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        foo: string;
+        foo: string[];
       };
       "
     `);

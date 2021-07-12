@@ -45,13 +45,13 @@ export async function generateGroqTypes({
 
   const { queries, references } = extractedQueries
     .map(({ queryKey, query }) => {
-      const typeNode = transformGroqToStructure({
+      const structure = transformGroqToStructure({
         node: parse(query),
         scopes: [],
         schema,
       });
 
-      return { queryKey, ...transformStructureToTs(typeNode) };
+      return { queryKey, ...transformStructureToTs({ structure }) };
     })
     .reduce<{
       queries: { [queryKey: string]: t.TSType };

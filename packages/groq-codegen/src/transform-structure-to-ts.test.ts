@@ -25,8 +25,8 @@ function print({
   );
 }
 
-describe('transformGroqToTypeNode', () => {
-  it('creates TSTypes from Groq.TypeNodes', () => {
+describe('transformStructureToTs', () => {
+  it('creates `TSType`s from `StructureNode`s', () => {
     const schema = schemaNormalizer([
       {
         name: 'book',
@@ -57,8 +57,8 @@ describe('transformGroqToTypeNode', () => {
       },
     ]);
 
-    const everythingNode = transformSchemaToStructure(schema);
-    const result = transformStructureToTs(everythingNode);
+    const everythingNode = transformSchemaToStructure({ schema });
+    const result = transformStructureToTs({ structure: everythingNode });
 
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = (
@@ -114,8 +114,8 @@ describe('transformGroqToTypeNode', () => {
       },
     ]);
 
-    const everythingNode = transformSchemaToStructure(schema);
-    const result = transformStructureToTs(everythingNode);
+    const everythingNode = transformSchemaToStructure({ schema });
+    const result = transformStructureToTs({ structure: everythingNode });
 
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
@@ -123,27 +123,27 @@ describe('transformGroqToTypeNode', () => {
         _id: string;
         node: {
           recursive: {
-            node: Ref_1ss487u;
-            recursive: Ref_dd6lns;
+            node: Ref_1t5qvoi;
+            recursive: Ref_1sr8v0v;
           };
-          node: Ref_1ss487u;
+          node: Ref_1t5qvoi;
         };
       }[];
 
-      type Ref_1ss487u = {
+      type Ref_1t5qvoi = {
         recursive: {
-          node: Ref_1ss487u;
-          recursive: Ref_dd6lns;
+          node: Ref_1t5qvoi;
+          recursive: Ref_1sr8v0v;
         };
-        node: Ref_1ss487u;
+        node: Ref_1t5qvoi;
       };
 
-      type Ref_dd6lns = {
+      type Ref_1sr8v0v = {
         node: {
-          recursive: Ref_dd6lns;
-          node: Ref_1ss487u;
+          recursive: Ref_1sr8v0v;
+          node: Ref_1t5qvoi;
         };
-        recursive: Ref_dd6lns;
+        recursive: Ref_1sr8v0v;
       };
       "
     `);
