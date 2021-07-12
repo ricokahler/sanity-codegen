@@ -8,5 +8,5 @@
     "strict": true,
     "target": "esnext"
   },
-  "include": ["./src", "./ambient.d.ts"]
+  "include": ["./src", "./schema-codegen.d.ts"]
 }
