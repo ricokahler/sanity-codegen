@@ -1,6 +1,9 @@
+import * as t from '@babel/types';
 import generate from '@babel/generator';
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
-import { transformGroqToTypescript } from './transform-groq-to-typescript';
+import { parse } from 'groq-js';
+import { transformGroqToTypeNode } from './transform-groq-to-type-node';
+import { transformTypeNodeToTsType } from './transform-type-node-to-ts-type';
 import {
   pluckGroqFromFiles,
   PluckGroqFromFilesOptions,
@@ -19,6 +22,10 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
    * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
    */
   prettierResolveConfigOptions?: ResolveConfigOptions;
+  /**
+   * TODO: update this comment
+   */
+  schema: Sanity.SchemaDef.Schema;
 }
 
 /**
@@ -31,38 +38,81 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
 export async function generateGroqTypes({
   prettierResolveConfigOptions,
   prettierResolveConfigPath,
+  schema,
   ...pluckOptions
 }: GenerateGroqTypesOptions) {
   const extractedQueries = await pluckGroqFromFiles(pluckOptions);
 
-  const codegenResults = extractedQueries
+  const { queries, references } = extractedQueries
     .map(({ queryKey, query }) => {
-      const typescriptNode = transformGroqToTypescript({ query });
-      // seems like the types to babel are mismatched
-      // @ts-expect-error
-      const codegen = generate(typescriptNode).code;
+      const typeNode = transformGroqToTypeNode({
+        node: parse(query),
+        scopes: [],
+        schema,
+      });
 
-      return {
-        queryKey,
-        codegen: `type ${queryKey} = ${codegen}`,
-      };
+      return { queryKey, ...transformTypeNodeToTsType(typeNode) };
+
+      // const { query: queryNode, references } =
     })
-    .sort((a, b) => a.queryKey.localeCompare(b.queryKey));
+    .reduce<{
+      queries: { [queryKey: string]: t.TSType };
+      references: { [referenceKey: string]: t.TSType };
+    }>(
+      (acc, { queryKey, query, references }) => {
+        acc.queries[queryKey] = query;
+
+        for (const [key, value] of Object.entries(references)) {
+          acc[key] = value;
+        }
+
+        return acc;
+      },
+      { queries: {}, references: {} },
+    );
 
   const finalCodegen = `
     /// <reference types="@sanity-codegen/types" />
 
     declare namespace Sanity {
       namespace Queries {
-        ${codegenResults.map((i) => i.codegen).join('\n')}
+        ${Object.entries(queries)
+          .sort(([queryKeyA], [queryKeyB]) =>
+            queryKeyA.localeCompare(queryKeyB, 'en'),
+          )
+          .map(
+            ([queryKey, queryTsType]) =>
+              `type ${queryKey} = ${
+                generate(
+                  // @ts-expect-error there seems to an error with @babel/generator
+                  queryTsType,
+                ).code
+              }`,
+          )
+          .join('\n')}
+
+          ${Object.entries(references)
+            .sort(([referenceKeyA], [referenceKeyB]) =>
+              referenceKeyA.localeCompare(referenceKeyB, 'en'),
+            )
+            .map(
+              ([referenceKey, referenceTsType]) =>
+                `type ${referenceKey} = ${
+                  generate(
+                    // @ts-expect-error there seems to an error with @babel/generator
+                    referenceTsType,
+                  ).code
+                }`,
+            )
+            .join('\n')}
 
         /**
          * A keyed type of all the codegen'ed queries. This type is used for
          * TypeScript meta programming purposes only.
          */
         type QueryMap = {
-          ${codegenResults
-            .map((i) => `${i.queryKey}: ${i.queryKey};`)
+          ${Object.keys(queries)
+            .map((queryKey) => `${queryKey}: ${queryKey};`)
             .join('\n')}
         };
       }
