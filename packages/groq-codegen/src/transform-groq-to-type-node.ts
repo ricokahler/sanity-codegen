@@ -1,7 +1,7 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
 import { narrowTypeNode } from './narrow-type-node';
 import { accessTypeNodeAttribute } from './access-type-node-attribute';
-import { getEverything } from './transform-schema-to-type-node';
+import { transformSchemaToTypeNode } from './transform-schema-to-type-node';
 import { unwrapReferences } from './unwrap-references';
 
 interface TransformGroqToTypeNodeOptions {
@@ -19,7 +19,7 @@ export function transformGroqToTypeNode({
 
   switch (node.type) {
     case 'Everything': {
-      return getEverything(schema);
+      return transformSchemaToTypeNode(schema);
     }
 
     case 'Map': {

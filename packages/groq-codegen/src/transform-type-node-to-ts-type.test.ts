@@ -1,4 +1,4 @@
-import { getEverything } from './transform-schema-to-type-node';
+import { transformSchemaToTypeNode } from './transform-schema-to-type-node';
 import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
 import { transformTypeNodeToTsType } from './transform-type-node-to-ts-type';
 import generate from '@babel/generator';
@@ -9,7 +9,7 @@ function print({
   references,
 }: ReturnType<typeof transformTypeNodeToTsType>) {
   return prettier.format(
-    `${`type Query = ${
+    `${`type Everything = ${
       // @ts-expect-error `generate` is incorrectly typed
       generate(query).code
     }`}\n\n${Object.entries(references)
@@ -57,11 +57,11 @@ describe('transformGroqToTypeNode', () => {
       },
     ]);
 
-    const everythingNode = getEverything(schema);
+    const everythingNode = transformSchemaToTypeNode(schema);
     const result = transformTypeNodeToTsType(everythingNode);
 
     expect(print(result)).toMatchInlineSnapshot(`
-      "type Query = (
+      "type Everything = (
         | {
             _type: \\"book\\";
             _id: string;
@@ -114,36 +114,36 @@ describe('transformGroqToTypeNode', () => {
       },
     ]);
 
-    const everythingNode = getEverything(schema);
+    const everythingNode = transformSchemaToTypeNode(schema);
     const result = transformTypeNodeToTsType(everythingNode);
 
     expect(print(result)).toMatchInlineSnapshot(`
-      "type Query = {
+      "type Everything = {
         _type: \\"config\\";
         _id: string;
         node: {
           recursive: {
-            node: Ref_10s7qt5;
-            recursive: Ref_46ui5g;
+            node: Ref_1aocgtx;
+            recursive: Ref_1xajvy2;
           };
-          node: Ref_10s7qt5;
+          node: Ref_1aocgtx;
         };
       }[];
 
-      type Ref_10s7qt5 = {
+      type Ref_1aocgtx = {
         recursive: {
-          node: Ref_10s7qt5;
-          recursive: Ref_46ui5g;
+          node: Ref_1aocgtx;
+          recursive: Ref_1xajvy2;
         };
-        node: Ref_10s7qt5;
+        node: Ref_1aocgtx;
       };
 
-      type Ref_46ui5g = {
+      type Ref_1xajvy2 = {
         node: {
-          recursive: Ref_46ui5g;
-          node: Ref_10s7qt5;
+          recursive: Ref_1xajvy2;
+          node: Ref_1aocgtx;
         };
-        recursive: Ref_46ui5g;
+        recursive: Ref_1xajvy2;
       };
       "
     `);
