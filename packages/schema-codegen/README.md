@@ -22,7 +22,7 @@ yarn add --dev @sanity-codegen/schema-codegen
 
 ### Execute, validate, and normalize
 
-The Sanity schemas are written for use inside of [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Sanity Studio is the sole client that writes data to Sanity's backend so all knowledge of the schema primarily lives there.
+The Sanity schemas are written for use inside of [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Sanity Studio is the primary client that writes data to Sanity's backend so all knowledge of the schema lives there.
 
 This poses a challenge because the way we write schemas can become highly dependent on that environment (e.g. importing React components, resolving the [parts system](https://www.sanity.io/docs/parts), CSS imports etc).
 
@@ -40,7 +40,7 @@ async function main() {
     schemaPath: './studio/schemas/schema.js',
   });
 
-  console.log(normalizedSchema); // { documentTypes: [/* ... */], topLevelTypes: [/* ... */] }
+  console.log(normalizedSchema); // { documents: [/* ... */], registeredTypes: [/* ... */] }
 }
 ```
 
@@ -109,7 +109,7 @@ export declare function schemaExtractor(
 ): Promise<Sanity.SchemaDef.Schema>;
 ```
 
-[See here for the definition of `Sanity.SchemaDef.Schema`](./ambient.d.ts)
+[See here for the definition of `Sanity.SchemaDef.Schema`](./schema-codegen.d.ts)
 
 ### `schemaNormalizer()`
 
