@@ -1,3 +1,5 @@
+import { defaultGenerateTypeName } from './default-generate-type-name';
+
 // TODO: utilize this error more and re-hydrate it when it goes over IPC
 export class SchemaParseError extends Error {}
 
@@ -6,12 +8,14 @@ const getFormattedName = (i: any): string => {
   return `(${['anonymous', i.type].filter(Boolean).join(' ')})`;
 };
 
-function getDefProps<T extends string, U extends 'primitive' | 'alias'>(
-  i: any,
-  definitionType?: U
-): Sanity.SchemaDef.DefProps<T, U> {
+const isRecord = (t: unknown): t is Record<string, unknown> => {
+  if (typeof t !== 'object') return false;
+  if (!t) return false;
+  return true;
+};
+
+function getCommonProps(i: any): Sanity.SchemaDef.CommonNodeProps {
   return {
-    definitionType: definitionType || ('primitive' as U),
     codegen: {
       required: !!i.codegen?.required,
     },
@@ -20,10 +24,29 @@ function getDefProps<T extends string, U extends 'primitive' | 'alias'>(
     name: i.name || null,
     readOnly: !!i.readOnly,
     title: i.title || (i.name ? transformCamelCase(i.name) : null),
-    type: i.type,
     hasValidation: !!i.validation,
   };
 }
+
+const typeMap: Record<string, Sanity.SchemaDef.SchemaNode['type'] | undefined> =
+  {
+    array: 'Array',
+    block: 'Block',
+    object: 'Object',
+    document: 'Document',
+    boolean: 'Boolean',
+    date: 'Date',
+    datetime: 'Datetime',
+    geopoint: 'Geopoint',
+    slug: 'Slug',
+    text: 'Text',
+    url: 'Url',
+    image: 'Image',
+    file: 'File',
+    number: 'Number',
+    string: 'String',
+    reference: 'Reference',
+  };
 
 function normalizeFields(t: any, parents: Array<string | number>) {
   const fields: any[] = t.fields || [];
@@ -31,8 +54,8 @@ function normalizeFields(t: any, parents: Array<string | number>) {
   if (!t?.fields?.length) {
     throw new SchemaParseError(
       `Expected type \`${parents.join(
-        '.'
-      )}\` to have property \`fields\` with at least one field.`
+        '.',
+      )}\` to have property \`fields\` with at least one field.`,
     );
   }
 
@@ -41,7 +64,7 @@ function normalizeFields(t: any, parents: Array<string | number>) {
 
     if (typeof f.name !== 'string') {
       throw new SchemaParseError(
-        `\`${pathname}\` had a field missing a \`name\` string.`
+        `\`${pathname}\` had a field missing a \`name\` string.`,
       );
     }
 
@@ -49,11 +72,11 @@ function normalizeFields(t: any, parents: Array<string | number>) {
       throw new SchemaParseError(
         `\`${pathname}\` has an invalid \`type\`. Expected a string but got \`${
           f.type === null ? 'null' : typeof f.type
-        }\``
+        }\``,
       );
     }
 
-    const schemaFieldDef: Sanity.SchemaDef.Field = {
+    const schemaFieldDef: Sanity.SchemaDef.FieldDef = {
       name: f.name,
       title: f.title || transformCamelCase(f.name),
       description: f.description || '',
@@ -68,21 +91,33 @@ function normalizeFields(t: any, parents: Array<string | number>) {
   });
 }
 
-function normalizeType(t: any, parents: Array<string | number>) {
-  switch (t.type) {
-    case 'array': {
-      const of = t.of;
+function normalizeType(t: unknown, parents: Array<string | number>) {
+  const pathname = [...parents, getFormattedName(t)].join('.');
 
-      const pathname = [...parents, getFormattedName(t)].join('.');
+  if (!isRecord(t)) {
+    throw new SchemaParseError(
+      `Expected \`${pathname}\` to be a non-null object.`,
+    );
+  }
+  if (typeof t.type !== 'string') {
+    throw new SchemaParseError(`Expected \`${pathname}.type\` to be a string.`);
+  }
+
+  const type = typeMap[t.type] || t.type;
+
+  switch (type) {
+    case 'Array': {
+      const of = t.of;
 
       if (!of) {
         throw new SchemaParseError(
-          `\`${pathname}\` was of type \`array\` but did not have an \`of\` property.`
+          `\`${pathname}\` was of type \`array\` but did not have an \`of\` property.`,
         );
       }
 
-      const schemaArrayDef: Sanity.SchemaDef.Array = {
-        ...getDefProps(t),
+      const schemaArrayDef: Sanity.SchemaDef.ArrayNode = {
+        ...getCommonProps(t),
+        type,
         of: Array.isArray(of)
           ? of.map((i, index) => normalizeType(i, [...parents, index]))
           : [normalizeType(of, [...parents, 0])],
@@ -92,11 +127,12 @@ function normalizeType(t: any, parents: Array<string | number>) {
       return schemaArrayDef;
     }
 
-    case 'block': {
+    case 'Block': {
       const of = t.of;
 
-      const schemaBlockDef: Sanity.SchemaDef.Block = {
-        ...getDefProps(t),
+      const schemaBlockDef: Sanity.SchemaDef.BlockNode = {
+        ...getCommonProps(t),
+        type,
         of: of
           ? Array.isArray(of)
             ? of.map((i, index) => normalizeType(i, [...parents, index]))
@@ -109,113 +145,142 @@ function normalizeType(t: any, parents: Array<string | number>) {
       return schemaBlockDef;
     }
 
-    case 'object': {
-      const schemaDef: Sanity.SchemaDef.Object = {
-        ...getDefProps(t),
+    case 'Object': {
+      const schemaDef: Sanity.SchemaDef.ObjectNode = {
+        ...getCommonProps(t),
+        type,
         fields: normalizeFields(t, [...parents, getFormattedName(t)]),
       };
 
       return schemaDef;
     }
 
-    case 'document': {
-      const defProps = getDefProps<'document', 'primitive'>(t);
+    case 'Document': {
+      const { name, title, ...defProps } = getCommonProps(t);
 
-      if (typeof defProps.name !== 'string') {
+      if (!name || typeof name !== 'string') {
         throw new SchemaParseError(`\`name\` is required for documents`);
       }
 
-      const schemaDef: Sanity.SchemaDef.Document = {
-        ...(defProps as typeof defProps & { name: string; title: string }),
+      if (!title || typeof title !== 'string') {
+        throw new SchemaParseError(`\`title\` is required for documents`);
+      }
+
+      const schemaDef: Sanity.SchemaDef.DocumentNode = {
+        ...defProps,
+        name,
+        title,
+        type,
         fields: normalizeFields(t, [...parents, getFormattedName(t)]),
       };
 
       return schemaDef;
     }
 
-    case 'boolean':
-    case 'date':
-    case 'datetime':
-    case 'geopoint':
-    case 'slug':
-    case 'text':
-    case 'url': {
-      const schemaDef:
-        | Sanity.SchemaDef.Boolean
-        | Sanity.SchemaDef.Date
-        | Sanity.SchemaDef.Datetime
-        | Sanity.SchemaDef.Geopoint
-        | Sanity.SchemaDef.Slug
-        | Sanity.SchemaDef.Text
-        | Sanity.SchemaDef.Url = getDefProps(t);
-
-      return schemaDef;
+    case 'Boolean':
+    case 'Date':
+    case 'Datetime':
+    case 'Geopoint':
+    case 'Slug':
+    case 'Text':
+    case 'Url': {
+      const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
+        {
+          ...getCommonProps(t),
+          type,
+        };
+      return node;
     }
 
-    case 'image':
-    case 'file': {
-      const schemaDef: Sanity.SchemaDef.File | Sanity.SchemaDef.Image = {
-        ...getDefProps(t),
-        fields: t.fields
-          ? normalizeFields(t, [...parents, getFormattedName(t)])
-          : null,
-      };
+    case 'Image':
+    case 'File': {
+      const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
+        {
+          ...getCommonProps(t),
+          type,
+          fields: t.fields
+            ? normalizeFields(t, [...parents, getFormattedName(t)])
+            : null,
+        };
 
-      return schemaDef;
+      return node;
     }
 
-    case 'number':
-    case 'string': {
-      const schemaDef: Sanity.SchemaDef.String | Sanity.SchemaDef.Number = {
-        ...getDefProps(t),
-        list: normalizeList(t, [...parents, getFormattedName(t)]),
-      };
+    case 'Number':
+    case 'String': {
+      const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
+        {
+          ...getCommonProps(t),
+          type,
+          list: normalizeList(t, [...parents, getFormattedName(t)]),
+        };
 
-      return schemaDef;
+      return node;
     }
 
-    case 'reference': {
+    case 'Reference': {
       // TODO: confirm references are to documents
-      const pathname = [...parents, getFormattedName(t)].join('.');
-
       const to = t.to;
 
       if (!to) {
         throw new SchemaParseError(
-          `\`${pathname}\` was of type \`reference\` but did not have an \`to\` property.`
+          `\`${pathname}\` was of type \`reference\` but did not have an \`to\` property.`,
         );
       }
 
-      const schemaReferenceDef: Sanity.SchemaDef.Reference = {
-        ...getDefProps(t),
-        to: (Array.isArray(to) ? to : [to]).map((i: any) =>
-          getDefProps(i, 'alias')
-        ),
+      const node: Sanity.SchemaDef.ReferenceNode = {
+        ...getCommonProps(t),
+        type,
+        to: (Array.isArray(to) ? to : [to]).map((i: any) => {
+          if (!i.type) {
+            throw new SchemaParseError(
+              `\`${pathname}\` of type \`reference\` has a \`to\` value without specifying a \`type\`.`,
+            );
+          }
+
+          const n: Sanity.SchemaDef.RegistryReferenceNode = {
+            ...getCommonProps(i),
+            to: i.type,
+            type: 'RegistryReference',
+          };
+          return n;
+        }),
         weak: !!t.weak,
       };
 
-      return schemaReferenceDef;
+      return node;
     }
 
-    // if not a primitive type, then assume it's an alias to another type.
+    // if not an intrinsic type, then assume it's a registry reference to
+    // another type.
     //
     // TODO: confirm this is not an unknown type by checking that a top-level
     // reference does exist
     default: {
-      const alias: Sanity.SchemaDef.Alias = getDefProps(t, 'alias');
-      return alias;
+      const node: Sanity.SchemaDef.RegistryReferenceNode = {
+        ...getCommonProps(t),
+        type: 'RegistryReference',
+        to: t.type,
+      };
+      return node;
     }
   }
 }
 
-const transformCamelCase = (camelCase: string) =>
-  // TODO: what's the logic here
-  `${camelCase.substring(0, 1).toUpperCase()}${camelCase.substring(1)}`;
+const transformCamelCase = (camelCase: string) => {
+  const normalizedCamelCase = defaultGenerateTypeName(camelCase);
+
+  return `${normalizedCamelCase
+    .substring(0, 1)
+    .toUpperCase()}${normalizedCamelCase
+    .substring(1)
+    .replace(/([A-Z])/g, ' $1')}`;
+};
 
 function normalizeList(
   t: any,
-  parents: Array<string | number>
-): Sanity.SchemaDef.List<any> | null {
+  parents: Array<string | number>,
+): Sanity.SchemaDef.ListOptionsDef<any> | null {
   const list = t?.options?.list;
 
   const pathname = parents.join('.');
@@ -225,7 +290,7 @@ function normalizeList(
     throw new SchemaParseError(
       `Expected \`${pathname}.options.list\` to be an array but found \`${
         list === null ? 'null' : typeof list
-      }\` instead.`
+      }\` instead.`,
     );
   }
 
@@ -242,13 +307,13 @@ function normalizeList(
       throw new SchemaParseError(
         `Invalid \`options.list\` item for type \`${pathname}\`. Expected a string, number, or object but found "${
           option === null ? 'null' : typeof option
-        }"`
+        }"`,
       );
     }
 
     if (!('title' in option && 'value' in option)) {
       throw new SchemaParseError(
-        `Invalid \`options.list\` item for type \`${pathname}\`. Expected item to have properties \`title\` and \`value\`.`
+        `Invalid \`options.list\` item for type \`${pathname}\`. Expected item to have properties \`title\` and \`value\`.`,
       );
     }
 
@@ -265,30 +330,30 @@ function normalizeList(
  * @returns normalized sanity schema
  */
 export function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema {
-  const allTopLevelTypes = types.map((i) => normalizeType(i, []));
+  const allRegisteredTypes = types.map((i) => normalizeType(i, []));
 
   // TODO: check if name is trying to override primitive types
-  for (const topLevelType of allTopLevelTypes) {
-    if (topLevelType.definitionType === 'primitive' && !topLevelType.name) {
-      throw new SchemaParseError('Found top-level type with no `name` field.');
+  for (const registeredType of allRegisteredTypes) {
+    if (!registeredType.name) {
+      throw new SchemaParseError(
+        'Found top-level registered type with no `name` field.',
+      );
     }
   }
 
-  const documentTypes = allTopLevelTypes.filter(
-    (i): i is Sanity.SchemaDef.Document =>
-      i.definitionType === 'primitive' && i.type === 'document'
+  const documents = allRegisteredTypes.filter(
+    (n): n is Sanity.SchemaDef.DocumentNode => n.type === 'Document',
   );
 
-  const topLevelTypes = allTopLevelTypes.filter(
-    <T extends Sanity.SchemaDef.Def>(
-      i: T
-    ): i is Exclude<
-      Sanity.SchemaDef.TopLevelType<T>,
-      Sanity.SchemaDef.Document
-    > => i.type !== 'document' && !!i.name
+  const restOfRegisteredTypes = allRegisteredTypes.filter(
+    (n): n is Sanity.SchemaDef.RegisteredSchemaNode => n.type !== 'Document',
   );
 
-  return { documentTypes, topLevelTypes };
+  return {
+    type: 'SchemaRoot',
+    documents,
+    registeredTypes: restOfRegisteredTypes,
+  };
 
   // TODO: run validation afterwards
 }

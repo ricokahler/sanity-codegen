@@ -75,7 +75,7 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Image - \`image\`
+             * Image - \`Image\`
              */
             image?: {
               asset: Sanity.Asset;
@@ -84,27 +84,27 @@ describe('generate-types', () => {
             };
 
             /**
-             * Boolean - \`boolean\`
+             * Boolean - \`Boolean\`
              */
             boolean?: boolean;
 
             /**
-             * Date - \`date\`
+             * Date - \`Date\`
              */
             date?: string;
 
             /**
-             * Datetime - \`datetime\`
+             * Datetime - \`Datetime\`
              */
             datetime?: string;
 
             /**
-             * Number - \`number\`
+             * Number - \`Number\`
              */
             number?: number;
 
             /**
-             * Slug - \`slug\`
+             * Slug - \`Slug\`
              */
             slug?: {
               _type: \\"slug\\";
@@ -112,22 +112,22 @@ describe('generate-types', () => {
             };
 
             /**
-             * String - \`string\`
+             * String - \`String\`
              */
             string?: string;
 
             /**
-             * Text - \`text\`
+             * Text - \`Text\`
              */
             text?: string;
 
             /**
-             * Url - \`url\`
+             * Url - \`Url\`
              */
             url?: string;
 
             /**
-             * Image - \`image\`
+             * Image - \`Image\`
              */
             image?: {
               asset: Sanity.Asset;
@@ -136,14 +136,14 @@ describe('generate-types', () => {
             };
 
             /**
-             * File - \`file\`
+             * File - \`File\`
              */
             file?: {
               asset: Sanity.Asset;
             };
 
             /**
-             * Geopoint - \`geopoint\`
+             * Geopoint - \`Geopoint\`
              */
             geopoint?: Sanity.Geopoint;
           }
@@ -201,12 +201,12 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * ChoicesStrings - \`string\`
+             * Choices Strings - \`String\`
              */
             choicesStrings: \\"a\\" | \\"b\\" | \\"c\\";
 
             /**
-             * ChoicesNumbers - \`number\`
+             * Choices Numbers - \`Number\`
              */
             choicesNumbers: 1 | 2 | 3;
           }
@@ -249,7 +249,7 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Name - \`string\`
+             * Name - \`String\`
              */
             name?: string;
           }
@@ -316,30 +316,30 @@ describe('generate-types', () => {
       declare namespace Sanity {
         namespace Schema {
           /**
-           * TestDocument
+           * Test Document
            */
           interface TestDocument extends Sanity.Document {
             _type: \\"testDocument\\";
 
             /**
-             * Foo - \`object\`
+             * Foo - \`Object\`
              */
             foo?: {
               /**
-               * Name - \`string\`
+               * Name - \`String\`
                */
               name: string;
 
               /**
-               * SubObject - \`object\`
+               * Sub Object - \`Object\`
                */
               subObject: {
                 /**
-                 * Really nested - \`object\`
+                 * Really nested - \`Object\`
                  */
                 reallyNested: {
                   /**
-                   * Bar - \`string\`
+                   * Bar - \`String\`
                    */
                   bar: string;
                 };
@@ -420,7 +420,7 @@ describe('generate-types', () => {
             hotspot?: Sanity.ImageHotspot;
 
             /**
-             * Title - \`string\`
+             * Title - \`String\`
              */
             title?: string;
           };
@@ -429,7 +429,7 @@ describe('generate-types', () => {
             _type: \\"bar\\";
 
             /**
-             * Nested Image Type - \`image\`
+             * Nested Image Type - \`Image\`
              */
             nestedImage?: {
               asset: Sanity.Asset;
@@ -437,19 +437,19 @@ describe('generate-types', () => {
               hotspot?: Sanity.ImageHotspot;
 
               /**
-               * Description - \`string\`
+               * Description - \`String\`
                */
               description: string;
             };
 
             /**
-             * Nested File Type - \`file\`
+             * Nested File Type - \`File\`
              */
             nestedFile?: {
               asset: Sanity.Asset;
 
               /**
-               * Other Description - \`number\`
+               * Other Description - \`Number\`
                */
               otherDescription: number;
             };
@@ -533,17 +533,17 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Array - \`array\`
+             * Array - \`Array\`
              */
             array?: Array<Sanity.Keyed<string>>;
 
             /**
-             * Array of references - \`array\`
+             * Array of references - \`Array\`
              */
             refs?: Array<Sanity.KeyedReference<Bar>>;
 
             /**
-             * Array Two - \`array\`
+             * Array Two - \`Array\`
              */
             arrayTwo?: Array<Sanity.Keyed<Bar> | Sanity.Keyed<Baz>>;
           }
@@ -555,7 +555,7 @@ describe('generate-types', () => {
             _type: \\"bar\\";
 
             /**
-             * Bar - \`string\`
+             * Bar - \`String\`
              */
             bar: string;
           }
@@ -567,7 +567,7 @@ describe('generate-types', () => {
             _type: \\"baz\\";
 
             /**
-             * Baz - \`string\`
+             * Baz - \`String\`
              */
             baz: string;
           }
@@ -657,17 +657,17 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Array - \`array\`
+             * Array - \`Array\`
              */
             array: Array<
               Sanity.Keyed<{
                 /**
-                 * Question - \`string\`
+                 * Question - \`String\`
                  */
                 question: string;
 
                 /**
-                 * Answer - \`string\`
+                 * Answer - \`String\`
                  */
                 answer: string;
               }>
@@ -714,7 +714,7 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Description - \`array\`
+             * Description - \`Array\`
              */
             description: Array<Sanity.Keyed<Sanity.Block>>;
           }
@@ -780,17 +780,17 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Name - \`string\`
+             * Name - \`String\`
              */
             name?: string;
 
             /**
-             * Bar - \`reference\`
+             * Bar - \`Reference\`
              */
             bar?: Sanity.Reference<Bar>;
 
             /**
-             * Two Types - \`reference\`
+             * Two Types - \`Reference\`
              */
             complex?: Sanity.Reference<Bar | Baz>;
           }
@@ -802,7 +802,7 @@ describe('generate-types', () => {
             _type: \\"bar\\";
 
             /**
-             * Name - \`string\`
+             * Name - \`String\`
              */
             name?: string;
           }
@@ -814,7 +814,7 @@ describe('generate-types', () => {
             _type: \\"baz\\";
 
             /**
-             * Name - \`string\`
+             * Name - \`String\`
              */
             name?: string;
           }
@@ -862,7 +862,7 @@ describe('generate-types', () => {
             _type: \\"foo-with-hyphen\\";
 
             /**
-             * Bar - \`foo_bar\`
+             * Bar - \`RegistryReference\`
              */
             foo_bar?: FooBar;
           }
@@ -871,7 +871,7 @@ describe('generate-types', () => {
             _type: \\"foo_bar\\";
 
             /**
-             * Name - \`string\`
+             * Name - \`String\`
              */
             name?: string;
           };
@@ -908,7 +908,7 @@ describe('generate-types', () => {
             _type: \\"foo\\";
 
             /**
-             * Code - \`code\`
+             * Code - \`RegistryReference\`
              */
             code?: Code;
           };
