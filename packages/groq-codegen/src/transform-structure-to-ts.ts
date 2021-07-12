@@ -1,40 +1,46 @@
 import * as t from '@babel/types';
 
-export interface TransformStructureToTsOptions {
-  structure: Sanity.GroqCodegen.StructureNode;
-}
+const getId = (node: Sanity.GroqCodegen.StructureNode) => `Ref_${node.hash}`;
 
-export function transformStructureToTs({
-  structure,
-}: TransformStructureToTsOptions) {
-  const visited = new Set<string>();
-  const aliasTypes = new Map<string, t.TSType>();
+function findAllLazyNodes(structure: Sanity.GroqCodegen.StructureNode) {
+  const lazyNodes = new Map<string, Sanity.GroqCodegen.StructureNode>();
 
-  const next = (node: Sanity.GroqCodegen.StructureNode) => {
-    const nodeId = getId(node);
+  function traverse(node: Sanity.GroqCodegen.StructureNode) {
+    switch (node.type) {
+      case 'Lazy': {
+        if (lazyNodes.has(getId(node))) return;
 
-    if (aliasTypes.has(nodeId)) {
-      return t.tsTypeReference(t.identifier(nodeId));
+        lazyNodes.set(getId(node), node);
+        traverse(node.get());
+        return;
+      }
+      case 'And':
+      case 'Or': {
+        for (const child of node.children) {
+          traverse(child);
+        }
+        return;
+      }
+      case 'Array': {
+        traverse(node.of);
+        return;
+      }
+      case 'Object': {
+        for (const property of node.properties) {
+          traverse(property.value);
+        }
+        return;
+      }
+      case 'Reference': {
+        traverse(node.to);
+        return;
+      }
     }
+  }
 
-    if (visited.has(nodeId)) {
-      aliasTypes.set(nodeId, createAlias(node));
-      return t.tsTypeReference(t.identifier(nodeId));
-    }
+  traverse(structure);
 
-    if (node.type === 'Lazy') {
-      visited.add(nodeId);
-    }
-
-    return transform(node, next);
-  };
-
-  return {
-    query: next(structure),
-    references: Object.fromEntries(
-      Array.from(aliasTypes).map(([k, v]) => [k, v]),
-    ),
-  };
+  return lazyNodes;
 }
 
 /**
@@ -125,24 +131,45 @@ function transform(
   return tsType;
 }
 
-const getId = (node: Sanity.GroqCodegen.StructureNode) => `Ref_${node.hash}`;
+export interface TransformStructureToTsOptions {
+  structure: Sanity.GroqCodegen.StructureNode;
+}
 
-function createAlias(node: Sanity.GroqCodegen.StructureNode) {
-  const visited = new Set<string>();
+export function transformStructureToTs({
+  structure,
+}: TransformStructureToTsOptions) {
+  const lazyNodes = findAllLazyNodes(structure);
 
-  const next = (n: Sanity.GroqCodegen.StructureNode) => {
-    const nodeId = getId(n);
+  const createAlias = (node: Sanity.GroqCodegen.StructureNode) => {
+    const next = (n: Sanity.GroqCodegen.StructureNode) => {
+      if (lazyNodes.has(getId(n))) {
+        return t.tsTypeReference(t.identifier(getId(n)));
+      }
 
-    if (visited.has(nodeId)) {
-      return t.tsTypeReference(t.identifier(nodeId));
-    }
+      return transform(n, next);
+    };
 
-    if (n.type === 'Lazy') {
-      visited.add(nodeId);
-    }
-
-    return transform(n, next);
+    // purposefully run the transform first before `next`
+    return transform(node, next);
   };
 
-  return next(node);
+  const aliasTypes = new Map(
+    Array.from(lazyNodes.values()).map((lazyNode) => [
+      getId(lazyNode),
+      createAlias(lazyNode),
+    ]),
+  );
+
+  const next = (node: Sanity.GroqCodegen.StructureNode) => {
+    if (aliasTypes.has(getId(node))) {
+      return t.tsTypeReference(t.identifier(getId(node)));
+    }
+
+    return transform(node, next);
+  };
+
+  return {
+    query: next(structure),
+    references: Object.fromEntries(Array.from(aliasTypes)),
+  };
 }

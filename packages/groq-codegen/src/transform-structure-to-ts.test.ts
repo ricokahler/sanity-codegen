@@ -129,18 +129,7 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         _type: \\"jsonDoc\\";
         _id: string;
-        jsonLike: (
-          | string
-          | number
-          | boolean
-          | Ref_f7g82l[]
-          | {
-              properties: {
-                key: string;
-                value: Ref_f7g82l;
-              }[];
-            }
-        )[];
+        jsonLike: Ref_f7g82l;
       }[];
 
       type Ref_f7g82l = (
