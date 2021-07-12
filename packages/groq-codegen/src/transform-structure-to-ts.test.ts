@@ -86,31 +86,39 @@ describe('transformStructureToTs', () => {
   it('creates named aliases when recursive definitions are found', () => {
     const schema = schemaNormalizer([
       {
-        title: 'Leaf',
-        name: 'leaf',
-        type: 'object',
-        fields: [{ name: 'value', type: 'string' }],
-      },
-      {
-        name: 'node',
-        type: 'object',
-        fields: [
-          { type: 'recursive', name: 'recursive' },
-          { type: 'node', name: 'node' },
+        name: 'jsonLike',
+        type: 'array',
+        of: [
+          { name: 'stringLike', type: 'string' },
+          { name: 'numberLike', type: 'number' },
+          { name: 'booleanLike', type: 'boolean' },
+          { name: 'arrayLike', type: 'array', of: [{ type: 'jsonLike' }] },
+          {
+            name: 'objectLike',
+            type: 'object',
+            fields: [
+              {
+                name: 'properties',
+                type: 'array',
+                of: [
+                  {
+                    type: 'object',
+                    name: 'propertyPair',
+                    fields: [
+                      { name: 'key', type: 'string' },
+                      { name: 'value', type: 'jsonLike' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
       {
-        name: 'recursive',
-        type: 'object',
-        fields: [
-          { type: 'node', name: 'node' },
-          { type: 'recursive', name: 'recursive' },
-        ],
-      },
-      {
-        name: 'config',
+        name: 'jsonDoc',
         type: 'document',
-        fields: [{ name: 'node', type: 'node' }],
+        fields: [{ name: 'jsonLike', type: 'jsonLike' }],
       },
     ]);
 
@@ -119,32 +127,34 @@ describe('transformStructureToTs', () => {
 
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
-        _type: \\"config\\";
+        _type: \\"jsonDoc\\";
         _id: string;
-        node: {
-          recursive: {
-            node: Ref_1t5qvoi;
-            recursive: Ref_1sr8v0v;
-          };
-          node: Ref_1t5qvoi;
-        };
+        jsonLike: (
+          | string
+          | number
+          | boolean
+          | Ref_f7g82l[]
+          | {
+              properties: {
+                key: string;
+                value: Ref_f7g82l;
+              }[];
+            }
+        )[];
       }[];
 
-      type Ref_1t5qvoi = {
-        recursive: {
-          node: Ref_1t5qvoi;
-          recursive: Ref_1sr8v0v;
-        };
-        node: Ref_1t5qvoi;
-      };
-
-      type Ref_1sr8v0v = {
-        node: {
-          recursive: Ref_1sr8v0v;
-          node: Ref_1t5qvoi;
-        };
-        recursive: Ref_1sr8v0v;
-      };
+      type Ref_f7g82l = (
+        | string
+        | number
+        | boolean
+        | Ref_f7g82l[]
+        | {
+            properties: {
+              key: string;
+              value: Ref_f7g82l;
+            }[];
+          }
+      )[];
       "
     `);
   });

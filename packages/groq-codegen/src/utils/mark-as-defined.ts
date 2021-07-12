@@ -1,18 +1,28 @@
+import { createStructure } from './create-structure';
+
 export function markAsDefined(
   node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'And':
     case 'Or': {
-      return { ...node, children: node.children.map(markAsDefined) };
+      return createStructure({
+        ...node,
+        children: node.children.map(markAsDefined),
+      });
     }
     case 'Lazy': {
-      // TODO: will this cause infinite loops?
-      return { type: 'Lazy', get: () => markAsDefined(node.get()) };
+      return createStructure({
+        type: 'Lazy',
+        get: () => markAsDefined(node.get()),
+        hashInput: ['MarkAsDefined', node.hash],
+      });
+    }
+    case 'Unknown': {
+      return node;
     }
     default: {
-      if ('canBeUndefined' in node) return { ...node, canBeUndefined: false };
-      return node;
+      return createStructure({ ...node, canBeUndefined: false });
     }
   }
 }

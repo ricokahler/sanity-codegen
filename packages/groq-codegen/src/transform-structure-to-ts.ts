@@ -1,5 +1,4 @@
 import * as t from '@babel/types';
-import { hash } from './utils';
 
 export interface TransformStructureToTsOptions {
   structure: Sanity.GroqCodegen.StructureNode;
@@ -8,25 +7,32 @@ export interface TransformStructureToTsOptions {
 export function transformStructureToTs({
   structure,
 }: TransformStructureToTsOptions) {
-  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
-  const aliasTypes = new Map<Sanity.GroqCodegen.StructureNode, t.TSType>();
+  const visited = new Set<string>();
+  const aliasTypes = new Map<string, t.TSType>();
 
-  const next = (n: Sanity.GroqCodegen.StructureNode) => {
-    if (aliasTypes.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
+  const next = (node: Sanity.GroqCodegen.StructureNode) => {
+    const nodeId = getId(node);
 
-    if (visited.has(n)) {
-      aliasTypes.set(n, createAlias(n));
-      return t.tsTypeReference(t.identifier(getId(n)));
+    if (aliasTypes.has(nodeId)) {
+      return t.tsTypeReference(t.identifier(nodeId));
     }
 
-    visited.add(n);
-    return transform(n, next);
+    if (visited.has(nodeId)) {
+      aliasTypes.set(nodeId, createAlias(node));
+      return t.tsTypeReference(t.identifier(nodeId));
+    }
+
+    if (node.type === 'Lazy') {
+      visited.add(nodeId);
+    }
+
+    return transform(node, next);
   };
 
   return {
     query: next(structure),
     references: Object.fromEntries(
-      Array.from(aliasTypes).map(([k, v]) => [getId(k), v]),
+      Array.from(aliasTypes).map(([k, v]) => [k, v]),
     ),
   };
 }
@@ -119,21 +125,22 @@ function transform(
   return tsType;
 }
 
-const idMap = new Map<Sanity.GroqCodegen.StructureNode, string>();
-
-function getId(node: Sanity.GroqCodegen.StructureNode) {
-  if (idMap.has(node)) return idMap.get(node)!;
-  const id = `Ref_${hash(node)}`;
-  idMap.set(node, id);
-  return id;
-}
+const getId = (node: Sanity.GroqCodegen.StructureNode) => `Ref_${node.hash}`;
 
 function createAlias(node: Sanity.GroqCodegen.StructureNode) {
-  const visited = new Set<Sanity.GroqCodegen.StructureNode>();
+  const visited = new Set<string>();
 
   const next = (n: Sanity.GroqCodegen.StructureNode) => {
-    if (visited.has(n)) return t.tsTypeReference(t.identifier(getId(n)));
-    visited.add(n);
+    const nodeId = getId(n);
+
+    if (visited.has(nodeId)) {
+      return t.tsTypeReference(t.identifier(nodeId));
+    }
+
+    if (n.type === 'Lazy') {
+      visited.add(nodeId);
+    }
+
     return transform(n, next);
   };
 

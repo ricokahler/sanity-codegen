@@ -1,3 +1,5 @@
+import { createStructure } from './create-structure';
+
 export function unwrapArray(
   node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
@@ -8,17 +10,17 @@ export function unwrapArray(
     }
     case 'And':
     case 'Or': {
-      return {
+      return createStructure({
         ...node,
         children: node.children.map(unwrapArray),
-      };
+      });
     }
     case 'Lazy': {
-      // TODO: will this cause any unnecessary churn or infinite loops?
-      return {
+      return createStructure({
         type: 'Lazy',
         get: () => unwrapArray(node.get()),
-      };
+        hashInput: ['UnwrapArray', node.hash],
+      });
     }
     default: {
       return node;
