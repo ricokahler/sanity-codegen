@@ -9,6 +9,6 @@
     "strict": true,
     "target": "esnext"
   },
-  "include": ["./src"],
-  "exclude": ["**/__example-files__/**/*"]
+  "include": ["./src", "./groq-codegen.d.ts"],
+  "exclude": ["**/__example-files__/**/*", "**/*.test.ts", "**/fixtures/**/*"]
 }

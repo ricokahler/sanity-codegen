@@ -1,4 +1,6 @@
+import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
 import { generateGroqTypes } from './generate-groq-types';
+import { exampleSchema } from './__example-files__/example-schema';
 
 describe('generateGroqTypes', () => {
   // TODO: better tests lol
@@ -6,6 +8,7 @@ describe('generateGroqTypes', () => {
     const result = await generateGroqTypes({
       cwd: __dirname,
       filenames: './__example-files__/**/*.ts',
+      schema: schemaNormalizer(exampleSchema),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -13,24 +16,10 @@ describe('generateGroqTypes', () => {
 
       declare namespace Sanity {
         namespace Queries {
-          type BookAuthor = Sanity.SafeIndexedAccess<
-            Extract<
-              Sanity.Schema.Document[][number],
-              {
-                _type: \\"book\\";
-              }
-            >[][number],
-            \\"author\\"
-          >;
-          type BookTitles = Sanity.SafeIndexedAccess<
-            Extract<
-              Sanity.Schema.Document[][number],
-              {
-                _type: \\"book\\";
-              }
-            >[][number],
-            \\"title\\"
-          >[];
+          type BookAuthor = {
+            name: string;
+          };
+          type BookTitles = string[];
 
           /**
            * A keyed type of all the codegen'ed queries. This type is used for
