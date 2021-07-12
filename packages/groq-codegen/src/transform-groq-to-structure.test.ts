@@ -2,20 +2,20 @@ import prettier from 'prettier';
 import generate from '@babel/generator';
 import { parse } from 'groq-js';
 import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
-import { transformGroqToTypeNode } from './transform-groq-to-type-node';
-import { transformTypeNodeToTsType } from './transform-type-node-to-ts-type';
+import { transformGroqToStructure } from './transform-groq-to-structure';
+import { transformStructureToTs } from './transform-structure-to-ts';
 
 function print(query: string, schemaTypes: any[]) {
   const schema = schemaNormalizer(schemaTypes);
   const root = parse(query);
 
-  const typeNode = transformGroqToTypeNode({
+  const typeNode = transformGroqToStructure({
     node: root,
     schema,
     scopes: [],
   });
 
-  const result = transformTypeNodeToTsType(typeNode);
+  const result = transformStructureToTs(typeNode);
 
   return prettier.format(
     `${`type Query = ${
@@ -170,6 +170,23 @@ describe('transformGroqToTypeNode', () => {
     `);
   });
 
+  test('preserve arrays', () => {
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [{ name: 'title', type: 'string' }],
+      },
+    ];
+
+    const query = `*[_type == 'book'].title`;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = string[];
+      "
+    `);
+  });
+
   test('deref', () => {
     const schema = [
       {
@@ -204,7 +221,7 @@ describe('transformGroqToTypeNode', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        foo: string[];
+        foo: string;
       };
       "
     `);

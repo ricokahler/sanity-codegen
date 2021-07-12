@@ -1,35 +1,38 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
 import { narrowTypeNode } from './narrow-type-node';
-import { accessTypeNodeAttribute } from './access-type-node-attribute';
-import { transformSchemaToTypeNode } from './transform-schema-to-type-node';
+import { accessAttributeInStructure } from './access-attribute-in-structure';
+import { transformSchemaToStructure } from './transform-schema-to-structure';
 import { unwrapReferences } from './unwrap-references';
+import { hasArray, unwrapArray, wrapArray } from './utils';
 
 interface TransformGroqToTypeNodeOptions {
   node: Groq.ExprNode;
   schema: Sanity.SchemaDef.Schema;
-  scopes: Sanity.Groq.TypeNode[];
+  scopes: Sanity.GroqCodegen.StructureNode[];
 }
 
-export function transformGroqToTypeNode({
+export function transformGroqToStructure({
   node,
   schema,
   scopes,
-}: TransformGroqToTypeNodeOptions): Sanity.Groq.TypeNode {
-  const scope = scopes[scopes.length - 1] as Sanity.Groq.TypeNode | undefined;
+}: TransformGroqToTypeNodeOptions): Sanity.GroqCodegen.StructureNode {
+  const scope = scopes[scopes.length - 1] as
+    | Sanity.GroqCodegen.StructureNode
+    | undefined;
 
   switch (node.type) {
     case 'Everything': {
-      return transformSchemaToTypeNode(schema);
+      return transformSchemaToStructure(schema);
     }
 
     case 'Map': {
-      const baseResult = transformGroqToTypeNode({
+      const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
         schema,
       });
 
-      const exprResult = transformGroqToTypeNode({
+      const exprResult = transformGroqToStructure({
         node: node.expr,
         scopes: [...scopes, baseResult],
         schema,
@@ -40,7 +43,7 @@ export function transformGroqToTypeNode({
 
     case 'Filter': {
       // e.g. the return type from everything
-      const baseResult = transformGroqToTypeNode({
+      const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
         schema,
@@ -50,7 +53,7 @@ export function transformGroqToTypeNode({
     }
 
     case 'This': {
-      return scope || { type: 'Unknown', isArray: false };
+      return scope || { type: 'Unknown' };
     }
 
     case 'OpCall': {
@@ -58,45 +61,39 @@ export function transformGroqToTypeNode({
     }
 
     case 'AccessElement': {
-      const baseResult = transformGroqToTypeNode({
+      const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
         schema,
       });
 
       if (baseResult.type === 'Unknown') {
-        return { type: 'Unknown', isArray: false };
+        return { type: 'Unknown' };
       }
 
-      if (baseResult.type === 'Alias') {
-        throw new Error('TODO');
-      }
-
-      return {
-        ...baseResult,
-        isArray: false,
-        canBeUndefined: true,
-      };
+      return unwrapArray(baseResult);
     }
 
     case 'Projection': {
       // e.g. the result of a filter
-      const baseResult = transformGroqToTypeNode({
+      const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
         schema,
       });
 
-      const exprResult = transformGroqToTypeNode({
+      const baseResultHadArray = hasArray(baseResult);
+
+      const exprResult = transformGroqToStructure({
         node: node.expr,
-        scopes: [...scopes, { ...baseResult, isArray: false }],
+        scopes: [
+          ...scopes,
+          baseResultHadArray ? unwrapArray(baseResult) : baseResult,
+        ],
         schema,
       });
 
-      return {
-        ...exprResult,
-        isArray: baseResult.isArray,
-      };
+      return baseResultHadArray ? wrapArray(exprResult) : exprResult;
     }
 
     case 'Object': {
@@ -111,13 +108,12 @@ export function transformGroqToTypeNode({
           )
           .map((attribute) => ({
             key: attribute.name,
-            value: transformGroqToTypeNode({
+            value: transformGroqToStructure({
               node: attribute.value,
               schema,
               scopes,
             }),
           })),
-        isArray: scope?.isArray || false,
       };
     }
 
@@ -125,19 +121,15 @@ export function transformGroqToTypeNode({
       return {
         type: 'Or',
         children: [
-          transformGroqToTypeNode({ node: node.left, scopes, schema }),
-          transformGroqToTypeNode({ node: node.right, scopes, schema }),
+          transformGroqToStructure({ node: node.left, scopes, schema }),
+          transformGroqToStructure({ node: node.right, scopes, schema }),
         ],
-        isArray: scope?.isArray || false,
-        // TODO: figure this out
-        canBeUndefined: false,
-        canBeNull: false,
       };
     }
 
     case 'AccessAttribute': {
       if (node.base) {
-        const baseResult = transformGroqToTypeNode({
+        const baseResult = transformGroqToStructure({
           node: node.base,
           scopes: scopes,
           schema,
@@ -146,20 +138,20 @@ export function transformGroqToTypeNode({
         const next = { ...node };
         delete next.base;
 
-        return transformGroqToTypeNode({
+        return transformGroqToStructure({
           node: next,
           scopes: [...scopes, baseResult],
           schema,
         });
       }
 
-      if (!scope) return { type: 'Unknown', isArray: false };
+      if (!scope) return { type: 'Unknown' };
 
-      return accessTypeNodeAttribute(scope, node.name);
+      return accessAttributeInStructure(scope, node.name);
     }
 
     case 'Deref': {
-      const baseResult = transformGroqToTypeNode({
+      const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
         schema,

@@ -1,70 +1,83 @@
 declare namespace Sanity {
-  namespace Groq {
+  namespace GroqCodegen {
     type IntrinsicType = 'Asset' | 'Crop' | 'Hotspot' | 'Geopoint';
 
-    type TypeNode =
-      | {
-          type: 'Alias';
-          get: () => TypeNode;
-          isArray: boolean;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-        }
-      | {
-          type: 'And';
-          children: TypeNode[];
-          isArray: boolean;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-        }
-      | {
-          type: 'Or';
-          children: TypeNode[];
-          isArray: boolean;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-        }
-      | {
-          type: 'Object';
-          properties: Array<{ key: string; value: TypeNode }>;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          isArray: boolean;
-        }
-      | {
-          type: 'String';
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          value: string | null;
-          isArray: boolean;
-        }
-      | {
-          type: 'Number';
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          value: number | null;
-          isArray: boolean;
-        }
-      | {
-          type: 'Boolean';
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          isArray: boolean;
-        }
-      | {
-          type: 'Intrinsic';
-          intrinsicType: IntrinsicType;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          isArray: boolean;
-        }
-      | {
-          type: 'Reference';
-          to: TypeNode;
-          canBeNull: boolean;
-          canBeUndefined: boolean;
-          isArray: boolean;
-        }
-      | { type: 'Unknown'; isArray: boolean };
+    type LazyNode = {
+      type: 'Lazy';
+      get: () => StructureNode;
+    };
+
+    type AndNode = {
+      type: 'And';
+      children: StructureNode[];
+    };
+
+    type OrNode = {
+      type: 'Or';
+      children: StructureNode[];
+    };
+
+    type ArrayNode = {
+      type: 'Array';
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+      of: StructureNode;
+    };
+
+    type ObjectNode = {
+      type: 'Object';
+      properties: Array<{ key: string; value: StructureNode }>;
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+    };
+
+    type StringNode = {
+      type: 'String';
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+      value: string | null;
+    };
+
+    type NumberNode = {
+      type: 'Number';
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+      value: number | null;
+    };
+
+    type BooleanNode = {
+      type: 'Boolean';
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+    };
+
+    type IntrinsicNode = {
+      type: 'Intrinsic';
+      intrinsicType: IntrinsicType;
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+    };
+
+    type ReferenceNode = {
+      type: 'Reference';
+      to: StructureNode;
+      canBeNull: boolean;
+      canBeUndefined: boolean;
+    };
+
+    type UnknownNode = { type: 'Unknown' };
+
+    type StructureNode =
+      | LazyNode
+      | AndNode
+      | OrNode
+      | ArrayNode
+      | ObjectNode
+      | StringNode
+      | NumberNode
+      | BooleanNode
+      | IntrinsicNode
+      | ReferenceNode
+      | UnknownNode;
   }
 }

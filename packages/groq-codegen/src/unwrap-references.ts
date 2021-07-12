@@ -1,13 +1,13 @@
-function unwrapAlias(n: Sanity.Groq.TypeNode) {
+function unwrapLazy(n: Sanity.GroqCodegen.StructureNode) {
   switch (n.type) {
-    case 'Alias': {
+    case 'Lazy': {
       return n.get();
     }
     case 'And':
     case 'Or': {
       return {
         ...n,
-        children: n.children.map(unwrapAlias),
+        children: n.children.map(unwrapLazy),
       };
     }
     default: {
@@ -16,10 +16,10 @@ function unwrapAlias(n: Sanity.Groq.TypeNode) {
   }
 }
 
-export function unwrapReferences(n: Sanity.Groq.TypeNode) {
+export function unwrapReferences(n: Sanity.GroqCodegen.StructureNode) {
   switch (n.type) {
     case 'Reference': {
-      return unwrapAlias(n.to);
+      return unwrapLazy(n.to);
     }
     case 'And':
     case 'Or': {
