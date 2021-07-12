@@ -125,17 +125,19 @@ describe('transformGroqToStructure', () => {
           _type: \\"book\\";
           _id: string;
           title: string;
-          author: Sanity.Reference<{
-            _type: \\"author\\";
-            _id: string;
-            name: string;
-          }>;
+          author: Sanity.Reference<Ref_1psxygh>;
         }[];
         authors: {
           _type: \\"author\\";
           _id: string;
           name: string;
         }[];
+      };
+
+      type Ref_1psxygh = {
+        _type: \\"author\\";
+        _id: string;
+        name: string;
       };
       "
     `);
