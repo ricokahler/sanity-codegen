@@ -2,124 +2,10 @@
 
 declare namespace Sanity {
   namespace SchemaDef {
-    type Schema = {
-      documentTypes: Document[];
-      topLevelTypes: TopLevelType<Exclude<Def, Document>>[];
-    };
-
-    type Def =
-      | Array
-      | Block
-      | Document
-      | Boolean
-      | Date
-      | Datetime
-      | File
-      | Geopoint
-      | Image
-      | Number
-      | Object
-      | Reference
-      | Slug
-      | String
-      | Text
-      | Url
-      | Alias;
-
     /**
-     * a definition but the `name` is required (because top-level types must)
-     * have a name
+     * The common props used on all schema node types.
      */
-    type TopLevelType<T extends Def> = T & { name: string };
-
-    interface Array extends Sanity.SchemaDef.DefProps<'array'> {
-      of: Sanity.SchemaDef.Def[];
-      list: List<string> | null;
-    }
-
-    interface Block extends Sanity.SchemaDef.DefProps<'block'> {
-      // note: this represents inline objects
-      of: Sanity.SchemaDef.Def[] | null;
-      // do we need markDefs, styles, etc?
-      markDefs: Object[];
-      // given the above scope, i don't think we do
-    }
-
-    interface Boolean extends Sanity.SchemaDef.DefProps<'boolean'> {}
-
-    interface Date extends Sanity.SchemaDef.DefProps<'date'> {}
-
-    interface Datetime extends Sanity.SchemaDef.DefProps<'datetime'> {}
-
-    interface Field {
-      name: string;
-      title: string;
-      description: string;
-      hidden: boolean;
-      readOnly: boolean;
-      codegen: { required: boolean };
-      hasValidation: boolean;
-      definition: Sanity.SchemaDef.Def;
-    }
-
-    interface Document extends Sanity.SchemaDef.DefProps<'document'> {
-      // `name` is required for `document`s
-      name: string;
-      title: string;
-      fields: Sanity.SchemaDef.Field[];
-    }
-
-    interface File extends Sanity.SchemaDef.DefProps<'file'> {
-      fields: Sanity.SchemaDef.Field[] | null;
-    }
-
-    interface Geopoint extends Sanity.SchemaDef.DefProps<'geopoint'> {}
-
-    interface Image extends Sanity.SchemaDef.DefProps<'image'> {
-      fields: Sanity.SchemaDef.Field[] | null;
-    }
-
-    interface Number extends Sanity.SchemaDef.DefProps<'number'> {
-      list: List<number> | null;
-    }
-
-    interface Object extends Sanity.SchemaDef.DefProps<'object'> {
-      fields: Sanity.SchemaDef.Field[];
-    }
-
-    interface Reference extends Sanity.SchemaDef.DefProps<'reference'> {
-      to: Sanity.SchemaDef.Alias[];
-      weak: boolean;
-    }
-
-    interface Slug extends Sanity.SchemaDef.DefProps<'slug'> {}
-
-    interface String extends Sanity.SchemaDef.DefProps<'string'> {
-      list: List<string> | null;
-    }
-
-    interface Text extends Sanity.SchemaDef.DefProps<'text'> {}
-
-    interface Url extends Sanity.SchemaDef.DefProps<'url'> {}
-
-    interface DefProps<
-      T extends string,
-      U extends 'primitive' | 'alias' = 'primitive'
-    > {
-      /**
-       * The `definitionType` can be either `'primitive'` or `'alias'`.
-       *
-       * A `primitive` definition is one that refers to a built-in schema type.
-       * When the `definitionType` is `primitive`, the `type` can only be one of
-       * the following `array`, `block`, `boolean`, `date`, `datetime`,
-       * `document`, `file`, `geopoint`, `image`, `number`, `object`,
-       * `reference`, `slug`, `string`, `text`, and `url`
-       *
-       * An `alias` definition refers to another non-primitive type. When the
-       * `definitionType` is `alias`, the `type` is just string.
-       */
-      definitionType: U;
-      type: T;
+    type CommonNodeProps = {
       title: string | null;
       name: string | null;
       hidden: boolean;
@@ -127,14 +13,181 @@ declare namespace Sanity {
       description: string | null;
       codegen: { required: boolean };
       hasValidation: boolean;
-    }
+    };
 
-    interface Alias extends Sanity.SchemaDef.DefProps<string, 'alias'> {}
-
-    type List<T> = {
-      // extractor will normalize to this
+    /**
+     * Defines a field that is common across `Document`s, `Object`s, `Image`s,
+     * and `File`s.
+     */
+    type FieldDef = {
+      name: string;
       title: string;
-      value: T;
-    }[];
+      description: string;
+      hidden: boolean;
+      readOnly: boolean;
+      codegen: { required: boolean };
+      hasValidation: boolean;
+      definition: SchemaNode;
+    };
+
+    /**
+     * Defines the options given to the `options.list` configuration of sanity
+     * schema type that accepts a list of options (i.e. string, number, array)
+     */
+    type ListOptionsDef<T> = { title: string; value: T }[];
+
+    /**
+     * The root node that contains a list of documents and top-level registered
+     * types.
+     */
+    type Schema = {
+      type: 'SchemaRoot';
+      /**
+       * Holds all the documents found in the schema.
+       */
+      documents: DocumentNode[];
+      /**
+       * Holds every other registered type (excluding documents).
+       *
+       * A registered type is one that is provided to…
+       *
+       * ```js
+       * createSchema({ types: [yourSchemaTypes] })
+       * ```
+       *
+       * …to be used as a `type` when defining fields of other objects,
+       * documents, etc.
+       */
+      registeredTypes: RegisteredSchemaNode[];
+    };
+
+    /**
+     * A union of all of the different schema nodes.
+     *
+     * This is a data structure that represents all type-related information
+     * about a sanity schema. Note that it purposely leaves out some schema
+     * information that is irrelevant to type generation or that cannot be
+     * easily serialized to JSON.
+     *
+     * @see `Sanity.SchemaDef.Schema`
+     * @see `Sanity.SchemaDef.RegistryReferenceNode`
+     */
+    type SchemaNode =
+      | DocumentNode
+      | RegistryReferenceNode
+      | ReferenceNode
+      | ObjectNode
+      | FileNode
+      | ImageNode
+      | ArrayNode
+      | BlockNode
+      | BooleanNode
+      | NumberNode
+      | StringNode
+      | TextNode
+      | UrlNode
+      | DateNode
+      | DatetimeNode
+      | GeopointNode
+      | SlugNode;
+
+    /**
+     * Represents a top-level `SchemaNode` (excluding the `DocumentNode`)
+     */
+    type RegisteredSchemaNode = Exclude<SchemaNode, { type: 'Document' }> & {
+      // name will always be defined
+      name: string;
+    };
+
+    /**
+     * A node that represents a reference to top-level registered schema node.
+     *
+     * NOTE: this node is an additional one to the default sanity schema nodes
+     * (meaning there is no 'registry reference' sanity type), that is used to
+     * point to a registered sanity type.
+     */
+    type RegistryReferenceNode = CommonNodeProps & {
+      type: 'RegistryReference';
+      /**
+       * A string that refer to registered type as part of the
+       * schema's `registeredTypes`
+       */
+      to: string;
+    };
+
+    type DocumentNode = CommonNodeProps & {
+      type: 'Document';
+      // name is required for documents
+      name: string;
+      title: string;
+      fields: FieldDef[];
+    };
+
+    type ReferenceNode = CommonNodeProps & {
+      type: 'Reference';
+      to: RegistryReferenceNode[];
+      weak: boolean;
+    };
+
+    type ObjectNode = CommonNodeProps & {
+      type: 'Object';
+      /**
+       * Fields are required for `Object`s and are guaranteed to have at least
+       * one value (via validation)
+       */
+      fields: FieldDef[];
+    };
+
+    type FileNode = CommonNodeProps & {
+      type: 'File';
+      /**
+       * Fields are optional for `File`s and may be null
+       */
+      fields: FieldDef[] | null;
+    };
+
+    type ImageNode = CommonNodeProps & {
+      type: 'Image';
+      /**
+       * Fields are optional for `Image`s and may be null
+       */
+      fields: FieldDef[] | null;
+    };
+
+    type ArrayNode = CommonNodeProps & {
+      type: 'Array';
+      of: SchemaNode[];
+      list: ListOptionsDef<string> | null;
+    };
+
+    type BlockNode = CommonNodeProps & {
+      type: 'Block';
+      of: SchemaNode[] | null;
+      markDefs: ObjectNode[];
+    };
+
+    type BooleanNode = CommonNodeProps & { type: 'Boolean' };
+
+    type NumberNode = CommonNodeProps & {
+      type: 'Number';
+      list: ListOptionsDef<number> | null;
+    };
+
+    type StringNode = CommonNodeProps & {
+      type: 'String';
+      list: ListOptionsDef<string> | null;
+    };
+
+    type TextNode = CommonNodeProps & { type: 'Text' };
+
+    type UrlNode = CommonNodeProps & { type: 'Url' };
+
+    type DateNode = CommonNodeProps & { type: 'Date' };
+
+    type DatetimeNode = CommonNodeProps & { type: 'Datetime' };
+
+    type GeopointNode = CommonNodeProps & { type: 'Geopoint' };
+
+    type SlugNode = CommonNodeProps & { type: 'Slug' };
   }
 }

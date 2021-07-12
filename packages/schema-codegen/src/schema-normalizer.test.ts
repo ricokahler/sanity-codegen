@@ -51,9 +51,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Expected type \`myObject\` to have property \`fields\` with at least one field."`
+      `"Expected type \`myObject\` to have property \`fields\` with at least one field."`,
     );
   });
 
@@ -72,9 +72,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Expected type \`myObject.nestedObject\` to have property \`fields\` with at least one field."`
+      `"Expected type \`myObject.nestedObject\` to have property \`fields\` with at least one field."`,
     );
   });
 
@@ -97,9 +97,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"\`(anonymous object).stuff\` had a field missing a \`name\` string."`
+      `"\`(anonymous object).stuff\` had a field missing a \`name\` string."`,
     );
   });
 
@@ -118,9 +118,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"\`movie\` has an invalid \`type\`. Expected a string but got \`null\`"`
+      `"\`movie\` has an invalid \`type\`. Expected a string but got \`null\`"`,
     );
   });
 
@@ -211,9 +211,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"\`myObject.myArrayMissingOf\` was of type \`array\` but did not have an \`of\` property."`
+      `"\`myObject.myArrayMissingOf\` was of type \`array\` but did not have an \`of\` property."`,
     );
   });
 
@@ -243,9 +243,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Found top-level type with no \`name\` field."`
+      `"Found top-level registered type with no \`name\` field."`,
     );
   });
 
@@ -364,9 +364,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Expected \`myObject.testField.options.list\` to be an array but found \`number\` instead."`
+      `"Expected \`myObject.testField.options.list\` to be an array but found \`number\` instead."`,
     );
   });
 
@@ -389,9 +389,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected a string, number, or object but found \\"function\\""`
+      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected a string, number, or object but found \\"function\\""`,
     );
   });
 
@@ -414,9 +414,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected item to have properties \`title\` and \`value\`."`
+      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected item to have properties \`title\` and \`value\`."`,
     );
   });
 
@@ -462,9 +462,9 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema)
+      schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"\`movie.actor\` was of type \`reference\` but did not have an \`to\` property."`
+      `"\`movie.actor\` was of type \`reference\` but did not have an \`to\` property."`,
     );
   });
 
@@ -522,11 +522,11 @@ describe('normalizer', () => {
   it.todo('creates references with _weak: true');
 
   it.todo(
-    'throws if the top-level type name is not composed of alphanumeric or underscores'
+    'throws if the top-level type name is not composed of alphanumeric or underscores',
   );
 
   it.todo(
-    'throws if the field name is not composed of alphanumeric or underscores'
+    'throws if the field name is not composed of alphanumeric or underscores',
   );
 
   it.todo('throws if it finds a span type outside of a block');

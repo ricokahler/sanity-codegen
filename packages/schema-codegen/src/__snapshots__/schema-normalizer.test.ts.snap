@@ -2,13 +2,12 @@
 
 exports[`normalizer accepts a \`block\` type within inline objects 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -19,7 +18,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "hasValidation": false,
           "hidden": false,
@@ -30,7 +28,6 @@ Object {
               "codegen": Object {
                 "required": false,
               },
-              "definitionType": "primitive",
               "description": null,
               "fields": Array [
                 Object {
@@ -41,7 +38,6 @@ Object {
                     "codegen": Object {
                       "required": false,
                     },
-                    "definitionType": "primitive",
                     "description": null,
                     "hasValidation": false,
                     "hidden": false,
@@ -49,7 +45,7 @@ Object {
                     "name": "name",
                     "readOnly": false,
                     "title": "Name",
-                    "type": "string",
+                    "type": "String",
                   },
                   "description": "",
                   "hasValidation": false,
@@ -63,24 +59,23 @@ Object {
               "hidden": false,
               "name": "inlineObject",
               "readOnly": false,
-              "title": "InlineObject",
-              "type": "object",
+              "title": "Inline Object",
+              "type": "Object",
             },
           ],
           "readOnly": false,
           "title": null,
-          "type": "block",
+          "type": "Block",
         },
       ],
       "readOnly": false,
       "title": "Wysiwyg",
-      "type": "array",
+      "type": "Array",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -91,7 +86,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "hasValidation": false,
           "hidden": false,
@@ -102,7 +96,6 @@ Object {
               "codegen": Object {
                 "required": false,
               },
-              "definitionType": "primitive",
               "description": null,
               "fields": Array [
                 Object {
@@ -113,7 +106,6 @@ Object {
                     "codegen": Object {
                       "required": false,
                     },
-                    "definitionType": "primitive",
                     "description": null,
                     "hasValidation": false,
                     "hidden": false,
@@ -121,7 +113,7 @@ Object {
                     "name": "name",
                     "readOnly": false,
                     "title": "Name",
-                    "type": "string",
+                    "type": "String",
                   },
                   "description": "",
                   "hasValidation": false,
@@ -135,24 +127,23 @@ Object {
               "hidden": false,
               "name": "inlineObject",
               "readOnly": false,
-              "title": "InlineObject",
-              "type": "object",
+              "title": "Inline Object",
+              "type": "Object",
             },
           ],
           "readOnly": false,
           "title": null,
-          "type": "block",
+          "type": "Block",
         },
       ],
       "readOnly": false,
       "title": "Wysiwyg",
-      "type": "array",
+      "type": "Array",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -163,7 +154,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "hasValidation": false,
           "hidden": false,
@@ -172,26 +162,26 @@ Object {
           "of": null,
           "readOnly": false,
           "title": null,
-          "type": "block",
+          "type": "Block",
         },
       ],
       "readOnly": false,
       "title": "Wysiwyg",
-      "type": "array",
+      "type": "Array",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts a block type with nested of types 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -202,7 +192,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "hasValidation": false,
           "hidden": false,
@@ -213,7 +202,6 @@ Object {
               "codegen": Object {
                 "required": false,
               },
-              "definitionType": "primitive",
               "description": null,
               "hasValidation": false,
               "hidden": false,
@@ -221,31 +209,31 @@ Object {
               "name": null,
               "readOnly": false,
               "title": null,
-              "type": "string",
+              "type": "String",
             },
           ],
           "readOnly": false,
           "title": null,
-          "type": "block",
+          "type": "Block",
         },
       ],
       "readOnly": false,
-      "title": "ArrayTesting",
-      "type": "array",
+      "title": "Array Testing",
+      "type": "Array",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts a number or string with or without list options 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -266,13 +254,12 @@ Object {
       "name": "dropdown",
       "readOnly": false,
       "title": "Dropdown",
-      "type": "string",
+      "type": "String",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -292,14 +279,13 @@ Object {
       ],
       "name": "dropdownNoTitle",
       "readOnly": false,
-      "title": "DropdownNoTitle",
-      "type": "string",
+      "title": "Dropdown No Title",
+      "type": "String",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -319,14 +305,13 @@ Object {
       ],
       "name": "numberDropdown",
       "readOnly": false,
-      "title": "NumberDropdown",
-      "type": "number",
+      "title": "Number Dropdown",
+      "type": "Number",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -337,21 +322,21 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "alias",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "dropdownField",
             "readOnly": false,
-            "title": "DropdownField",
-            "type": "dropdown",
+            "title": "Dropdown Field",
+            "to": "dropdown",
+            "type": "RegistryReference",
           },
           "description": "",
           "hasValidation": false,
           "hidden": false,
           "name": "dropdownField",
           "readOnly": false,
-          "title": "DropdownField",
+          "title": "Dropdown Field",
         },
         Object {
           "codegen": Object {
@@ -361,21 +346,21 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "alias",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "numberDropdownField",
             "readOnly": false,
-            "title": "NumberDropdownField",
-            "type": "numberDropdown",
+            "title": "Number Dropdown Field",
+            "to": "numberDropdown",
+            "type": "RegistryReference",
           },
           "description": "",
           "hasValidation": false,
           "hidden": false,
           "name": "numberDropdownField",
           "readOnly": false,
-          "title": "NumberDropdownField",
+          "title": "Number Dropdown Field",
         },
         Object {
           "codegen": Object {
@@ -385,7 +370,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -393,7 +377,7 @@ Object {
             "name": "foo",
             "readOnly": false,
             "title": "Foo",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -410,7 +394,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -418,7 +401,7 @@ Object {
             "name": "bar",
             "readOnly": false,
             "title": "Bar",
-            "type": "number",
+            "type": "Number",
           },
           "description": "",
           "hasValidation": false,
@@ -432,21 +415,21 @@ Object {
       "hidden": false,
       "name": "someObject",
       "readOnly": false,
-      "title": "SomeObject",
-      "type": "object",
+      "title": "Some Object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts a reference type 1`] = `
 Object {
-  "documentTypes": Array [
+  "documents": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -457,7 +440,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -465,7 +447,7 @@ Object {
             "name": "title",
             "readOnly": false,
             "title": "Title",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -482,7 +464,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -494,17 +475,17 @@ Object {
                 "codegen": Object {
                   "required": false,
                 },
-                "definitionType": "alias",
                 "description": null,
                 "hasValidation": false,
                 "hidden": false,
                 "name": null,
                 "readOnly": false,
                 "title": null,
-                "type": "actor",
+                "to": "actor",
+                "type": "RegistryReference",
               },
             ],
-            "type": "reference",
+            "type": "Reference",
             "weak": false,
           },
           "description": "",
@@ -520,13 +501,12 @@ Object {
       "name": "movie",
       "readOnly": false,
       "title": "Movie",
-      "type": "document",
+      "type": "Document",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -537,7 +517,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -545,7 +524,7 @@ Object {
             "name": "name",
             "readOnly": false,
             "title": "Name",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -560,36 +539,35 @@ Object {
       "name": "actor",
       "readOnly": false,
       "title": "Actor",
-      "type": "document",
+      "type": "Document",
     },
   ],
-  "topLevelTypes": Array [],
+  "registeredTypes": Array [],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts an image and file type with or without fields 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": null,
       "hasValidation": false,
       "hidden": false,
       "name": "myImage",
       "readOnly": false,
-      "title": "MyImage",
-      "type": "image",
+      "title": "My Image",
+      "type": "Image",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -600,7 +578,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -608,7 +585,7 @@ Object {
             "name": "description",
             "readOnly": false,
             "title": "Description",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -622,22 +599,22 @@ Object {
       "hidden": false,
       "name": "myFile",
       "readOnly": false,
-      "title": "MyFile",
-      "type": "file",
+      "title": "My File",
+      "type": "File",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts and normalizes a field with a nested object 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -648,7 +625,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "fields": Array [
               Object {
@@ -659,7 +635,6 @@ Object {
                   "codegen": Object {
                     "required": false,
                   },
-                  "definitionType": "primitive",
                   "description": null,
                   "hasValidation": false,
                   "hidden": false,
@@ -667,7 +642,7 @@ Object {
                   "name": "name",
                   "readOnly": false,
                   "title": "Name",
-                  "type": "string",
+                  "type": "String",
                 },
                 "description": "",
                 "hasValidation": false,
@@ -682,7 +657,7 @@ Object {
             "name": "actor",
             "readOnly": false,
             "title": "Actor",
-            "type": "object",
+            "type": "Object",
           },
           "description": "",
           "hasValidation": false,
@@ -697,21 +672,21 @@ Object {
       "name": "movie",
       "readOnly": false,
       "title": "Movie",
-      "type": "object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts and normalizes a field with a top-level reference 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -722,7 +697,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -730,7 +704,7 @@ Object {
             "name": "name",
             "readOnly": false,
             "title": "Name",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -745,13 +719,12 @@ Object {
       "name": "actor",
       "readOnly": false,
       "title": "Actor",
-      "type": "object",
+      "type": "Object",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -762,14 +735,14 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "alias",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "actor",
             "readOnly": false,
             "title": "Actor",
-            "type": "actor",
+            "to": "actor",
+            "type": "RegistryReference",
           },
           "description": "",
           "hasValidation": false,
@@ -784,21 +757,21 @@ Object {
       "name": "movie",
       "readOnly": false,
       "title": "Movie",
-      "type": "object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts and normalizes array types 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -809,7 +782,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "hasValidation": false,
           "hidden": false,
@@ -817,18 +789,17 @@ Object {
           "name": null,
           "readOnly": false,
           "title": null,
-          "type": "string",
+          "type": "String",
         },
       ],
       "readOnly": false,
-      "title": "MyArray",
-      "type": "array",
+      "title": "My Array",
+      "type": "Array",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -839,7 +810,6 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "primitive",
           "description": null,
           "fields": Array [
             Object {
@@ -850,7 +820,6 @@ Object {
                 "codegen": Object {
                   "required": false,
                 },
-                "definitionType": "primitive",
                 "description": null,
                 "hasValidation": false,
                 "hidden": false,
@@ -858,7 +827,7 @@ Object {
                 "name": "foo",
                 "readOnly": false,
                 "title": "Foo",
-                "type": "string",
+                "type": "String",
               },
               "description": "",
               "hasValidation": false,
@@ -873,18 +842,17 @@ Object {
           "name": null,
           "readOnly": false,
           "title": null,
-          "type": "object",
+          "type": "Object",
         },
       ],
       "readOnly": false,
-      "title": "InlineObjects",
-      "type": "array",
+      "title": "Inline Objects",
+      "type": "Array",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
@@ -895,25 +863,24 @@ Object {
           "codegen": Object {
             "required": false,
           },
-          "definitionType": "alias",
           "description": null,
           "hasValidation": false,
           "hidden": false,
           "name": null,
           "readOnly": false,
           "title": null,
-          "type": "actor",
+          "to": "actor",
+          "type": "RegistryReference",
         },
       ],
       "readOnly": false,
-      "title": "TopLevelType",
-      "type": "array",
+      "title": "Top Level Type",
+      "type": "Array",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -924,7 +891,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -932,7 +898,7 @@ Object {
             "name": "name",
             "readOnly": false,
             "title": "Name",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -947,34 +913,33 @@ Object {
       "name": "actor",
       "readOnly": false,
       "title": "Actor",
-      "type": "object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts basic primitives types 1`] = `
 Object {
-  "documentTypes": Array [],
-  "topLevelTypes": Array [
+  "documents": Array [],
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "hasValidation": false,
       "hidden": false,
       "name": "boolean",
       "readOnly": false,
       "title": "Boolean",
-      "type": "boolean",
+      "type": "Boolean",
     },
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -985,14 +950,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "date",
             "readOnly": false,
             "title": "Date",
-            "type": "date",
+            "type": "Date",
           },
           "description": "",
           "hasValidation": false,
@@ -1009,14 +973,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "datetime",
             "readOnly": false,
             "title": "Datetime",
-            "type": "datetime",
+            "type": "Datetime",
           },
           "description": "",
           "hasValidation": false,
@@ -1033,14 +996,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "geopoint",
             "readOnly": false,
             "title": "Geopoint",
-            "type": "geopoint",
+            "type": "Geopoint",
           },
           "description": "",
           "hasValidation": false,
@@ -1057,14 +1019,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "slug",
             "readOnly": false,
             "title": "Slug",
-            "type": "slug",
+            "type": "Slug",
           },
           "description": "",
           "hasValidation": false,
@@ -1081,14 +1042,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "text",
             "readOnly": false,
             "title": "Text",
-            "type": "text",
+            "type": "Text",
           },
           "description": "",
           "hasValidation": false,
@@ -1105,14 +1065,13 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "url",
             "readOnly": false,
             "title": "Url",
-            "type": "url",
+            "type": "Url",
           },
           "description": "",
           "hasValidation": false,
@@ -1126,21 +1085,21 @@ Object {
       "hidden": false,
       "name": "myObject",
       "readOnly": false,
-      "title": "MyObject",
-      "type": "object",
+      "title": "My Object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer takes in a sanity schema and returns a normalized, json-serializable representation 1`] = `
 Object {
-  "documentTypes": Array [
+  "documents": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -1151,7 +1110,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -1159,7 +1117,7 @@ Object {
             "name": "title",
             "readOnly": false,
             "title": "Title",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -1176,22 +1134,21 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "list": null,
             "name": "yearReleased",
             "readOnly": false,
-            "title": "YearReleased",
-            "type": "number",
+            "title": "Year Released",
+            "type": "Number",
           },
           "description": "",
           "hasValidation": false,
           "hidden": false,
           "name": "yearReleased",
           "readOnly": false,
-          "title": "YearReleased",
+          "title": "Year Released",
         },
         Object {
           "codegen": Object {
@@ -1201,7 +1158,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -1212,19 +1168,19 @@ Object {
                 "codegen": Object {
                   "required": false,
                 },
-                "definitionType": "alias",
                 "description": null,
                 "hasValidation": false,
                 "hidden": false,
                 "name": null,
                 "readOnly": false,
                 "title": null,
-                "type": "actor",
+                "to": "actor",
+                "type": "RegistryReference",
               },
             ],
             "readOnly": false,
             "title": "Actors",
-            "type": "array",
+            "type": "Array",
           },
           "description": "",
           "hasValidation": false,
@@ -1239,15 +1195,14 @@ Object {
       "name": "movie",
       "readOnly": false,
       "title": "Movie",
-      "type": "document",
+      "type": "Document",
     },
   ],
-  "topLevelTypes": Array [
+  "registeredTypes": Array [
     Object {
       "codegen": Object {
         "required": false,
       },
-      "definitionType": "primitive",
       "description": null,
       "fields": Array [
         Object {
@@ -1258,7 +1213,6 @@ Object {
             "codegen": Object {
               "required": false,
             },
-            "definitionType": "primitive",
             "description": null,
             "hasValidation": false,
             "hidden": false,
@@ -1266,7 +1220,7 @@ Object {
             "name": "name",
             "readOnly": false,
             "title": "Name",
-            "type": "string",
+            "type": "String",
           },
           "description": "",
           "hasValidation": false,
@@ -1281,8 +1235,9 @@ Object {
       "name": "actor",
       "readOnly": false,
       "title": "Actor",
-      "type": "object",
+      "type": "Object",
     },
   ],
+  "type": "SchemaRoot",
 }
 `;

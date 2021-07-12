@@ -1,4 +1,5 @@
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
+import { defaultGenerateTypeName } from './default-generate-type-name';
 
 export interface GenerateSchemaTypesOptions {
   schema: Sanity.SchemaDef.Schema;
@@ -22,19 +23,7 @@ export interface GenerateSchemaTypesOptions {
   prettierResolveConfigOptions?: ResolveConfigOptions;
 }
 
-type Segment = { node: Sanity.SchemaDef.Def; path: string | number };
-
-function defaultGenerateTypeName(sanityTypeName: string) {
-  const typeName = `${sanityTypeName
-    .substring(0, 1)
-    .toUpperCase()}${sanityTypeName
-    // If using snake_case, remove underscores and convert to uppercase the letter following them.
-    .replace(/(_[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
-    .replace(/(-[A-Z])/gi, (replace) => replace.substring(1).toUpperCase())
-    .substring(1)}`;
-
-  return typeName;
-}
+type Segment = { node: Sanity.SchemaDef.SchemaNode; path: string | number };
 
 /**
  * Converts a normalized schema schema definitions (created from
@@ -48,153 +37,152 @@ function defaultGenerateTypeName(sanityTypeName: string) {
  * @param param0 options
  */
 export async function generateSchemaTypes({
-  schema: { documentTypes, topLevelTypes },
+  schema: { documents, registeredTypes },
   generateTypeName = defaultGenerateTypeName,
   prettierResolveConfigOptions,
   prettierResolveConfigPath,
 }: GenerateSchemaTypesOptions) {
-  function convertType(t: Sanity.SchemaDef.Def, parents: Segment[]): string {
-    switch (t.definitionType) {
-      case 'alias': {
-        return generateTypeName(t.type);
+  function convertType(
+    t: Sanity.SchemaDef.SchemaNode,
+    parents: Segment[],
+  ): string {
+    switch (t.type) {
+      case 'RegistryReference': {
+        return generateTypeName(t.to);
       }
-      case 'primitive': {
-        switch (t.type) {
-          case 'array': {
-            const union = t.of
-              .map((i, index) =>
-                convertType(i, [...parents, { node: t, path: index }])
-              )
-              .map((i) => {
-                // if the wrapping type is a reference, we need to replace that
-                // type with `SanityKeyedReference<T>` in order to preserve `T`
-                // (which is purely for meta programming purposes)
-                const refMatch = /^\s*Sanity\.Reference<([^>]+)>\s*$/.exec(i);
+      case 'Array': {
+        const union = t.of
+          .map((i, index) =>
+            convertType(i, [...parents, { node: t, path: index }]),
+          )
+          .map((i) => {
+            // if the wrapping type is a reference, we need to replace that
+            // type with `SanityKeyedReference<T>` in order to preserve `T`
+            // (which is purely for meta programming purposes)
+            const refMatch = /^\s*Sanity\.Reference<([^>]+)>\s*$/.exec(i);
 
-                if (refMatch) {
-                  const innerType = refMatch[1];
-                  return `Sanity.KeyedReference<${innerType}>`;
-                }
-
-                return `Sanity.Keyed<${i}>`;
-              })
-              .join(' | ');
-
-            return `Array<${union}>`;
-          }
-          case 'block': {
-            // TODO: parse markDefs and serialize in types
-            return 'Sanity.Block';
-          }
-          case 'boolean': {
-            return 'boolean';
-          }
-          case 'date':
-          case 'datetime':
-          case 'text':
-          case 'url': {
-            return 'string';
-          }
-          case 'document': {
-            // TODO: should this be another error type?
-            // TODO: should this check be moved into the normalizer?
-            throw new Error('Found nested document type');
-          }
-          case 'image':
-          case 'file':
-          case 'object': {
-            const lastNode: Sanity.SchemaDef.Def | undefined =
-              parents[parents.length - 1]?.node;
-
-            const lastNodeHasFields =
-              lastNode?.definitionType === 'primitive' && 'fields' in lastNode;
-
-            const typeClause =
-              t.name && !lastNodeHasFields ? `_type: '${t.name}';` : '';
-
-            const assetClause =
-              t.type === 'image' || t.type === 'file'
-                ? 'asset: Sanity.Asset;'
-                : '';
-
-            const imageClause =
-              t.type === 'image'
-                ? 'crop?: Sanity.ImageCrop; hotspot?: Sanity.ImageHotspot;'
-                : '';
-
-            const fieldsClause = (t.fields || [])
-              .map((field) =>
-                convertField(field, [
-                  ...parents,
-                  { node: t, path: t.name || '(anonymous object)' },
-                ])
-              )
-              .filter(Boolean)
-              .join('\n');
-
-            return `{
-              ${typeClause}
-              ${assetClause}
-              ${imageClause}
-              ${fieldsClause}
-            }`;
-          }
-          case 'geopoint': {
-            return 'Sanity.Geopoint';
-          }
-          case 'string': {
-            // Sanity lets you specify a set of list allowed strings in the
-            // editor for the type of string. This checks for that and returns
-            // unioned literals instead of just `string`
-            if (t.list) {
-              return t.list.map((i) => `'${i.value}'`).join(' | ');
+            if (refMatch) {
+              const innerType = refMatch[1];
+              return `Sanity.KeyedReference<${innerType}>`;
             }
 
-            // else just return a string
-            return 'string';
-          }
-          case 'number': {
-            // Sanity lets you specify a set of list allowed number in the
-            // editor for the type of string. This checks for that and returns
-            // unioned literals instead of just `number`
-            if (t.list) {
-              return t.list.map((i) => `${i.value}`).join(' | ');
-            }
+            return `Sanity.Keyed<${i}>`;
+          })
+          .join(' | ');
 
-            // else just return a number
-            return 'number';
-          }
-          case 'reference': {
-            // TODO: do something for weak references
-            const union = t.to
-              .map((refType) =>
-                convertType(refType, [...parents, { node: t, path: '_ref' }])
-              )
-              .join(' | ');
+        return `Array<${union}>`;
+      }
+      case 'Block': {
+        // TODO: parse markDefs and serialize in types
+        return 'Sanity.Block';
+      }
+      case 'Boolean': {
+        return 'boolean';
+      }
+      case 'Date':
+      case 'Datetime':
+      case 'Text':
+      case 'Url': {
+        return 'string';
+      }
+      case 'Document': {
+        // TODO: should this be another error type?
+        // TODO: should this check be moved into the normalizer?
+        throw new Error('Found nested document type');
+      }
+      case 'Image':
+      case 'File':
+      case 'Object': {
+        const lastNode: Sanity.SchemaDef.SchemaNode | undefined =
+          parents[parents.length - 1]?.node;
 
-            // Note: we want the union to be wrapped by one Reference<T> so when
-            // unwrapped the union can be further discriminated using the `_type`
-            // of each individual reference type
-            return `Sanity.Reference<${union}>`;
-          }
-          case 'slug': {
-            // TODO: when does a slug get a `_type`?
-            return `{
-              _type: '${t.name || t.type}';
-              current: string;
-            }`;
-          }
-          default: {
-            throw new Error(
-              'Found unknown type. This is a bug in sanity-codegen. Please file an issue.'
-            );
-          }
+        const lastNodeHasFields = lastNode && 'fields' in lastNode;
+
+        const typeClause =
+          t.name && !lastNodeHasFields ? `_type: '${t.name}';` : '';
+
+        const assetClause =
+          t.type === 'Image' || t.type === 'File' ? 'asset: Sanity.Asset;' : '';
+
+        const imageClause =
+          t.type === 'Image'
+            ? 'crop?: Sanity.ImageCrop; hotspot?: Sanity.ImageHotspot;'
+            : '';
+
+        const fieldsClause = (t.fields || [])
+          .map((field) =>
+            convertField(field, [
+              ...parents,
+              { node: t, path: t.name || '(anonymous object)' },
+            ]),
+          )
+          .filter(Boolean)
+          .join('\n');
+
+        return `{
+          ${typeClause}
+          ${assetClause}
+          ${imageClause}
+          ${fieldsClause}
+        }`;
+      }
+      case 'Geopoint': {
+        return 'Sanity.Geopoint';
+      }
+      case 'String': {
+        // Sanity lets you specify a set of list allowed strings in the
+        // editor for the type of string. This checks for that and returns
+        // unioned literals instead of just `string`
+        if (t.list) {
+          return t.list.map((i) => `'${i.value}'`).join(' | ');
         }
+
+        // else just return a string
+        return 'string';
+      }
+      case 'Number': {
+        // Sanity lets you specify a set of list allowed number in the
+        // editor for the type of string. This checks for that and returns
+        // unioned literals instead of just `number`
+        if (t.list) {
+          return t.list.map((i) => `${i.value}`).join(' | ');
+        }
+
+        // else just return a number
+        return 'number';
+      }
+      case 'Reference': {
+        // TODO: do something for weak references
+        const union = t.to
+          .map((refType) =>
+            convertType(refType, [...parents, { node: t, path: '_ref' }]),
+          )
+          .join(' | ');
+
+        // Note: we want the union to be wrapped by one Reference<T> so when
+        // unwrapped the union can be further discriminated using the `_type`
+        // of each individual reference type
+        return `Sanity.Reference<${union}>`;
+      }
+      case 'Slug': {
+        // TODO: when does a slug get a `_type`?
+        return `{
+          _type: '${t.name || t.type}';
+          current: string;
+        }`;
+      }
+      default: {
+        throw new Error(
+          'Found unknown type. This is a bug in sanity-codegen. Please file an issue.',
+        );
       }
     }
   }
 
-  function convertField(f: Sanity.SchemaDef.Field, parents: Segment[]): string {
+  function convertField(
+    f: Sanity.SchemaDef.FieldDef,
+    parents: Segment[],
+  ): string {
     return `
       /**
        * ${f.title} - \`${f.definition.type}\`${
@@ -209,7 +197,7 @@ export async function generateSchemaTypes({
   }
 
   const allTypes = [
-    ...documentTypes.map((documentType) => {
+    ...documents.map((documentType) => {
       const { name, title, description, fields } = documentType;
 
       return `
@@ -224,17 +212,14 @@ export async function generateSchemaTypes({
       }
     `;
     }),
-    ...topLevelTypes.map((t) => {
+    ...registeredTypes.map((t) => {
       return `
           type ${generateTypeName(t.name)} = ${convertType(t, [])};
         `;
     }),
-    documentTypes.length
+    documents.length
       ? `
-        type Document = ${documentTypes
-          .filter(
-            (t): t is Sanity.SchemaDef.Document & { name: string } => !!t.name
-          )
+        type Document = ${documents
           .map((t) => generateTypeName(t.name))
           .join(' | ')}
       `
@@ -254,7 +239,7 @@ export async function generateSchemaTypes({
   const resolvedConfig = prettierResolveConfigPath
     ? await resolveConfig(
         prettierResolveConfigPath,
-        prettierResolveConfigOptions
+        prettierResolveConfigOptions,
       )
     : null;
 
