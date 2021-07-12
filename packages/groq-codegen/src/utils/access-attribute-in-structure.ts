@@ -1,4 +1,5 @@
-import { hasArray, unwrapArray, wrapArray } from './utils';
+import { structureIsArray } from './structure-is-array';
+import { wrapArray } from './wrap-array';
 
 export function accessAttributeInStructure(
   node: Sanity.GroqCodegen.StructureNode,
@@ -24,7 +25,7 @@ export function accessAttributeInStructure(
       return matchingProperty.value;
     }
     case 'Array': {
-      const nodeHadArray = hasArray(node);
+      const nodeHadArray = structureIsArray(node);
 
       return nodeHadArray
         ? wrapArray(accessAttributeInStructure(node.of, attributeName))

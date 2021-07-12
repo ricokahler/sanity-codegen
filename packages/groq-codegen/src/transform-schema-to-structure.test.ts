@@ -11,7 +11,7 @@ describe('transformSchemaToStructure', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure(schema);
+    const structure = transformSchemaToStructure({ schema });
 
     expect(structure).toMatchObject({
       type: 'Array',

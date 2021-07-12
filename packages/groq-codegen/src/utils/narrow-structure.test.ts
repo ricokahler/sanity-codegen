@@ -2,17 +2,17 @@ import prettier from 'prettier';
 import generate from '@babel/generator';
 import { parse } from 'groq-js';
 import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
-import { transformSchemaToStructure } from './transform-schema-to-structure';
-import { transformStructureToTs } from './transform-structure-to-ts';
-import { narrowTypeNode } from './narrow-type-node';
+import { transformSchemaToStructure } from '../transform-schema-to-structure';
+import { transformStructureToTs } from '../transform-structure-to-ts';
+import { narrowStructure } from './narrow-structure';
 
 function print(filter: string, schemaTypes: any[]) {
   const schema = schemaNormalizer(schemaTypes);
-  const narrowed = narrowTypeNode(
-    transformSchemaToStructure(schema),
+  const narrowed = narrowStructure(
+    transformSchemaToStructure({ schema }),
     parse(filter),
   );
-  const result = transformStructureToTs(narrowed);
+  const result = transformStructureToTs({ structure: narrowed });
 
   return prettier.format(
     `${`type Query = ${

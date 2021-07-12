@@ -3,11 +3,11 @@ import * as Groq from 'groq-js/dist/nodeTypes';
 // TODO: could include things like defined checks or narrow based on types
 // TODO: also think about functions and how they could affect narrowing
 //
-// e.g. _type == 'foo' && defined(bar) would not accept type nodes that don't
-// `bar` and could mark `bar` as `canBeNull: false`
+// e.g. _type == 'foo' && defined(bar) would not accept structure nodes that
+// don't `bar` and could mark `bar` as `canBeNull: false`
 //
-// e.g. description == 'hello' would not accept type nodes that have the type of
-// description as `number`
+// e.g. description == 'hello' would not accept structure nodes that have the
+// type of description as `number`
 type LogicExprNode =
   | { type: 'And'; children: LogicExprNode[] }
   | { type: 'Or'; children: LogicExprNode[] }
@@ -25,7 +25,7 @@ type LogicExprNode =
  *
  * An internal function that takes in an GROQ ExprNode and returns a normalized
  * `LogicExprNode` node used to evaluate against a set of types described by a
- * `TypeNode`
+ * `StructureNode`
  *
  * @see `accept`
  */
@@ -276,9 +276,9 @@ function narrow(
   }
 }
 
-export function narrowTypeNode(
-  typeNode: Sanity.GroqCodegen.StructureNode,
+export function narrowStructure(
+  node: Sanity.GroqCodegen.StructureNode,
   filter: Groq.ExprNode,
 ) {
-  return narrow(typeNode, transformExprNodeToLogicExpr(filter));
+  return narrow(node, transformExprNodeToLogicExpr(filter));
 }
