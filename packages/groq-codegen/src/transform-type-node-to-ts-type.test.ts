@@ -123,27 +123,27 @@ describe('transformGroqToTypeNode', () => {
         _id: string;
         node: {
           recursive: {
-            node: Ref_1aocgtx;
-            recursive: Ref_1xajvy2;
+            node: Ref_1cx2750;
+            recursive: Ref_zx6fah;
           };
-          node: Ref_1aocgtx;
+          node: Ref_1cx2750;
         };
       }[];
 
-      type Ref_1aocgtx = {
+      type Ref_1cx2750 = {
         recursive: {
-          node: Ref_1aocgtx;
-          recursive: Ref_1xajvy2;
+          node: Ref_1cx2750;
+          recursive: Ref_zx6fah;
         };
-        node: Ref_1aocgtx;
+        node: Ref_1cx2750;
       };
 
-      type Ref_1xajvy2 = {
+      type Ref_zx6fah = {
         node: {
-          recursive: Ref_1xajvy2;
-          node: Ref_1aocgtx;
+          recursive: Ref_zx6fah;
+          node: Ref_1cx2750;
         };
-        recursive: Ref_1xajvy2;
+        recursive: Ref_zx6fah;
       };
       "
     `);
