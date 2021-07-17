@@ -165,26 +165,31 @@ describe('accessAttributeInStructure', () => {
       canBeNull: false,
       canBeOptional: false,
       of: createStructure({
-        type: 'Object',
-        canBeNull: false,
-        canBeOptional: false,
-        properties: [
-          {
-            key: 'foo',
-            value: createStructure({
-              type: 'String',
-              canBeNull: false,
-              canBeOptional: false,
-              value: null,
-            }),
-          },
+        type: 'Or',
+        children: [
+          createStructure({
+            type: 'Object',
+            canBeNull: false,
+            canBeOptional: false,
+            properties: [
+              {
+                key: 'foo',
+                value: createStructure({
+                  type: 'String',
+                  canBeNull: false,
+                  canBeOptional: false,
+                  value: null,
+                }),
+              },
+            ],
+          }),
         ],
       }),
     });
 
     expect(accessAttributeInStructure(arrayStructure, 'foo')).toMatchObject({
-      type: 'Array',
-      of: { type: 'String' },
+      type: 'Or',
+      children: [{ type: 'Array', of: { type: 'String' } }],
     });
   });
 

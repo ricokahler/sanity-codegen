@@ -55,4 +55,38 @@ describe('narrow', () => {
       "
     `);
   });
+
+  // TODO: make this test more readable
+  it('does not unnecessarily narrow', () => {
+    const result = print(`_type == 'book'`, [
+      {
+        type: 'document',
+        name: 'book',
+        fields: [
+          {
+            name: 'authors',
+            type: 'array',
+            of: [
+              {
+                type: 'object',
+                name: 'author',
+                fields: [{ name: 'name', type: 'string' }],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    expect(result).toMatchInlineSnapshot(`
+      "type Query = {
+        _type: \\"book\\";
+        _id: string;
+        authors?: {
+          name?: string;
+        }[];
+      }[];
+      "
+    `);
+  });
 });
