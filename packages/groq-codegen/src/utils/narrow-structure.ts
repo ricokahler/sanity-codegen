@@ -234,14 +234,17 @@ function narrow(
       return createStructure({
         ...node,
         children: node.children
-          .filter((n) => accept(n, filter))
-          .map((n) => narrow(n, filter)),
+          // TODO: what happens when none are accepted?
+          .filter((n) => accept(n, filter)),
+        // TODO: what's the proper way to traverse this?
+        // .map((n) => narrow(n, filter)),
       });
     }
 
     case 'And': {
       return createStructure({
         ...node,
+        // TODO: what's the proper way to traverse this?
         children: node.children.map((n) => narrow(n, filter)),
       });
     }

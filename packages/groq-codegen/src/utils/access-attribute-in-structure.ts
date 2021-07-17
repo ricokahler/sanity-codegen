@@ -3,6 +3,7 @@ import { createStructure } from './create-structure';
 import { removeOptional } from './remove-optional';
 import { isStructureOptional } from './is-structure-optional';
 import { addNull } from './add-null';
+import { unwrapArray } from './unwrap-array';
 
 export function accessAttributeInStructure(
   node: Sanity.GroqCodegen.StructureNode,
@@ -33,7 +34,7 @@ export function accessAttributeInStructure(
       return matchingProperty.value;
     }
     case 'Array': {
-      return wrapArray(accessAttributeInStructure(node.of, attributeName));
+      return wrapArray(accessAttributeInStructure(unwrapArray(node.of), attributeName));
     }
     case 'Intrinsic': {
       throw new Error('Not implemented yet');
