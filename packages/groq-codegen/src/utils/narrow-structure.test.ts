@@ -50,7 +50,7 @@ describe('narrow', () => {
       "type Query = {
         _type: \\"book\\";
         _id: string;
-        title: string;
+        title?: string;
       }[];
       "
     `);
