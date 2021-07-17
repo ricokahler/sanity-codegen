@@ -1,8 +1,8 @@
 import { createStructure } from './create-structure';
-import { markAsDefined } from './mark-as-defined';
+import { removeOptional } from './remove-optional';
 
-describe('markAsDefined', () => {
-  it('traverses the given structure and marks all leaf nodes with `canBeUndefined: false`', () => {
+describe('removeOptional', () => {
+  it('traverses the given structure and marks all leaf nodes with `canBeOptional: false`', () => {
     const structure = createStructure({
       type: 'And',
       children: [
@@ -10,7 +10,7 @@ describe('markAsDefined', () => {
         createStructure({
           type: 'String',
           canBeNull: false,
-          canBeUndefined: true,
+          canBeOptional: true,
           value: null,
         }),
         createStructure({
@@ -19,7 +19,7 @@ describe('markAsDefined', () => {
             createStructure({
               type: 'Number',
               canBeNull: false,
-              canBeUndefined: true,
+              canBeOptional: true,
               value: null,
             }),
           ],
@@ -27,14 +27,14 @@ describe('markAsDefined', () => {
       ],
     });
 
-    expect(markAsDefined(structure)).toMatchObject({
+    expect(removeOptional(structure)).toMatchObject({
       type: 'And',
       children: [
         { type: 'Unknown' },
-        { type: 'String', canBeUndefined: false },
+        { type: 'String', canBeOptional: false },
         {
           type: 'Or',
-          children: [{ type: 'Number', canBeUndefined: false }],
+          children: [{ type: 'Number', canBeOptional: false }],
         },
       ],
     });
@@ -52,7 +52,7 @@ describe('markAsDefined', () => {
       ],
     });
 
-    const result = markAsDefined(
+    const result = removeOptional(
       selfReferencingStructure,
     ) as Sanity.GroqCodegen.AndNode;
     const lazy1 = result.children[0] as Sanity.GroqCodegen.LazyNode;

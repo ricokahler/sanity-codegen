@@ -5,18 +5,18 @@ describe('createStructureNode', () => {
     const node = createStructure({
       type: 'String',
       canBeNull: false,
-      canBeUndefined: false,
+      canBeOptional: false,
       value: null,
     });
 
-    expect(node.hash).toMatchInlineSnapshot(`"czk878"`);
+    expect(node.hash).toMatchInlineSnapshot(`"1i1vqj4"`);
   });
 
   it('utilizes child hashes for faster, incremental hashing', () => {
     const stringStructure = createStructure({
       type: 'String',
       canBeNull: false,
-      canBeUndefined: false,
+      canBeOptional: false,
       value: null,
     });
     const mockStringHashGet = jest.fn(() => 'string hash');
@@ -26,7 +26,7 @@ describe('createStructureNode', () => {
       type: 'Array',
       of: stringStructure,
       canBeNull: false,
-      canBeUndefined: false,
+      canBeOptional: false,
     });
     const mockArrayHashGet = jest.fn(() => 'array hash');
     Object.defineProperty(nestedArray, 'hash', { get: mockArrayHashGet });
@@ -35,7 +35,7 @@ describe('createStructureNode', () => {
       type: 'Reference',
       to: nestedArray,
       canBeNull: false,
-      canBeUndefined: false,
+      canBeOptional: false,
     });
     const mockReferenceHashGet = jest.fn(() => 'reference hash');
     Object.defineProperty(nestedReference, 'hash', {

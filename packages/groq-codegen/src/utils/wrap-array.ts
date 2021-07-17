@@ -28,7 +28,7 @@ export function wrapArray(
         of: node,
         // TODO: what about `undefined`s and `null`s?
         canBeNull: false,
-        canBeUndefined: false,
+        canBeOptional: false,
       });
     }
   }

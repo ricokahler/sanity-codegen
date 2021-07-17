@@ -104,7 +104,7 @@ export function transformGroqToStructure({
       return createStructure({
         type: 'Object',
         canBeNull: false,
-        canBeUndefined: false,
+        canBeOptional: false,
         properties: node.attributes
           .filter(
             (attribute): attribute is Groq.ObjectAttributeValueNode =>
