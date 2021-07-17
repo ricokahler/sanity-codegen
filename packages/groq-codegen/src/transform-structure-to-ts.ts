@@ -121,10 +121,10 @@ function transform(
     }
   }
 
-  // if ('canBeNull' in node || 'canBeUndefined' in node) {
+  // if ('canBeNull' in node || 'canBeOptional' in node) {
   //   const types: t.TSType[] = [tsType];
   //   if (node.canBeNull) types.push(t.tsNullKeyword());
-  //   if (node.canBeUndefined) types.push(t.tSUndefinedKeyword());
+  //   if (node.canBeOptional) types.push(t.tsUndefinedKeyword());
   //   tsType = t.tsUnionType(types);
   // }
 

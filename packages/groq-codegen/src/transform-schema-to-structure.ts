@@ -1,4 +1,4 @@
-import { markAsDefined, createStructure } from './utils';
+import { removeOptional, createStructure } from './utils';
 
 export interface TransformSchemaToStructureOptions {
   schema: Sanity.SchemaDef.Schema;
@@ -12,11 +12,11 @@ export function transformSchemaToStructure({
     of: createStructure({
       type: 'Or',
       children: schema.documents.map((n) =>
-        markAsDefined(transform(n, schema)),
+        removeOptional(transform(n, schema)),
       ),
     }),
     canBeNull: false,
-    canBeUndefined: false,
+    canBeOptional: false,
   });
 }
 
@@ -46,7 +46,7 @@ function transform(
       return createStructure({
         type: 'Array',
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
         of: createStructure({
           type: 'Or',
           children: node.of.map((n) => transform(n, schema)),
@@ -63,7 +63,7 @@ function transform(
       return createStructure({
         type: 'Boolean',
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
       });
     }
     case 'Date':
@@ -74,7 +74,7 @@ function transform(
       return createStructure({
         type: 'String',
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
         value: null,
       });
     }
@@ -95,7 +95,7 @@ function transform(
           value: createStructure({
             type: 'String',
             canBeNull: false,
-            canBeUndefined: false,
+            canBeOptional: false,
             value: node.name,
           }),
         });
@@ -105,7 +105,7 @@ function transform(
           value: createStructure({
             type: 'String',
             canBeNull: false,
-            canBeUndefined: false,
+            canBeOptional: false,
             value: null,
           }),
         });
@@ -119,7 +119,7 @@ function transform(
             intrinsicType: 'Asset',
             // TODO: is this right?
             canBeNull: false,
-            canBeUndefined: false,
+            canBeOptional: false,
           }),
         });
       }
@@ -131,7 +131,7 @@ function transform(
             type: 'Intrinsic',
             intrinsicType: 'Crop',
             canBeNull: false,
-            canBeUndefined: true,
+            canBeOptional: true,
           }),
         });
 
@@ -141,7 +141,7 @@ function transform(
             type: 'Intrinsic',
             intrinsicType: 'Hotspot',
             canBeNull: false,
-            canBeUndefined: true,
+            canBeOptional: true,
           }),
         });
       }
@@ -161,7 +161,7 @@ function transform(
         type: 'Object',
         properties,
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
       });
     }
 
@@ -170,7 +170,7 @@ function transform(
         type: 'Intrinsic',
         intrinsicType: 'Geopoint',
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
       });
     }
 
@@ -178,7 +178,7 @@ function transform(
       return createStructure({
         type: 'Number',
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
         value: null,
       });
     }
@@ -193,7 +193,7 @@ function transform(
           children: node.to.map((n) => transform(n, schema)),
         }),
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
       });
     }
 
@@ -211,18 +211,18 @@ function transform(
                   value: createStructure({
                     type: 'String',
                     canBeNull: false,
-                    canBeUndefined: false,
+                    canBeOptional: false,
                     value: null,
                   }),
                 },
               ],
               canBeNull: false,
-              canBeUndefined: false,
+              canBeOptional: false,
             }),
           },
         ],
         canBeNull: false,
-        canBeUndefined: !node.codegen.required,
+        canBeOptional: !node.codegen.required,
       });
     }
 

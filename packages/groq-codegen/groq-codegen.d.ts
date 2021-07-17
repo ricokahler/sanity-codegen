@@ -26,7 +26,7 @@ declare namespace Sanity {
     type ArrayNode = {
       type: 'Array';
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       of: StructureNode;
       hash: string;
     };
@@ -35,14 +35,14 @@ declare namespace Sanity {
       type: 'Object';
       properties: Array<{ key: string; value: StructureNode }>;
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       hash: string;
     };
 
     type StringNode = {
       type: 'String';
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       value: string | null;
       hash: string;
     };
@@ -50,7 +50,7 @@ declare namespace Sanity {
     type NumberNode = {
       type: 'Number';
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       value: number | null;
       hash: string;
     };
@@ -58,7 +58,7 @@ declare namespace Sanity {
     type BooleanNode = {
       type: 'Boolean';
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       hash: string;
     };
 
@@ -66,7 +66,7 @@ declare namespace Sanity {
       type: 'Intrinsic';
       intrinsicType: IntrinsicType;
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       hash: string;
     };
 
@@ -74,7 +74,7 @@ declare namespace Sanity {
       type: 'Reference';
       to: StructureNode;
       canBeNull: boolean;
-      canBeUndefined: boolean;
+      canBeOptional: boolean;
       hash: string;
     };
 

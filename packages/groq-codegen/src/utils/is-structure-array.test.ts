@@ -9,22 +9,22 @@ describe('isStructureArray', () => {
         createStructure({
           type: 'Array',
           canBeNull: false,
-          canBeUndefined: false,
+          canBeOptional: false,
           of: createStructure({
             type: 'String',
             canBeNull: false,
-            canBeUndefined: false,
+            canBeOptional: false,
             value: null,
           }),
         }),
         createStructure({
           type: 'Array',
           canBeNull: false,
-          canBeUndefined: false,
+          canBeOptional: false,
           of: createStructure({
             type: 'Number',
             canBeNull: false,
-            canBeUndefined: false,
+            canBeOptional: false,
             value: null,
           }),
         }),
@@ -39,13 +39,13 @@ describe('isStructureArray', () => {
         createStructure({
           type: 'String',
           canBeNull: false,
-          canBeUndefined: false,
+          canBeOptional: false,
           value: null,
         }),
         createStructure({
           type: 'Number',
           canBeNull: false,
-          canBeUndefined: false,
+          canBeOptional: false,
           value: null,
         }),
       ],

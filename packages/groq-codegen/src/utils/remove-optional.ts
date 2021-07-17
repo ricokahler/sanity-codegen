@@ -1,6 +1,6 @@
 import { createStructure } from './create-structure';
 
-export function markAsDefined(
+export function removeOptional(
   node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
@@ -8,13 +8,13 @@ export function markAsDefined(
     case 'Or': {
       return createStructure({
         ...node,
-        children: node.children.map(markAsDefined),
+        children: node.children.map(removeOptional),
       });
     }
     case 'Lazy': {
       return createStructure({
         type: 'Lazy',
-        get: () => markAsDefined(node.get()),
+        get: () => removeOptional(node.get()),
         hashInput: ['MarkAsDefined', node.hash],
       });
     }
@@ -22,7 +22,7 @@ export function markAsDefined(
       return node;
     }
     default: {
-      return createStructure({ ...node, canBeUndefined: false });
+      return createStructure({ ...node, canBeOptional: false });
     }
   }
 }
