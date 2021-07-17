@@ -17,9 +17,9 @@ describe('generateGroqTypes', () => {
       declare namespace Sanity {
         namespace Queries {
           type BookAuthor = {
-            name: string;
-          };
-          type BookTitles = string[];
+            name?: string;
+          } | null;
+          type BookTitles = (string | null)[];
 
           /**
            * A keyed type of all the codegen'ed queries. This type is used for

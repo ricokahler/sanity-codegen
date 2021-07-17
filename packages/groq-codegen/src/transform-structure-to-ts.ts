@@ -1,4 +1,5 @@
 import * as t from '@babel/types';
+import { createStructure, isStructureOptional, removeOptional } from './utils';
 
 const getId = (node: Sanity.GroqCodegen.StructureNode) => `Ref_${node.hash}`;
 
@@ -21,14 +22,31 @@ function findAllLazyNodes(structure: Sanity.GroqCodegen.StructureNode) {
         }
         return;
       }
-      case 'Array': {
-        traverse(node.of);
-        return;
-      }
+
       case 'Object': {
         for (const property of node.properties) {
+          if (isStructureOptional(property.value)) {
+            // this alteration is due to how the transform function below works.
+            // if inside an object, a value is found to be optional, the
+            // transform removes the optional value and marks the current
+            // property as optional instead. this alteration in the tree needs
+            // to be accounted for when finding all the lazy nodes
+            traverse(removeOptional(property.value));
+            continue;
+          }
+
           traverse(property.value);
         }
+        return;
+      }
+      case 'Array': {
+        // same comment as above
+        if (isStructureOptional(node.of)) {
+          traverse(removeOptional(node.of));
+          return;
+        }
+
+        traverse(node.of);
         return;
       }
       case 'Reference': {
@@ -76,12 +94,20 @@ function transform(
     }
     case 'Object': {
       tsType = t.tsTypeLiteral(
-        node.properties.map(({ key, value }) =>
-          t.tsPropertySignature(
+        node.properties.map(({ key, value }) => {
+          const valueIsOptional = isStructureOptional(value);
+
+          const propertySignature = t.tsPropertySignature(
             t.stringLiteral(key),
-            t.tsTypeAnnotation(next(value)),
-          ),
-        ),
+            t.tsTypeAnnotation(
+              next(valueIsOptional ? removeOptional(value) : value),
+            ),
+          );
+
+          propertySignature.optional = valueIsOptional;
+
+          return propertySignature;
+        }),
       );
       break;
     }
@@ -111,7 +137,9 @@ function transform(
       break;
     }
     case 'Array': {
-      tsType = t.tsArrayType(next(node.of));
+      tsType = t.tsArrayType(
+        next(isStructureOptional(node.of) ? removeOptional(node.of) : node.of),
+      );
       break;
     }
     default: {
@@ -121,12 +149,12 @@ function transform(
     }
   }
 
-  // if ('canBeNull' in node || 'canBeOptional' in node) {
-  //   const types: t.TSType[] = [tsType];
-  //   if (node.canBeNull) types.push(t.tsNullKeyword());
-  //   if (node.canBeOptional) types.push(t.tsUndefinedKeyword());
-  //   tsType = t.tsUnionType(types);
-  // }
+  if ('canBeNull' in node || 'canBeOptional' in node) {
+    const types: t.TSType[] = [tsType];
+    if (node.canBeNull) types.push(t.tsNullKeyword());
+    if (node.canBeOptional) types.push(t.tsUndefinedKeyword());
+    tsType = t.tsUnionType(types);
+  }
 
   return tsType;
 }

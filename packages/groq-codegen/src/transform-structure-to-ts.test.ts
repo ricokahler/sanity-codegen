@@ -1,6 +1,7 @@
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
 import { transformStructureToTs } from './transform-structure-to-ts';
+import { createStructure } from './utils';
 import generate from '@babel/generator';
 import prettier from 'prettier';
 
@@ -65,17 +66,17 @@ describe('transformStructureToTs', () => {
         | {
             _type: \\"book\\";
             _id: string;
-            title: string;
-            author: {
-              name: string;
+            title?: string;
+            author?: {
+              name?: string;
             };
           }
         | {
             _type: \\"movie\\";
             _id: string;
-            title: string;
-            leadActor: {
-              name: string;
+            title?: string;
+            leadActor?: {
+              name?: string;
             };
           }
       )[];
@@ -122,28 +123,140 @@ describe('transformStructureToTs', () => {
       },
     ]);
 
-    const everythingNode = transformSchemaToStructure({ schema });
-    const result = transformStructureToTs({ structure: everythingNode });
+    const structure = transformSchemaToStructure({ schema });
+    const result = transformStructureToTs({ structure });
 
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
         _type: \\"jsonDoc\\";
         _id: string;
-        jsonLike: Ref_f7g82l;
+        jsonLike?: Ref_13jjpm3;
       }[];
 
-      type Ref_f7g82l = (
+      type Ref_13jjpm3 = (
         | string
         | number
         | boolean
-        | Ref_f7g82l[]
+        | Ref_13jjpm3[]
         | {
-            properties: {
-              key: string;
-              value: Ref_f7g82l;
+            properties?: {
+              key?: string;
+              value?: Ref_13jjpm3;
             }[];
           }
       )[];
+      "
+    `);
+  });
+
+  it('transforms references', () => {
+    const schema = schemaNormalizer([
+      {
+        name: 'book',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'author', type: 'reference', to: [{ type: 'author' }] },
+        ],
+      },
+      {
+        name: 'author',
+        type: 'document',
+        fields: [{ name: 'name', type: 'string' }],
+      },
+    ]);
+
+    const structure = transformSchemaToStructure({ schema });
+    const result = transformStructureToTs({ structure });
+
+    expect(print(result)).toMatchInlineSnapshot(`
+      "type Everything = (
+        | {
+            _type: \\"book\\";
+            _id: string;
+            title?: string;
+            author?: Sanity.Reference<Ref_1psxygh>;
+          }
+        | {
+            _type: \\"author\\";
+            _id: string;
+            name?: string;
+          }
+      )[];
+
+      type Ref_1psxygh =
+        | {
+            _type: \\"author\\";
+            _id: string;
+            name?: string;
+          }
+        | undefined;
+      "
+    `);
+  });
+
+  it('correctly encodes `undefined`s and `null`s', () => {
+    const schema = schemaNormalizer([
+      {
+        name: 'requiredDoc',
+        type: 'document',
+        fields: [
+          {
+            name: 'requiredString',
+            type: 'string',
+            codegen: { required: true },
+          },
+          {
+            name: 'optionalString',
+            type: 'string',
+          },
+        ],
+      },
+    ]);
+
+    const schemaStructure = transformSchemaToStructure({ schema });
+
+    const structureWithNulls = createStructure({
+      type: 'Object',
+      canBeNull: true,
+      canBeOptional: false,
+      properties: [
+        {
+          key: 'foo',
+          value: createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: false,
+            value: null,
+          }),
+        },
+      ],
+    });
+
+    const structure = createStructure({
+      type: 'Object',
+      canBeNull: false,
+      canBeOptional: false,
+      properties: [
+        { key: 'a', value: schemaStructure },
+        { key: 'b', value: structureWithNulls },
+      ],
+    });
+
+    const result = transformStructureToTs({ structure });
+
+    expect(print(result)).toMatchInlineSnapshot(`
+      "type Everything = {
+        a: {
+          _type: \\"requiredDoc\\";
+          _id: string;
+          requiredString: string;
+          optionalString?: string;
+        }[];
+        b: {
+          foo: string;
+        } | null;
+      };
       "
     `);
   });

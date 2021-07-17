@@ -48,7 +48,7 @@ describe('transformGroqToStructure', () => {
       "type Query = {
         _type: \\"book\\";
         _id: string;
-        name: string;
+        name?: string;
       }[];
       "
     `);
@@ -88,8 +88,8 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        title: string;
-        authorGivenName: string;
+        title: string | null;
+        authorGivenName: string | null;
       }[];
       "
     `);
@@ -124,21 +124,23 @@ describe('transformGroqToStructure', () => {
         books: {
           _type: \\"book\\";
           _id: string;
-          title: string;
-          author: Sanity.Reference<Ref_1psxygh>;
+          title?: string;
+          author?: Sanity.Reference<Ref_1psxygh>;
         }[];
         authors: {
           _type: \\"author\\";
           _id: string;
-          name: string;
+          name?: string;
         }[];
       };
 
-      type Ref_1psxygh = {
-        _type: \\"author\\";
-        _id: string;
-        name: string;
-      };
+      type Ref_1psxygh =
+        | {
+            _type: \\"author\\";
+            _id: string;
+            name?: string;
+          }
+        | undefined;
       "
     `);
   });
@@ -164,9 +166,9 @@ describe('transformGroqToStructure', () => {
       "type Query = {
         _type: \\"movie\\";
         _id: string;
-        title: string;
-        popularity: number;
-        releaseDate: string;
+        title?: string;
+        popularity?: number;
+        releaseDate?: string;
       }[];
       "
     `);
@@ -184,7 +186,7 @@ describe('transformGroqToStructure', () => {
     const query = `*[_type == 'book'].title`;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-      "type Query = string[];
+      "type Query = (string | null)[];
       "
     `);
   });
@@ -223,7 +225,7 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        foo: string[];
+        foo: (string | null)[];
       };
       "
     `);
