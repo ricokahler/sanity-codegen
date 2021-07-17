@@ -35,15 +35,17 @@ function print(query: string, schemaTypes: any[]) {
 }
 
 describe('transformGroqToStructure', () => {
-  test('', () => {
-    const result = print('*', [
+  test('everything', () => {
+    const schema = [
       {
         type: 'document',
         name: 'book',
         fields: [{ name: 'name', type: 'string' }],
       },
-    ]);
+    ];
+    const query = '*';
 
+    const result = print(query, schema);
     expect(result).toMatchInlineSnapshot(`
       "type Query = {
         _type: \\"book\\";
@@ -191,7 +193,7 @@ describe('transformGroqToStructure', () => {
     `);
   });
 
-  test('deref', () => {
+  test('dereferencing', () => {
     const schema = [
       {
         name: 'book',
@@ -230,4 +232,25 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('grouping', () => {
+    const query = `
+      ({ 'foo': *[_type == 'book'].name }).foo
+    `;
+
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [{ name: 'name', type: 'string' }],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = (string | null)[];
+      "
+    `);
+  });
+
+  
 });
