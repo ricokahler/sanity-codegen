@@ -29,7 +29,9 @@ export function transformGroqToStructure({
       return transformSchemaToStructure({ schema });
     }
 
-    case 'Map': {
+    // TODO: are these actually the same?
+    case 'Map':
+    case 'FlatMap': {
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
@@ -58,10 +60,6 @@ export function transformGroqToStructure({
 
     case 'This': {
       return scope || createStructure({ type: 'Unknown' });
-    }
-
-    case 'OpCall': {
-      throw new Error('TODO not implemented yet');
     }
 
     case 'AccessElement': {
@@ -164,7 +162,9 @@ export function transformGroqToStructure({
       return unwrapReferences(baseResult);
     }
 
-    case 'Group': {
+    case 'Slice':
+    case 'Group':
+    case 'ArrayCoerce': {
       return transformGroqToStructure({
         node: node.base,
         scopes,

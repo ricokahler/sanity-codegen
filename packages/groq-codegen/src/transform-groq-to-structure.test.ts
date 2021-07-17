@@ -252,5 +252,72 @@ describe('transformGroqToStructure', () => {
     `);
   });
 
-  
+  test('slices', () => {
+    const query = `
+      {
+        'firstThreeBooks': *[_type == 'book'][0...3],
+        'firstThreeTitles': (*[_type == 'book'].title)[0...3],
+      }
+    `;
+
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [{ name: 'title', type: 'string' }],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        firstThreeBooks: {
+          _type: \\"book\\";
+          _id: string;
+          title?: string;
+        }[];
+        firstThreeTitles: (string | null)[];
+      };
+      "
+    `);
+  });
+
+  test('flatmap', () => {
+    const query = `*[_type == 'book'].authors[].names[].name`;
+
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [
+          {
+            name: 'authors',
+            type: 'array',
+            of: [
+              {
+                type: 'object',
+                name: 'author',
+                fields: [
+                  {
+                    name: 'names',
+                    type: 'array',
+                    of: [
+                      {
+                        type: 'object',
+                        fields: [{ name: 'name', type: 'string' }],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = (string | null)[];
+      "
+    `);
+  });
 });
