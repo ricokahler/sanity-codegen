@@ -164,6 +164,14 @@ export function transformGroqToStructure({
       return unwrapReferences(baseResult);
     }
 
+    case 'Group': {
+      return transformGroqToStructure({
+        node: node.base,
+        scopes,
+        schema,
+      });
+    }
+
     default: {
       throw new Error(`"${node.type}" not implemented yet.`);
     }
