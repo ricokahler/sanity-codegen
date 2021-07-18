@@ -21,6 +21,8 @@ export const getStaticProps = async () => {
     `,
   );
 
+  sanity.query('AllBooks', groq`*[_type == 'book']`);
+
   return { props: { author } };
 };
 

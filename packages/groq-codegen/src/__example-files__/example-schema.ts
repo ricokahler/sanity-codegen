@@ -9,6 +9,12 @@ export const exampleSchema = [
         type: 'object',
         fields: [{ name: 'name', type: 'string' }],
       },
+      { name: 'description', type: 'blocks' },
     ],
+  },
+  {
+    name: 'blocks',
+    type: 'array',
+    of: [{ type: 'block' }],
   },
 ];
