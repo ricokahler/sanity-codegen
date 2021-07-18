@@ -37,7 +37,7 @@ function transform(
       return createStructure({
         type: 'Lazy',
         // Note that the hash inputs are a function of the resulting getter
-        // value. This is necessary to prevent caching behavior.
+        // value. This is necessary to prevent weird caching behavior.
         hashInput: ['TransformSchemaToStructure', referencedType.name],
         get: () => transform(referencedType, schema),
       });
@@ -54,10 +54,112 @@ function transform(
       });
     }
     case 'Block': {
-      // TODO:
-      throw new Error(
-        `Schema Definition Type "${node.type}" not implemented yet.`,
-      );
+      return createStructure({
+        type: 'Object',
+        canBeNull: false,
+        canBeOptional: !node.codegen.required,
+        properties: [
+          {
+            key: '_key',
+            value: createStructure({
+              type: 'String',
+              canBeNull: false,
+              canBeOptional: false,
+              value: null,
+            }),
+          },
+          {
+            key: '_type',
+            value: createStructure({
+              type: 'String',
+              canBeNull: false,
+              canBeOptional: false,
+              value: 'block',
+            }),
+          },
+          {
+            key: 'children',
+            value: createStructure({
+              type: 'Array',
+              canBeNull: false,
+              // TODO: can this be marked as false?
+              canBeOptional: false,
+              of: createStructure({
+                type: 'Or',
+                children: [
+                  // span
+                  createStructure({
+                    type: 'Object',
+                    canBeNull: false,
+                    canBeOptional: false,
+                    properties: [
+                      {
+                        key: '_key',
+                        value: createStructure({
+                          type: 'String',
+                          canBeOptional: false,
+                          canBeNull: false,
+                          value: null,
+                        }),
+                      },
+                      {
+                        key: '_type',
+                        value: createStructure({
+                          type: 'String',
+                          canBeNull: false,
+                          canBeOptional: false,
+                          value: 'span',
+                        }),
+                      },
+                      {
+                        key: 'marks',
+                        value: createStructure({
+                          type: 'Array',
+                          canBeNull: false,
+                          canBeOptional: true,
+                          of: createStructure({ type: 'Unknown' }),
+                        }),
+                      },
+                      {
+                        key: 'text',
+                        value: createStructure({
+                          type: 'String',
+                          canBeNull: false,
+                          canBeOptional: true,
+                          value: null,
+                        }),
+                      },
+                    ],
+                  }),
+                  // the rest
+                  ...(node.of || []).map((child) => transform(child, schema)),
+                ],
+              }),
+            }),
+          },
+          {
+            key: 'markDefs',
+            value: createStructure({
+              type: 'Array',
+              canBeNull: false,
+              // TODO: can this be marked as false?
+              canBeOptional: true,
+              // TODO:
+              of: createStructure({ type: 'Unknown' }),
+            }),
+          },
+          {
+            key: 'style',
+            value: createStructure({
+              type: 'String',
+              canBeNull: false,
+              // TODO: can this be marked as false?
+              canBeOptional: true,
+              value: null,
+            }),
+          },
+        ],
+      });
     }
     case 'Boolean': {
       return createStructure({
