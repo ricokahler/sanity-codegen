@@ -2,7 +2,7 @@
 
 rm -rf ./dist
 
-npx tsc
+npx tsc --project ./tsconfig.build.json
 
 npx babel                                                     \
   -x .js,.ts                                                  \
