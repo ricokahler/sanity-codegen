@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import * as Parser from '@oclif/parser';
 import { stripIndents } from 'common-tags';
-// @ts-ignore
+// @ts-expect-error no types for this
 import register from '@babel/register';
 import path from 'path';
 import fs from 'fs';
@@ -57,11 +57,18 @@ export default class SchemaCodegen extends Command {
         like "Cannot use import statement outside a module".
       `,
     }),
-    outputPath: flags.string({
-      name: 'outputPath',
+    schemaTypesOutputPath: flags.string({
+      name: 'schemaTypesOutputPath',
       description: stripIndents`
         Optionally provide a destination path to the resulting sanity schema
-        types. The default value is ./schema.d.ts.
+        types. The default value is ./schema-types.d.ts.
+      `,
+    }),
+    schemaJsonOutputPath: flags.string({
+      name: 'schemaJsonOutputPath',
+      description: stripIndents`
+        Optionally provide a destination path to the resulting sanity schema
+        JSON. The default value is ./schema-def.json.
       `,
     }),
   };
@@ -79,7 +86,7 @@ export default class SchemaCodegen extends Command {
   async run() {
     const { args, flags } = this.parse(SchemaCodegen);
 
-    register({ ...defaultBabelOptions });
+    register(defaultBabelOptions);
 
     const config: SanityCodegenConfig | null = await (async () => {
       const configPath = await findFile(
@@ -193,12 +200,14 @@ export default class SchemaCodegen extends Command {
       return undefined;
     })();
 
-    const schema = await schemaExtractor({
-      schemaPath,
-      babelrcPath,
-      babelOptions,
-      cwd: path.resolve(flags.cwd || config?.cwd || process.cwd()),
-    });
+    const schema =
+      config?.schema ||
+      (await schemaExtractor({
+        schemaPath,
+        babelrcPath,
+        babelOptions,
+        cwd: path.resolve(flags.cwd || config?.cwd || process.cwd()),
+      }));
 
     const result = await generateSchemaTypes({
       schema,
@@ -210,9 +219,21 @@ export default class SchemaCodegen extends Command {
     await fs.promises.writeFile(
       path.resolve(
         process.cwd(),
-        flags.outputPath || config?.outputPath || 'schema.d.ts',
+        flags.schemaTypesOutputPath ||
+          config?.schemaTypesOutputPath ||
+          'schema-types.d.ts',
       ),
       result,
+    );
+
+    await fs.promises.writeFile(
+      path.resolve(
+        process.cwd(),
+        flags.schemaJsonOutputPath ||
+          config?.schemaJsonOutputPath ||
+          'schema-def.json',
+      ),
+      JSON.stringify(schema, null, 2),
     );
   }
 }
