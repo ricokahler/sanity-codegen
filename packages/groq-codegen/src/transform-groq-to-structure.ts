@@ -10,11 +10,25 @@ import {
 } from './utils';
 
 export interface TransformGroqToStructureOptions {
+  /**
+   * A GROQ AST node from `groq-js`'s `parse` method
+   */
   node: Groq.ExprNode;
+  /**
+   * An extracted and normalized schema result from the
+   * `@sanity-codegen/schema-codegen` package.
+   */
   schema: Sanity.SchemaDef.Schema;
+  /**
+   * An array of scopes. These scopes stack as the GROQ AST is traversed and new
+   * contexts are created. This should be an empty array to start with.
+   */
   scopes: Sanity.GroqCodegen.StructureNode[];
 }
 
+/**
+ * Used to transform a GROQ AST (e.g. `ExprNode`) into a `StructureNode`
+ */
 export function transformGroqToStructure({
   node,
   schema,

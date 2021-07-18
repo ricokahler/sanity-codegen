@@ -35,11 +35,11 @@ export default class GroqCodegen extends Command {
         Any CLI flags passed with override the config options.
       `,
     }),
-    groqTypesOutputPath: flags.string({
-      name: 'groqTypesOutputPath',
+    queryTypesOutputPath: flags.string({
+      name: 'queryTypesOutputPath',
       description: stripIndents`
         Optionally provide a destination path to the resulting sanity groq
-        types. The default value is \`groq-types.d.ts\`.
+        types. The default value is \`query-types.d.ts\`.
       `,
     }),
     schemaJsonInputPath: flags.string({
@@ -103,7 +103,12 @@ export default class GroqCodegen extends Command {
     });
 
     await fs.promises.writeFile(
-      path.resolve(process.cwd(), flags.groqTypesOutputPath || 'queries.d.ts'),
+      path.resolve(
+        process.cwd(),
+        flags.queryTypesOutputPath ||
+          config?.queryTypesOutputPath ||
+          'query-types.d.ts',
+      ),
       result,
     );
   }

@@ -23,7 +23,8 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
    */
   prettierResolveConfigOptions?: ResolveConfigOptions;
   /**
-   * TODO: update this comment
+   * An extracted and normalized schema result from the
+   * `@sanity-codegen/schema-codegen` package.
    */
   schema: Sanity.SchemaDef.Schema;
 }

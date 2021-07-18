@@ -4,4 +4,4 @@ lib
 coverage
 .DS_Store
 yarn-error.log
-__debug-output.ts
+oclif.manifest.json

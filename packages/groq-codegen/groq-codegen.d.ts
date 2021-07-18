@@ -1,6 +1,25 @@
 declare namespace Sanity {
   namespace GroqCodegen {
-    type IntrinsicType = 'Asset' | 'Crop' | 'Hotspot' | 'Geopoint';
+    /**
+     * An intermediate representation of a set of types. This structure is
+     * first derived from a sanity schema. That structure is then altered to
+     * match the types inside of a GROQ AST.
+     *
+     * @see `transformSchemaToStructure`
+     * @see `transformGroqToStructure`
+     */
+    type StructureNode =
+      | LazyNode
+      | AndNode
+      | OrNode
+      | ArrayNode
+      | ObjectNode
+      | StringNode
+      | NumberNode
+      | BooleanNode
+      | IntrinsicNode
+      | ReferenceNode
+      | UnknownNode;
 
     type LazyNode = {
       type: 'Lazy';
@@ -62,6 +81,8 @@ declare namespace Sanity {
       hash: string;
     };
 
+    type IntrinsicType = 'Asset' | 'Crop' | 'Hotspot' | 'Geopoint';
+
     type IntrinsicNode = {
       type: 'Intrinsic';
       intrinsicType: IntrinsicType;
@@ -79,18 +100,5 @@ declare namespace Sanity {
     };
 
     type UnknownNode = { type: 'Unknown'; hash: 'unknown' };
-
-    type StructureNode =
-      | LazyNode
-      | AndNode
-      | OrNode
-      | ArrayNode
-      | ObjectNode
-      | StringNode
-      | NumberNode
-      | BooleanNode
-      | IntrinsicNode
-      | ReferenceNode
-      | UnknownNode;
   }
 }
