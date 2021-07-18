@@ -10,9 +10,24 @@ export interface SanityCodegenConfig
   schemaPath?: string;
   /**
    * Optionally provide a destination path to the resulting sanity schema types.
-   * The default value is `schema.d.ts`.
+   * The default value is `schema-types.d.ts`
    */
-  outputPath?: string;
+  schemaTypesOutputPath?: string;
+  /**
+   * Optionally provide a destination path to the resulting sanity schema JSON.
+   * The default value is `schema-def.json`
+   */
+  schemaJsonOutputPath?: string;
+  /**
+   * Optionally provide a destination path to the resulting sanity groq types.
+   * The default value is `groq-types.d.ts`.
+   */
+  groqTypesOutputPath?: string;
+  /**
+   * Optionally provide an input `schema-def.json` file to be used for GROQ
+   * codegen. This is the `schemaJsonOutputPath` by default.
+   */
+  schemaJsonInputPath?: string;
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
