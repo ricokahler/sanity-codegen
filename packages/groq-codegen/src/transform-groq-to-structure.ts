@@ -173,7 +173,9 @@ export function transformGroqToStructure({
     }
 
     default: {
-      throw new Error(`"${node.type}" not implemented yet.`);
+      console.warn(`"${node.type}" not implemented yet.`);
+
+      return createStructure({ type: 'Unknown' });
     }
   }
 }
