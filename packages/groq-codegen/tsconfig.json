@@ -10,5 +10,5 @@
     "target": "esnext"
   },
   "include": ["./src", "./groq-codegen.d.ts"],
-  "exclude": ["**/__example-files__/**/*", "**/*.test.ts", "**/fixtures/**/*"]
+  "exclude": ["**/__example-files__/**/*"]
 }
