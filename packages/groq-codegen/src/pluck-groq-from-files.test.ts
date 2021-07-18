@@ -22,6 +22,10 @@ describe('pluckGroqFromFile', () => {
           ",
           "queryKey": "BookTitles",
         },
+        Object {
+          "query": "*[_type == 'book']",
+          "queryKey": "AllBooks",
+        },
       ]
     `);
   });

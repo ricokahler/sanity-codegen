@@ -62,7 +62,7 @@ export async function generateGroqTypes({
         acc.queries[queryKey] = query;
 
         for (const [key, value] of Object.entries(references)) {
-          acc[key] = value;
+          acc.references[key] = value;
         }
 
         return acc;
