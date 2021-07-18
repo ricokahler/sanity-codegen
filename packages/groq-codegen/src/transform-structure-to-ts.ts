@@ -1,5 +1,5 @@
 import * as t from '@babel/types';
-import { createStructure, isStructureOptional, removeOptional } from './utils';
+import { isStructureOptional, removeOptional } from './utils';
 
 const getId = (node: Sanity.GroqCodegen.StructureNode) => `Ref_${node.hash}`;
 
@@ -160,9 +160,22 @@ function transform(
 }
 
 export interface TransformStructureToTsOptions {
+  /**
+   * The input `StructureNode` to be converted to a `TSType`
+   */
   structure: Sanity.GroqCodegen.StructureNode;
 }
 
+/**
+ * Takes in a `StructureNode` and returns an object with the resulting main
+ * the type, `query`, as well as any named references created (necessary when
+ * the schema has self-reference). Those references are stored in an object
+ * keyed by that node's hash.
+ *
+ * The resulting `TSType`s can be printed to source code via `@babel/generator`.
+ *
+ * @see `generateGroqTypes` for a reference implementation
+ */
 export function transformStructureToTs({
   structure,
 }: TransformStructureToTsOptions) {

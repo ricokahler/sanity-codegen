@@ -1,9 +1,17 @@
 import { removeOptional, createStructure } from './utils';
 
 export interface TransformSchemaToStructureOptions {
+  /**
+   * An extracted and normalized schema result from the
+   * `@sanity-codegen/schema-codegen` package.
+   */
   schema: Sanity.SchemaDef.Schema;
 }
 
+/**
+ * Takes in a schema (see the `@sanity-codegen/schema-codegen` package) and
+ * returns a `StructureNode`
+ */
 export function transformSchemaToStructure({
   schema,
 }: TransformSchemaToStructureOptions): Sanity.GroqCodegen.StructureNode {
