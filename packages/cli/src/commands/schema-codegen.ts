@@ -85,12 +85,18 @@ export default class SchemaCodegen extends Command {
     const { args, flags } = this.parse(SchemaCodegen);
     const { babelOptions, config, babelrcPath, root } = await getConfig({
       flags,
+      log: this.log.bind(this),
     });
 
     const normalizedSchema = config?.normalizedSchema
       ? config.normalizedSchema
       : await schemaExtractor({
-          schemaPath: await getSchemaPath({ config, args, root }),
+          schemaPath: await getSchemaPath({
+            config,
+            args,
+            root,
+            log: this.log.bind(this),
+          }),
           babelrcPath: babelrcPath || undefined,
           babelOptions,
           cwd: root,
@@ -103,24 +109,29 @@ export default class SchemaCodegen extends Command {
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
     });
 
-    await fs.promises.writeFile(
-      path.resolve(
-        root,
-        flags.schemaTypesOutputPath ||
-          config?.schemaTypesOutputPath ||
-          'schema-types.d.ts',
-      ),
-      result,
+    const schemaTypesOutputPath = path.resolve(
+      root,
+      flags.schemaTypesOutputPath ||
+        config?.schemaTypesOutputPath ||
+        'schema-types.d.ts',
+    );
+    await fs.promises.writeFile(schemaTypesOutputPath, result);
+    this.log(
+      `\x1b[32m✓\x1b[0m Wrote schema types output to: ${schemaTypesOutputPath}`,
     );
 
+    const schemaJsonOutputPath = path.resolve(
+      root,
+      flags.schemaJsonOutputPath ||
+        config?.schemaJsonOutputPath ||
+        'schema-def.json',
+    );
     await fs.promises.writeFile(
-      path.resolve(
-        root,
-        flags.schemaJsonOutputPath ||
-          config?.schemaJsonOutputPath ||
-          'schema-def.json',
-      ),
+      schemaJsonOutputPath,
       JSON.stringify(normalizedSchema, null, 2),
+    );
+    this.log(
+      `\x1b[32m✓\x1b[0m Wrote schema JSON output to: ${schemaJsonOutputPath}`,
     );
   }
 }
