@@ -1,8 +1,9 @@
+import type { GenerateSchemaTypesOptions } from '@sanity-codegen/schema-codegen';
+import type { GenerateGroqTypesOptions } from '@sanity-codegen/groq-codegen';
+
 export interface SanityCodegenConfig
-  extends Omit<
-    import('@sanity-codegen/schema-codegen').GenerateSchemaTypesOptions,
-    'types'
-  > {
+  extends Partial<GenerateSchemaTypesOptions>,
+    Partial<GenerateGroqTypesOptions> {
   /**
    * Optionally provide the path to your sanity schema entry point. If not
    * provided, the CLI will try to get this value from your `sanity.json` file.
@@ -32,7 +33,8 @@ export interface SanityCodegenConfig
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
    *
-   * Mutually exclusive with \`babelOptions\`.
+   * If both `babelOptions` and `babelrcPath` are provided, the results will be
+   * merged with `babel-merge`
    */
   babelrcPath?: string;
   /**
@@ -42,14 +44,15 @@ export interface SanityCodegenConfig
    * Note: these options get serialized to JSON so if you need to pass any
    * non-serializable babel options, you must use `babelrcPath` (can be
    * `.babelrc.js`).
-   */
-  babelOptions?: string;
-  /**
-   * Optionally provide a working directory. All of the sanity schema files must
-   * be inside the current working directory. If not, you may get errors like
-   * "Cannot use import statement outside a module".
    *
-   * Defaults to `process.cwd()`
+   * If both `babelOptions` and `babelrcPath` are provided, the results will be
+   * merged with `babel-merge`
    */
-  cwd?: string;
+  // TODO: add types from babel
+  babelOptions?: Record<string, unknown>;
+  /**
+   * Determines from where files are relative to. Defaults to where your
+   * sanity-codegen config was found.
+   */
+  root?: string;
 }

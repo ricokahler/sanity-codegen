@@ -1,14 +1,10 @@
 import { Command, flags } from '@oclif/command';
 import * as Parser from '@oclif/parser';
 import { stripIndents } from 'common-tags';
-// @ts-expect-error no types for this
-import register from '@babel/register';
 import path from 'path';
 import fs from 'fs';
 import { generateGroqTypes } from '@sanity-codegen/groq-codegen';
-import { defaultBabelOptions } from '@sanity-codegen/schema-codegen';
-import { findFile } from '../find-file';
-import { SanityCodegenConfig } from '../types';
+import { getConfig } from '../get-config';
 
 export default class GroqCodegen extends Command {
   static description = stripIndents`
@@ -17,11 +13,12 @@ export default class GroqCodegen extends Command {
 
   static flags = {
     help: flags.help({ char: 'h' }),
-    cwd: flags.string({
-      name: 'cwd',
+    root: flags.string({
+      name: 'root',
       description: stripIndents`
-        Optionally provide a working directory. The working directory is used
-        as a root when resolving relative blobs.
+        Determines from where files are relative to. Defaults to where your
+        sanity-codegen config was found (if any) or the current working
+        directory.
       `,
     }),
     configPath: flags.string({
@@ -49,36 +46,30 @@ export default class GroqCodegen extends Command {
         codegen. This is the \`schemaJsonOutputPath\` by default.
       `,
     }),
+    groqCodegenExclude: flags.string({
+      name: 'groqCodegenExclude',
+      description: stripIndents`
+        Specify a glob or a list of globs to specify which source files you want
+        to exclude from type generation.
+      `,
+    }),
   };
 
   static args: Parser.args.IArg[] = [
     {
-      name: 'filenames',
+      name: 'groqCodegenInclude',
       description: stripIndents`
         Provide a glob to match source files you wish to parse for GROQ queries.
       `,
-      required: true,
     },
   ];
 
   async run() {
     const { args, flags } = this.parse(GroqCodegen);
-
-    register(defaultBabelOptions);
-
-    const config: SanityCodegenConfig | null = await (async () => {
-      const configPath = await findFile(
-        'sanity-codegen.config',
-        flags.configPath,
-      );
-
-      const configValue = configPath && require(configPath);
-
-      return configValue?.default || configValue;
-    })();
+    const { config, root, babelOptions } = await getConfig({ flags });
 
     const schemaJsonInputPath = path.resolve(
-      process.cwd(),
+      root,
       flags.schemaJsonInputPath ||
         config?.schemaJsonInputPath ||
         config?.schemaJsonOutputPath ||
@@ -91,20 +82,33 @@ export default class GroqCodegen extends Command {
       );
     }
 
-    const schemaBuffer = await fs.promises.readFile(
-      path.resolve(process.cwd(), schemaJsonInputPath),
-    );
-    const schema = JSON.parse(schemaBuffer.toString());
+    const schemaBuffer = await fs.promises.readFile(schemaJsonInputPath);
+    const normalizedSchema = JSON.parse(schemaBuffer.toString());
+
+    const groqCodegenInclude =
+      (args.groqCodegenInclude as string | undefined) ||
+      config?.groqCodegenInclude;
+
+    if (!groqCodegenInclude) {
+      throw new Error(
+        `No \`groqCodegenInclude\` pattern was provided. Please add this to your config or provide via the CLI.`,
+      );
+    }
 
     const result = await generateGroqTypes({
-      filenames: args.filenames,
-      cwd: path.resolve(flags.cwd || config?.cwd || process.cwd()),
-      schema,
+      groqCodegenInclude,
+      groqCodegenExclude:
+        flags.groqCodegenExclude || config?.groqCodegenExclude,
+      babelOptions,
+      prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
+      prettierResolveConfigPath: config?.prettierResolveConfigPath,
+      root,
+      normalizedSchema,
     });
 
     await fs.promises.writeFile(
       path.resolve(
-        process.cwd(),
+        root,
         flags.queryTypesOutputPath ||
           config?.queryTypesOutputPath ||
           'query-types.d.ts',
