@@ -60,7 +60,7 @@ describe('removeOptional', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"1kje9yc"`);
+    expect(result.hash).toMatchInlineSnapshot(`"heg3lZeCkTu3lNTR"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });

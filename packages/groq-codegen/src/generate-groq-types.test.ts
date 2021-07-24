@@ -24,14 +24,14 @@ describe('generateGroqTypes', () => {
             author?: {
               name?: string;
             };
-            description?: Ref_44wbp4;
+            description?: Ref_xJaAbbnFTdIxXbVq;
           }[];
           type BookAuthor = {
             name?: string;
           } | null;
           type BookTitles = (string | null)[];
 
-          type Ref_44wbp4 = {
+          type Ref_xJaAbbnFTdIxXbVq = {
             _key: string;
             _type: \\"block\\";
             children: {
@@ -56,6 +56,6 @@ describe('generateGroqTypes', () => {
         }
       }
       "
-    `);
+      `);
   });
 });
