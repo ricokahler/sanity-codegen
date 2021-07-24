@@ -3,7 +3,7 @@ import { transformSchemaToStructure } from './transform-schema-to-structure';
 
 describe('transformSchemaToStructure', () => {
   it('takes in a schema and outputs a Structure node', () => {
-    const schema = schemaNormalizer([
+    const normalizedSchema = schemaNormalizer([
       {
         type: 'document',
         name: 'book',
@@ -11,7 +11,7 @@ describe('transformSchemaToStructure', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure({ schema });
+    const structure = transformSchemaToStructure({ normalizedSchema });
 
     expect(structure).toMatchObject({
       type: 'Array',
@@ -29,7 +29,7 @@ describe('transformSchemaToStructure', () => {
 
   // TODO: better description
   it('correctly converts arrays', () => {
-    const schema = schemaNormalizer([
+    const normalizedSchema = schemaNormalizer([
       {
         name: 'book',
         type: 'document',
@@ -49,7 +49,7 @@ describe('transformSchemaToStructure', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure({ schema });
+    const structure = transformSchemaToStructure({ normalizedSchema });
 
     expect(structure).toMatchObject({
       type: 'Array',
@@ -86,7 +86,7 @@ describe('transformSchemaToStructure', () => {
   });
 
   it('works with Blocks', () => {
-    const schema = schemaNormalizer([
+    const normalizedSchema = schemaNormalizer([
       {
         name: 'book',
         type: 'document',
@@ -118,7 +118,7 @@ describe('transformSchemaToStructure', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure({ schema });
+    const structure = transformSchemaToStructure({ normalizedSchema });
 
     expect(structure).toMatchObject({
       type: 'Array',
