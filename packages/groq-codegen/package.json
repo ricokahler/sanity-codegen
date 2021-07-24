@@ -40,9 +40,8 @@
     "@babel/types": "^7.14.5",
     "@ricokahler/pool": "^1.1.2",
     "babel-merge": "^3.0.0",
-    "glob": "^7.1.7",
-    "groq-js": "^0.3.0",
-    "minimatch": "^3.0.4"
+    "globby": "~11.0.0",
+    "groq-js": "^0.3.0"
   },
   "engines": {
     "node": ">=10.0.0"
