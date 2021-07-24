@@ -1,34 +1,36 @@
-// https://github.com/darkskyapp/string-hash/blob/cb38ab492aba198b9658b286bb2391278bb6992b/index.js
-function stringHash(str: string) {
-  let hash = 5381;
-  let i = str.length;
+import hash from 'object-hash';
 
-  while (i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i);
+function replacer(n: unknown) {
+  // don't consider the contents of the function
+  if (typeof n === 'function') {
+    // this i just a random string that won't collide with anything
+    return 'aaad5ec23bd8c7b1268fb02791c9a19ae1a43abb';
   }
 
-  return (hash >>> 0).toString(36);
+  return n;
 }
 
 /**
- * a very simple object hash function.
- * designed for low churn but not meant to be perfect
+ * a very simple object hash function powered by `object-hash`
  */
-export function objectHash(obj: unknown): string {
-  if (typeof obj !== 'object') return stringHash(`__${typeof obj}_${obj}`);
-  if (obj === null) return stringHash(`__null_${obj}`);
-
-  if (Array.isArray(obj)) return objectHash(obj.map(objectHash).join('_'));
-
-  return objectHash(
-    Object.entries(obj)
-      .map(([k, v]) => [k, objectHash(v)])
-      .sort(([a], [b]) => a.toString().localeCompare(b.toString(), 'en')),
-  );
+export function objectHash(n: unknown) {
+  return hash(
+    { sanityCodegen: n },
+    { algorithm: 'md5', replacer, encoding: 'base64' },
+  )
+    .replace(/\W/g, '')
+    .substring(0, 16)
+    .padStart(16, '0');
 }
 
+/**
+ * takes any number of items and returns a hash where the top-level order is not
+ * considered
+ */
 export function unorderedHash(items: unknown[]) {
-  return objectHash(
-    items.map(objectHash).sort((a, b) => a.localeCompare(b, 'en')),
-  );
+  return objectHash({
+    sanityCodegenUnordered: items
+      .map(objectHash)
+      .sort((a, b) => a.localeCompare(b, 'en')),
+  });
 }

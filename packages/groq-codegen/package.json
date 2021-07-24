@@ -41,12 +41,16 @@
     "@ricokahler/pool": "^1.1.2",
     "babel-merge": "^3.0.0",
     "globby": "~11.0.0",
-    "groq-js": "^0.3.0"
+    "groq-js": "^0.3.0",
+    "object-hash": "^2.2.0"
   },
   "engines": {
     "node": ">=10.0.0"
   },
   "selfDependencies": [
     "@sanity-codegen/types"
-  ]
+  ],
+  "devDependencies": {
+    "@types/object-hash": "^2.1.1"
+  }
 }

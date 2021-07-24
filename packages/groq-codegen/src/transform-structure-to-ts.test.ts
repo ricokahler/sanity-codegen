@@ -125,23 +125,23 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         _type: \\"jsonDoc\\";
         _id: string;
-        jsonLike?: Ref_13jjpm3;
+        jsonLike?: Ref_SSiWDRALho7Xz4SR;
       }[];
 
-      type Ref_13jjpm3 = (
+      type Ref_SSiWDRALho7Xz4SR = (
         | string
         | number
         | boolean
-        | Ref_13jjpm3[]
+        | Ref_SSiWDRALho7Xz4SR[]
         | {
             properties?: {
               key?: string;
-              value?: Ref_13jjpm3;
+              value?: Ref_SSiWDRALho7Xz4SR;
             }[];
           }
       )[];
       "
-    `);
+      `);
   });
 
   it('transforms references', () => {
@@ -170,7 +170,7 @@ describe('transformStructureToTs', () => {
             _type: \\"book\\";
             _id: string;
             title?: string;
-            author?: Sanity.Reference<Ref_1psxygh>;
+            author?: Sanity.Reference<Ref_f660DNqVmvjOxRqf>;
           }
         | {
             _type: \\"author\\";
@@ -179,7 +179,7 @@ describe('transformStructureToTs', () => {
           }
       )[];
 
-      type Ref_1psxygh =
+      type Ref_f660DNqVmvjOxRqf =
         | {
             _type: \\"author\\";
             _id: string;
@@ -187,7 +187,7 @@ describe('transformStructureToTs', () => {
           }
         | undefined;
       "
-    `);
+      `);
   });
 
   it('correctly encodes `undefined`s and `null`s', () => {

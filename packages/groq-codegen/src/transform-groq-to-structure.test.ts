@@ -120,7 +120,7 @@ describe('transformGroqToStructure', () => {
           _type: \\"book\\";
           _id: string;
           title?: string;
-          author?: Sanity.Reference<Ref_1psxygh>;
+          author?: Sanity.Reference<Ref_f660DNqVmvjOxRqf>;
         }[];
         authors: {
           _type: \\"author\\";
@@ -129,7 +129,7 @@ describe('transformGroqToStructure', () => {
         }[];
       };
 
-      type Ref_1psxygh =
+      type Ref_f660DNqVmvjOxRqf =
         | {
             _type: \\"author\\";
             _id: string;
@@ -137,7 +137,7 @@ describe('transformGroqToStructure', () => {
           }
         | undefined;
       "
-    `);
+      `);
   });
 
   test('filter with ands', () => {

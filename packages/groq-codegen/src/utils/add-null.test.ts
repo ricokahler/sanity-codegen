@@ -97,7 +97,7 @@ describe('addNull', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"4kp659"`);
+    expect(result.hash).toMatchInlineSnapshot(`"fIAY7odezgzxvkhR"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });

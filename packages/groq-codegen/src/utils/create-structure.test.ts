@@ -9,7 +9,7 @@ describe('createStructureNode', () => {
       value: null,
     });
 
-    expect(node.hash).toMatchInlineSnapshot(`"1i1vqj4"`);
+    expect(node.hash).toMatchInlineSnapshot(`"GJYMHcax4HJoxhTb"`);
   });
 
   it('utilizes child hashes for faster, incremental hashing', () => {
@@ -47,7 +47,7 @@ describe('createStructureNode', () => {
       children: [nestedReference],
     });
 
-    expect(node.hash).toMatchInlineSnapshot(`"y0npk2"`);
+    expect(node.hash).toMatchInlineSnapshot(`"c3ltzMeZa39hF3gI"`);
     expect(mockStringHashGet).toHaveBeenCalledTimes(1);
     expect(mockArrayHashGet).toHaveBeenCalledTimes(1);
     expect(mockReferenceHashGet).toHaveBeenCalledTimes(1);
