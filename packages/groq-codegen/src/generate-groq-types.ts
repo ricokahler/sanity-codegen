@@ -81,12 +81,7 @@ export async function generateGroqTypes({
           )
           .map(
             ([queryKey, queryTsType]) =>
-              `type ${queryKey} = ${
-                generate(
-                  // @ts-expect-error there seems to an error with @babel/generator
-                  queryTsType,
-                ).code
-              }`,
+              `type ${queryKey} = ${generate(queryTsType).code}`,
           )
           .join('\n')}
 
@@ -96,12 +91,7 @@ export async function generateGroqTypes({
             )
             .map(
               ([referenceKey, referenceTsType]) =>
-                `type ${referenceKey} = ${
-                  generate(
-                    // @ts-expect-error there seems to an error with @babel/generator
-                    referenceTsType,
-                  ).code
-                }`,
+                `type ${referenceKey} = ${generate(referenceTsType).code}`,
             )
             .join('\n')}
 

@@ -7,7 +7,8 @@ describe('generateGroqTypes', () => {
   it('works', async () => {
     const result = await generateGroqTypes({
       cwd: __dirname,
-      filenames: './__example-files__/**/*.ts',
+      groqCodegenInclude: './__example-files__/**/*.ts',
+      groqCodegenExclude: '**/*.fake-test.ts',
       schema: schemaNormalizer(exampleSchema),
     });
 

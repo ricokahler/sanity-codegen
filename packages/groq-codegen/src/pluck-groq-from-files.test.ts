@@ -5,7 +5,8 @@ describe('pluckGroqFromFile', () => {
   it('works', async () => {
     const results = await pluckGroqFromFiles({
       cwd: __dirname,
-      filenames: './__example-files__/**/*.ts',
+      groqCodegenInclude: './__example-files__/**/*.ts',
+      groqCodegenExclude: '**/*.fake-test.ts',
     });
 
     expect(results).toMatchInlineSnapshot(`
