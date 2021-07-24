@@ -241,7 +241,7 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
 }
 
 /**
@@ -375,7 +375,7 @@ export interface TransformSchemaToStructureOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
 }
 
 /**
@@ -399,7 +399,7 @@ export interface TransformGroqToStructureOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
   /**
    * An array of scopes. These scopes stack as the GROQ AST is traversed and new
    * contexts are created. This should be an empty array to start with.

@@ -5,7 +5,7 @@ export interface TransformSchemaToStructureOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
 }
 
 /**
@@ -13,14 +13,14 @@ export interface TransformSchemaToStructureOptions {
  * returns a `StructureNode`
  */
 export function transformSchemaToStructure({
-  schema,
+  normalizedSchema,
 }: TransformSchemaToStructureOptions): Sanity.GroqCodegen.StructureNode {
   return createStructure({
     type: 'Array',
     of: createStructure({
       type: 'Or',
-      children: schema.documents.map((n) =>
-        removeOptional(transform(n, schema)),
+      children: normalizedSchema.documents.map((n) =>
+        removeOptional(transform(n, normalizedSchema)),
       ),
     }),
     canBeNull: false,
@@ -30,13 +30,13 @@ export function transformSchemaToStructure({
 
 function transform(
   node: Sanity.SchemaDef.SchemaNode,
-  schema: Sanity.SchemaDef.Schema,
+  normalizedSchema: Sanity.SchemaDef.Schema,
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'RegistryReference': {
       const referencedType = [
-        ...schema.documents,
-        ...schema.registeredTypes,
+        ...normalizedSchema.documents,
+        ...normalizedSchema.registeredTypes,
       ].find((n) => n.name === node.to);
 
       // TODO: could show warning
@@ -47,7 +47,7 @@ function transform(
         // Note that the hash inputs are a function of the resulting getter
         // value. This is necessary to prevent weird caching behavior.
         hashInput: ['TransformSchemaToStructure', referencedType.name],
-        get: () => transform(referencedType, schema),
+        get: () => transform(referencedType, normalizedSchema),
       });
     }
     case 'Array': {
@@ -57,7 +57,7 @@ function transform(
         canBeOptional: !node.codegen.required,
         of: createStructure({
           type: 'Or',
-          children: node.of.map((n) => transform(n, schema)),
+          children: node.of.map((n) => transform(n, normalizedSchema)),
         }),
       });
     }
@@ -140,7 +140,7 @@ function transform(
                     ],
                   }),
                   // the rest
-                  ...(node.of || []).map((child) => transform(child, schema)),
+                  ...(node.of || []).map((child) => transform(child, normalizedSchema)),
                 ],
               }),
             }),
@@ -258,7 +258,7 @@ function transform(
 
       const fieldProperties = node.fields?.map((field) => ({
         key: field.name,
-        value: transform(field.definition, schema),
+        value: transform(field.definition, normalizedSchema),
       }));
 
       if (fieldProperties) {
@@ -300,7 +300,7 @@ function transform(
         // the desired behavior is to have them named when unmodified
         to: createStructure({
           type: 'Or',
-          children: node.to.map((n) => transform(n, schema)),
+          children: node.to.map((n) => transform(n, normalizedSchema)),
         }),
         canBeNull: false,
         canBeOptional: !node.codegen.required,

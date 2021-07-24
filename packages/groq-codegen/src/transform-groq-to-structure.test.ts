@@ -11,7 +11,7 @@ function print(query: string, schemaTypes: any[]) {
 
   const structure = transformGroqToStructure({
     node: root,
-    schema,
+    normalizedSchema: schema,
     scopes: [],
   });
 

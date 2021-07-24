@@ -9,7 +9,7 @@ import {
   PluckGroqFromFilesOptions,
 } from './pluck-groq-from-files';
 
-interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
+export interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
   /**
    * This option is fed directly to prettier `resolveConfig`
    *
@@ -26,7 +26,7 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
 }
 
 /**
@@ -39,7 +39,7 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
 export async function generateGroqTypes({
   prettierResolveConfigOptions,
   prettierResolveConfigPath,
-  schema,
+  normalizedSchema,
   ...pluckOptions
 }: GenerateGroqTypesOptions) {
   const extractedQueries = await pluckGroqFromFiles(pluckOptions);
@@ -49,7 +49,7 @@ export async function generateGroqTypes({
       const structure = transformGroqToStructure({
         node: parse(query),
         scopes: [],
-        schema,
+        normalizedSchema,
       });
 
       return { queryKey, ...transformStructureToTs({ structure }) };

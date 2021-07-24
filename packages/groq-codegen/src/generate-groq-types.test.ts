@@ -9,7 +9,7 @@ describe('generateGroqTypes', () => {
       cwd: __dirname,
       groqCodegenInclude: './__example-files__/**/*.ts',
       groqCodegenExclude: '**/*.fake-test.ts',
-      schema: schemaNormalizer(exampleSchema),
+      normalizedSchema: schemaNormalizer(exampleSchema),
     });
 
     expect(result).toMatchInlineSnapshot(`

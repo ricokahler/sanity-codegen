@@ -18,7 +18,7 @@ export interface TransformGroqToStructureOptions {
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
    */
-  schema: Sanity.SchemaDef.Schema;
+  normalizedSchema: Sanity.SchemaDef.Schema;
   /**
    * An array of scopes. These scopes stack as the GROQ AST is traversed and new
    * contexts are created. This should be an empty array to start with.
@@ -31,7 +31,7 @@ export interface TransformGroqToStructureOptions {
  */
 export function transformGroqToStructure({
   node,
-  schema,
+  normalizedSchema,
   scopes,
 }: TransformGroqToStructureOptions): Sanity.GroqCodegen.StructureNode {
   const scope = scopes[scopes.length - 1] as
@@ -40,7 +40,7 @@ export function transformGroqToStructure({
 
   switch (node.type) {
     case 'Everything': {
-      return transformSchemaToStructure({ schema });
+      return transformSchemaToStructure({ normalizedSchema: normalizedSchema });
     }
 
     // TODO: are these actually the same?
@@ -49,13 +49,13 @@ export function transformGroqToStructure({
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
 
       const exprResult = transformGroqToStructure({
         node: node.expr,
         scopes: [...scopes, baseResult],
-        schema,
+        normalizedSchema,
       });
 
       return exprResult;
@@ -66,7 +66,7 @@ export function transformGroqToStructure({
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
 
       return narrowStructure(baseResult, node.expr);
@@ -80,7 +80,7 @@ export function transformGroqToStructure({
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
 
       if (baseResult.type === 'Unknown') {
@@ -95,7 +95,7 @@ export function transformGroqToStructure({
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
 
       const baseResultHadArray = isStructureArray(baseResult);
@@ -106,7 +106,7 @@ export function transformGroqToStructure({
           ...scopes,
           baseResultHadArray ? unwrapArray(baseResult) : baseResult,
         ],
-        schema,
+        normalizedSchema,
       });
 
       return baseResultHadArray ? wrapArray(exprResult) : exprResult;
@@ -126,7 +126,7 @@ export function transformGroqToStructure({
             key: attribute.name,
             value: transformGroqToStructure({
               node: attribute.value,
-              schema,
+              normalizedSchema,
               scopes,
             }),
           })),
@@ -137,8 +137,16 @@ export function transformGroqToStructure({
       return createStructure({
         type: 'Or',
         children: [
-          transformGroqToStructure({ node: node.left, scopes, schema }),
-          transformGroqToStructure({ node: node.right, scopes, schema }),
+          transformGroqToStructure({
+            node: node.left,
+            scopes,
+            normalizedSchema,
+          }),
+          transformGroqToStructure({
+            node: node.right,
+            scopes,
+            normalizedSchema,
+          }),
         ],
       });
     }
@@ -148,7 +156,7 @@ export function transformGroqToStructure({
         const baseResult = transformGroqToStructure({
           node: node.base,
           scopes: scopes,
-          schema,
+          normalizedSchema,
         });
 
         const next = { ...node };
@@ -157,7 +165,7 @@ export function transformGroqToStructure({
         return transformGroqToStructure({
           node: next,
           scopes: [...scopes, baseResult],
-          schema,
+          normalizedSchema,
         });
       }
 
@@ -170,7 +178,7 @@ export function transformGroqToStructure({
       const baseResult = transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
 
       return unwrapReferences(baseResult);
@@ -182,7 +190,7 @@ export function transformGroqToStructure({
       return transformGroqToStructure({
         node: node.base,
         scopes,
-        schema,
+        normalizedSchema,
       });
     }
 

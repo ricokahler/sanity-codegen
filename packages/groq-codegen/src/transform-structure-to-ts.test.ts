@@ -10,17 +10,10 @@ function print({
   references,
 }: ReturnType<typeof transformStructureToTs>) {
   return prettier.format(
-    `${`type Everything = ${
-      // @ts-expect-error `generate` is incorrectly typed
-      generate(query).code
-    }`}\n\n${Object.entries(references)
-      .map(
-        ([k, v]) =>
-          `type ${k} = ${
-            // @ts-expect-error `generate` is incorrectly typed
-            generate(v).code
-          }`,
-      )
+    `${`type Everything = ${generate(query).code}`}\n\n${Object.entries(
+      references,
+    )
+      .map(([k, v]) => `type ${k} = ${generate(v).code}`)
       .join('\n\n')}`,
     { parser: 'typescript' },
   );
@@ -58,7 +51,9 @@ describe('transformStructureToTs', () => {
       },
     ]);
 
-    const everythingNode = transformSchemaToStructure({ schema });
+    const everythingNode = transformSchemaToStructure({
+      normalizedSchema: schema,
+    });
     const result = transformStructureToTs({ structure: everythingNode });
 
     expect(print(result)).toMatchInlineSnapshot(`
@@ -123,7 +118,7 @@ describe('transformStructureToTs', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure({ schema });
+    const structure = transformSchemaToStructure({ normalizedSchema: schema });
     const result = transformStructureToTs({ structure });
 
     expect(print(result)).toMatchInlineSnapshot(`
@@ -166,7 +161,7 @@ describe('transformStructureToTs', () => {
       },
     ]);
 
-    const structure = transformSchemaToStructure({ schema });
+    const structure = transformSchemaToStructure({ normalizedSchema: schema });
     const result = transformStructureToTs({ structure });
 
     expect(print(result)).toMatchInlineSnapshot(`
@@ -214,7 +209,9 @@ describe('transformStructureToTs', () => {
       },
     ]);
 
-    const schemaStructure = transformSchemaToStructure({ schema });
+    const schemaStructure = transformSchemaToStructure({
+      normalizedSchema: schema,
+    });
 
     const structureWithNulls = createStructure({
       type: 'Object',
@@ -260,4 +257,7 @@ describe('transformStructureToTs', () => {
       "
     `);
   });
+
+  // might be better for another test file
+  it.todo('arrays and `_key`s');
 });
