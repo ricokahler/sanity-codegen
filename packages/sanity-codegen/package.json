@@ -26,7 +26,8 @@
     "test": ":",
     "lint": ":",
     "typecheck": ":",
-    "sort-package-json": "sort-package-json"
+    "sort-package-json": "sort-package-json",
+    "clean": "rm -rf node_modules"
   },
   "engines": {
     "node": ">=10.0.0"

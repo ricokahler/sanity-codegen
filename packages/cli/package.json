@@ -42,7 +42,8 @@
     "version": "oclif-dev readme && git add README.md",
     "sort-package-json": "sort-package-json",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "lint": "eslint --ext .ts,.js ./src"
+    "lint": "eslint --ext .ts,.js ./src",
+    "clean": "rm -rf node_modules"
   },
   "dependencies": {
     "@oclif/command": "^1.8.0",

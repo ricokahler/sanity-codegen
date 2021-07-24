@@ -27,6 +27,7 @@
     "test": ":",
     "typecheck": "tsc",
     "lint": ":",
-    "sort-package-json": "sort-package-json"
+    "sort-package-json": "sort-package-json",
+    "clean": "rm -rf node_modules"
   }
 }
