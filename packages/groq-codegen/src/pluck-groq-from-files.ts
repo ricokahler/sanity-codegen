@@ -1,26 +1,34 @@
 import glob from 'glob';
+import minimatch from 'minimatch';
 import { parse, traverse } from '@babel/core';
+import babelMerge from 'babel-merge';
 import * as t from '@babel/types';
 import pool from '@ricokahler/pool';
 import fs from 'fs';
 import path from 'path';
 
-export interface PluckGroqFromFilesOptions {
+const defaultPluckBabelOptions = {
+  presets: [
+    ['@babel/preset-env', { targets: 'maintained node versions' }],
+    '@babel/preset-typescript',
+  ],
+  rootMode: 'upward-optional',
+};
+
+export interface PluckGroqFromSourceOptions {
   /**
-   * Specify a glob, powered by [`glob`](https://github.com/isaacs/node-glob),
-   * or a function that returns a list of paths.
+   * The contents of the source file to pluck GROQ queries from.
    */
-  filenames: string | (() => Promise<string[]>);
+  source: string;
   /**
-   * Specify the current working direction used to resolve relative filenames.
-   * By default this is `process.env.cwd()`
+   * An incoming filename (sent to babel)
    */
-  cwd?: string;
+  filename?: string;
   /**
-   * Specify the max amount of files you want the pluck function to attempt to
-   * read concurrently. Defaults to 50.
+   * Babel options configuration object that is merged with a provided default
+   * configuration.
    */
-  maxConcurrency?: number;
+  babelOptions?: Record<string, unknown>;
 }
 
 /**
@@ -39,23 +47,19 @@ export interface PluckGroqFromFilesOptions {
  * begin exactly `groq`. The 3rd argument (i.e. query parameters) does not need
  * to be present.
  *
- * Note: in contrast to the schema codegen extractor, the babel set up for this
- * extractor is relatively standard. It also utilizes the
- * [`rootMode`](https://babeljs.io/docs/en/options#rootmode)
- * `'upward-optional'` to allow for top-level configuration to pass down.
+ * This function also accepts an babel options configuration object that is
+ * merged with a provided default configuration.
  */
-export function pluckGroqFromSource(
-  source: string,
-  filename: string = 'file.ts',
-) {
-  const tree = parse(source, {
-    filename,
-    presets: [
-      ['@babel/preset-env', { targets: 'maintained node versions' }],
-      '@babel/preset-typescript',
-    ],
-    rootMode: 'upward-optional',
-  });
+export function pluckGroqFromSource({
+  source,
+  filename = 'file.ts',
+  babelOptions,
+}: PluckGroqFromSourceOptions) {
+  const combinedBabelOptions: Record<string, unknown> = babelMerge(
+    defaultPluckBabelOptions,
+    babelOptions || {},
+  );
+  const tree = parse(source, { ...combinedBabelOptions, filename });
 
   const pluckedQueries: Array<{ queryKey: string; query: string }> = [];
 
@@ -94,35 +98,87 @@ export function pluckGroqFromSource(
   return pluckedQueries;
 }
 
+export interface PluckGroqFromFilesOptions {
+  /**
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs, or a function that returns a list of paths to specify the
+   * source files you want to generate types from.
+   */
+  groqCodegenInclude: string | string[] | (() => Promise<string[]>);
+  /**
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs to specify which source files you want to exclude from type
+   * generation.
+   */
+  groqCodegenExclude?: string | string[];
+  /**
+   * Specify the current working direction used to resolve relative filenames.
+   * By default this is `process.env.cwd()`
+   */
+  cwd?: string;
+  babelOptions?: Record<string, unknown>;
+}
+
 /**
  * Goes through each specified file and statically plucks groq queries and their
  * corresponding query keys. @see `pluckGroqFromSource` for more info.
  */
 export async function pluckGroqFromFiles({
-  filenames: inputFilenames,
+  groqCodegenInclude,
+  groqCodegenExclude,
   cwd = process.cwd(),
-  // TODO: does this option need to exist?
-  maxConcurrency = 50,
+  babelOptions,
 }: PluckGroqFromFilesOptions) {
-  const filenames =
-    typeof inputFilenames === 'function'
-      ? await inputFilenames()
-      : await new Promise<string[]>((resolve, reject) =>
-          glob(inputFilenames, { cwd }, (err, matches) => {
-            if (err) reject(err);
-            else resolve(matches);
-          }),
+  let filenames: string[];
+
+  if (typeof groqCodegenInclude === 'function') {
+    filenames = await groqCodegenInclude();
+  } else {
+    const inclusions = Array.isArray(groqCodegenInclude)
+      ? groqCodegenInclude
+      : [groqCodegenInclude];
+
+    const rawFilenames = new Set(
+      (
+        await Promise.all(
+          inclusions.map(
+            (inclusion) =>
+              new Promise<string[]>((resolve, reject) =>
+                // TODO: is there a static way to combined these globs?
+                glob(inclusion, { cwd }, (err, matches) => {
+                  if (err) reject(err);
+                  else resolve(matches);
+                }),
+              ),
+          ),
+        )
+      ).flat(),
+    );
+
+    filenames = Array.from(rawFilenames)
+      .map((rawFilename) => path.resolve(cwd, rawFilename))
+      .filter((filename) => {
+        const exclusions = groqCodegenExclude
+          ? Array.isArray(groqCodegenExclude)
+            ? groqCodegenExclude
+            : [groqCodegenExclude]
+          : [];
+
+        return !exclusions.some((exclusion) =>
+          minimatch(filename, exclusion, { dot: true }),
         );
+      });
+  }
 
   const extractedQueries = (
     await pool({
       collection: filenames,
-      maxConcurrency,
+      maxConcurrency: 25,
       task: async (filename) => {
         const buffer = await fs.promises.readFile(path.resolve(cwd, filename));
         const source = buffer.toString();
 
-        return pluckGroqFromSource(source, filename);
+        return pluckGroqFromSource({ source, filename, babelOptions });
       },
     })
   ).flat();

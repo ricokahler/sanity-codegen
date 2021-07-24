@@ -64,7 +64,8 @@ async function main() {
   // 3. the resulting types are printed as strings and joined together in one
   //    big typescript source file
   const codegenResult = await generateGroqTypes({
-    filenames: './src/**/*.{js,ts,tsx}',
+    groqCodegenInclude: ['./src/**/*.{js,ts,tsx}'],
+    groqCodegenExclude: ['**/*.test.{js,ts,tsx}'],
     schema,
   });
 
@@ -141,20 +142,23 @@ This package contains also more granular functions to better fit your use case. 
 ```ts
 export interface PluckGroqFromFilesOptions {
   /**
-   * Specify a glob, powered by [`glob`](https://github.com/isaacs/node-glob),
-   * or a function that returns a list of paths.
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs, or a function that returns a list of paths to specify the
+   * source files you want to generate types from.
    */
-  filenames: string | (() => Promise<string[]>);
+  groqCodegenInclude: string | string[] | (() => Promise<string[]>);
+  /**
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs to specify which source files you want to exclude from type
+   * generation.
+   */
+  groqCodegenExclude?: string | string[];
   /**
    * Specify the current working direction used to resolve relative filenames.
    * By default this is `process.env.cwd()`
    */
   cwd?: string;
-  /**
-   * Specify the max amount of files you want the pluck function to attempt to
-   * read concurrently. Defaults to 50.
-   */
-  maxConcurrency?: number;
+  babelOptions?: Record<string, unknown>;
 }
 
 /**
@@ -163,12 +167,33 @@ export interface PluckGroqFromFilesOptions {
  */
 export declare function pluckGroqFromFiles(
   options: PluckGroqFromFilesOptions,
-): Promise<{ queryKey: string; query: string }[]>;
+): Promise<
+  {
+    queryKey: string;
+    query: string;
+  }[]
+>;
 ```
 
 ### `pluckGroqFromSource()`
 
 ````ts
+export interface PluckGroqFromSourceOptions {
+  /**
+   * The contents of the source file to pluck GROQ queries from.
+   */
+  source: string;
+  /**
+   * An incoming filename (sent to babel)
+   */
+  filename?: string;
+  /**
+   * Babel options configuration object that is merged with a provided default
+   * configuration.
+   */
+  babelOptions?: Record<string, unknown>;
+}
+
 /**
  * Given a source file as a string, this function will extract the queries and
  * their corresponding query keys.
@@ -185,15 +210,15 @@ export declare function pluckGroqFromFiles(
  * begin exactly `groq`. The 3rd argument (i.e. query parameters) does not need
  * to be present.
  *
- * Note: in contrast to the schema codegen extractor, the babel set up for this
- * extractor is relatively standard. It also utilizes the
- * [`rootMode`](https://babeljs.io/docs/en/options#rootmode)
- * `'upward-optional'` to allow for top-level configuration to pass down.
+ * This function also accepts an babel options configuration object that is
+ * merged with a provided default configuration.
  */
 export declare function pluckGroqFromSource(
-  source: string,
-  filename?: string,
-): { queryKey: string; query: string }[];
+  options: PluckGroqFromSourceOptions,
+): {
+  queryKey: string;
+  query: string;
+}[];
 ````
 
 ### `generateGroqTypes()`
