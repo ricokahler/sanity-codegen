@@ -19,7 +19,19 @@ const config: SanityCodegenConfig = {
    * Optionally provide the path to your sanity schema entry point. If not
    * provided, the CLI will try to get this value from your `sanity.json` file.
    */
-  // schemaPath: './path/to/your/schema',
+  schemaPath: './schema',
+  /**
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs, or a function that returns a list of paths to specify the
+   * source files you want to generate types from.
+   */
+  groqCodegenInclude: ['./src/**/*.{js,jsx,ts,tsx}'],
+  /**
+   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
+   * a list of globs to specify which source files you want to exclude from type
+   * generation.
+   */
+  groqCodegenExclude: ['**/*.test.{js,jsx,ts,tsx}'],
   /**
    * Optionally provide a destination path to the resulting sanity schema types.
    * The default value is `schema-types.d.ts`
@@ -44,9 +56,10 @@ const config: SanityCodegenConfig = {
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
    *
-   * Mutually exclusive with \`babelOptions\`.
+   * If both `babelOptions` and `babelrcPath` are provided, the results will be
+   * merged with `babel-merge`
    */
-  // babelrcPath: './.babelrc',
+  // babelrcPath: './babelrc',
   /**
    * Optionally provide babel options inline. This will be passed into the babel
    * options of the schema executor.
@@ -54,30 +67,58 @@ const config: SanityCodegenConfig = {
    * Note: these options get serialized to JSON so if you need to pass any
    * non-serializable babel options, you must use `babelrcPath` (can be
    * `.babelrc.js`).
-   */
-  // babelOptions: {/* ... */},
-  /**
-   * Optionally provide a working directory. All of the sanity schema files must
-   * be inside the current working directory. If not, you may get errors like
-   * "Cannot use import statement outside a module".
    *
-   * Defaults to `process.cwd()`
+   * If both `babelOptions` and `babelrcPath` are provided, the results will be
+   * merged with `babel-merge`
    */
-  // cwd: process.cwd(),
+  // babelOptions: {
+  //   // ...
+  // },
+  /**
+   * Determines from where files are relative to. Defaults to where your
+   * sanity-codegen config was found.
+   */
+  // root: process.cwd(),
+  /**
+   * You can directly provide a normalized instead of using a schema-def.json.
+   * A normalized schema (result of the `schemaNormalizer`)
+   * @see schemaNormalizer
+   */
+  // normalizedSchema: undefined,
+  /**
+   * Optionally provide a function that generates the typescript type identifer
+   * from the sanity type name. Use this function to override the default and
+   * prevent naming collisions.
+   */
+  // generateTypeName: undefined,
+  /**
+   * This option is fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
+  // prettierResolveConfigPath: undefined,
+  /**
+   * This options is also fed directly to prettier `resolveConfig`
+   *
+   * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
+   */
+  // prettierResolveConfigOptions: undefined,
 };
 
 export default config;
 ```
 
 <!-- toc -->
-* [@sanity-codegen/cli](#sanity-codegencli)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [@sanity-codegen/cli](#sanity-codegencli)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
@@ -89,25 +130,27 @@ USAGE
   $ sanity-codegen COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`sanity-codegen groq-codegen FILENAMES`](#sanity-codegen-groq-codegen-filenames)
-* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
-* [`sanity-codegen schema-codegen [SCHEMAPATH]`](#sanity-codegen-schema-codegen-schemapath)
 
-## `sanity-codegen groq-codegen FILENAMES`
+- [`sanity-codegen groq-codegen [GROQCODEGENINCLUDE]`](#sanity-codegen-groq-codegen-groqcodegeninclude)
+- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+- [`sanity-codegen schema-codegen [SCHEMAPATH]`](#sanity-codegen-schema-codegen-schemapath)
+
+## `sanity-codegen groq-codegen [GROQCODEGENINCLUDE]`
 
 parses source code files for GROQ queries and outputs TypeScript types from them
 
 ```
 USAGE
-  $ sanity-codegen groq-codegen FILENAMES
+  $ sanity-codegen groq-codegen [GROQCODEGENINCLUDE]
 
 ARGUMENTS
-  FILENAMES  Provide a glob to match source files you wish to parse for GROQ queries.
+  GROQCODEGENINCLUDE  Provide a glob to match source files you wish to parse for GROQ queries.
 
 OPTIONS
   -h, --help
@@ -121,13 +164,18 @@ OPTIONS
 
       Any CLI flags passed with override the config options.
 
-  --cwd=cwd
-      Optionally provide a working directory. The working directory is used
-      as a root when resolving relative blobs.
+  --groqCodegenExclude=groqCodegenExclude
+      Specify a glob or a list of globs to specify which source files you want
+      to exclude from type generation.
 
   --queryTypesOutputPath=queryTypesOutputPath
       Optionally provide a destination path to the resulting sanity groq
       types. The default value is `query-types.d.ts`.
+
+  --root=root
+      Determines from where files are relative to. Defaults to where your
+      sanity-codegen config was found (if any) or the current working
+      directory.
 
   --schemaJsonInputPath=schemaJsonInputPath
       Optionally provide an input `schema-def.json` file to be used for GROQ
@@ -189,10 +237,10 @@ OPTIONS
 
       Any CLI flags passed with override the config options.
 
-  --cwd=cwd
-      Optionally provide a working directory. All of the sanity schema files
-      must be inside the current working directory. If not, you may get errors
-      like "Cannot use import statement outside a module".
+  --root=root
+      Determines from where files are relative to. Defaults to where your
+      sanity-codegen config was found (if any) or the current working
+      directory.
 
   --schemaJsonOutputPath=schemaJsonOutputPath
       Optionally provide a destination path to the resulting sanity schema
@@ -204,4 +252,5 @@ OPTIONS
 ```
 
 _See code: [lib/commands/schema-codegen.js](https://github.com/ricokahler/sanity-codegen/blob/v1.0.0-alpha.0/lib/commands/schema-codegen.js)_
+
 <!-- commandsstop -->

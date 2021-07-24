@@ -1,17 +1,15 @@
 import { Command, flags } from '@oclif/command';
 import * as Parser from '@oclif/parser';
 import { stripIndents } from 'common-tags';
-// @ts-expect-error no types for this
-import register from '@babel/register';
+
 import path from 'path';
 import fs from 'fs';
 import {
   schemaExtractor,
   generateSchemaTypes,
-  defaultBabelOptions,
 } from '@sanity-codegen/schema-codegen';
-import { findFile } from '../find-file';
-import { SanityCodegenConfig } from '../types';
+import { getConfig } from '../get-config';
+import { getSchemaPath } from '../get-schema-path';
 
 export default class SchemaCodegen extends Command {
   static description = stripIndents`
@@ -49,12 +47,12 @@ export default class SchemaCodegen extends Command {
         \`babelOptions\` takes precedence over \`babelrcPath\`
       `,
     }),
-    cwd: flags.string({
-      name: 'cwd',
+    root: flags.string({
+      name: 'root',
       description: stripIndents`
-        Optionally provide a working directory. All of the sanity schema files
-        must be inside the current working directory. If not, you may get errors
-        like "Cannot use import statement outside a module".
+        Determines from where files are relative to. Defaults to where your
+        sanity-codegen config was found (if any) or the current working
+        directory.
       `,
     }),
     schemaTypesOutputPath: flags.string({
@@ -85,132 +83,21 @@ export default class SchemaCodegen extends Command {
 
   async run() {
     const { args, flags } = this.parse(SchemaCodegen);
+    const { babelOptions, config, babelrcPath, root } = await getConfig({
+      flags,
+    });
 
-    register(defaultBabelOptions);
-
-    const config: SanityCodegenConfig | null = await (async () => {
-      const configPath = await findFile(
-        'sanity-codegen.config',
-        flags.configPath,
-      );
-
-      const configValue = configPath && require(configPath);
-
-      return configValue?.default || configValue;
-    })();
-
-    const schemaPath = await (async () => {
-      if (args.schemaPath) {
-        try {
-          return require.resolve(path.resolve(process.cwd(), args.schemaPath));
-        } catch {
-          throw new Error(
-            `Could not resolve \`schemaPath\` "${args.schemaPath}" provided via CLI args.`,
-          );
-        }
-      }
-
-      if (config?.schemaPath) {
-        try {
-          return require.resolve(
-            path.resolve(process.cwd(), config.schemaPath),
-          );
-        } catch {
-          throw new Error(
-            `Could not resolve \`schemaPath\` "${config.schemaPath}" provided via the config.`,
-          );
-        }
-      }
-
-      const sanityJsonPath = await findFile('sanity.json');
-      if (sanityJsonPath) {
-        try {
-          const sanityJson: unknown = require(sanityJsonPath);
-
-          if (typeof sanityJson !== 'object' || !sanityJson) {
-            throw new Error();
-          }
-
-          // no parts in sanity.json
-          if (!('parts' in sanityJson)) {
-            throw new Error();
-          }
-
-          const parts = (sanityJson as any).parts;
-
-          // parts is not an array
-          if (!Array.isArray(parts)) {
-            throw new Error();
-          }
-
-          // parts doesn't contain `part:@sanity/base/schema`
-          const schemaPart = parts.find(
-            (part) => part.name === 'part:@sanity/base/schema',
-          );
-          if (!schemaPart) {
-            throw new Error();
-          }
-
-          return require.resolve(
-            path.resolve(path.dirname(sanityJsonPath), schemaPart.path),
-          );
-        } catch {
-          throw new Error('Failed to get schema path from `sanity.json`');
-        }
-      }
-
-      throw new Error('Failed to find schema path.');
-    })();
-
-    const babelrcPath = (() => {
-      if (flags.babelrcPath) {
-        try {
-          return require.resolve(
-            path.resolve(process.cwd(), flags.babelrcPath),
-          );
-        } catch {
-          throw new Error(
-            `Could not resolve \`babelrcPath\` "${args.babelrcPath}" provided via CLI args.`,
-          );
-        }
-      }
-
-      if (config?.babelrcPath) {
-        try {
-          return require.resolve(
-            path.resolve(process.cwd(), config.babelrcPath),
-          );
-        } catch {
-          throw new Error(
-            `Could not resolve \`babelrcPath\` "${config.babelrcPath}" provided via the config.`,
-          );
-        }
-      }
-    })();
-
-    const babelOptions = (() => {
-      if (flags.babelOptions) {
-        return JSON.parse(flags.babelOptions);
-      }
-
-      if (config?.babelOptions) {
-        return config.babelOptions;
-      }
-
-      return undefined;
-    })();
-
-    const schema =
-      config?.schema ||
-      (await schemaExtractor({
-        schemaPath,
-        babelrcPath,
-        babelOptions,
-        cwd: path.resolve(flags.cwd || config?.cwd || process.cwd()),
-      }));
+    const normalizedSchema = config?.normalizedSchema
+      ? config.normalizedSchema
+      : await schemaExtractor({
+          schemaPath: await getSchemaPath({ config, args, root }),
+          babelrcPath: babelrcPath || undefined,
+          babelOptions,
+          cwd: root,
+        });
 
     const result = await generateSchemaTypes({
-      schema,
+      normalizedSchema,
       generateTypeName: config?.generateTypeName,
       prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
@@ -218,7 +105,7 @@ export default class SchemaCodegen extends Command {
 
     await fs.promises.writeFile(
       path.resolve(
-        process.cwd(),
+        root,
         flags.schemaTypesOutputPath ||
           config?.schemaTypesOutputPath ||
           'schema-types.d.ts',
@@ -228,12 +115,12 @@ export default class SchemaCodegen extends Command {
 
     await fs.promises.writeFile(
       path.resolve(
-        process.cwd(),
+        root,
         flags.schemaJsonOutputPath ||
           config?.schemaJsonOutputPath ||
           'schema-def.json',
       ),
-      JSON.stringify(schema, null, 2),
+      JSON.stringify(normalizedSchema, null, 2),
     );
   }
 }
