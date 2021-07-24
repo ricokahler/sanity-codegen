@@ -18,6 +18,9 @@ export const defaultBabelOptions = {
     '@babel/preset-typescript',
     '@babel/preset-react',
   ],
+  // overrides `node_modules` ignoring
+  // https://babeljs.io/docs/en/babel-register#ignores-node_modules-by-default
+  ignore: [],
   plugins: [
     // used to resolve and no-op sanity's part system
     [

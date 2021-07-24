@@ -1,6 +1,8 @@
 import path from 'path';
-// @ts-ignore
+// @ts-expect-error no types or 3rd party types
 import register from '@babel/register';
+// @ts-expect-error no types or 3rd party types
+import babelMerge from 'babel-merge';
 import { schemaNormalizer } from './schema-normalizer';
 import { defaultBabelOptions } from './default-babel-options';
 
@@ -13,8 +15,6 @@ export type ExecutorResult =
       status: 'error';
       error: any;
     };
-
-register(defaultBabelOptions);
 
 export interface ExecutorOptions {
   /**
@@ -36,9 +36,8 @@ export interface ExecutorOptions {
    */
   babelOptions?: any;
   /**
-   * Optionally provide a working directory. All of the sanity schema files must
-   * be inside the current working directory. If not, you may get errors like
-   * "Cannot use import statement outside a module".
+   * Optionally provide a working directory. This will be passed down to
+   * `@babel/register` as `cwd`
    */
   cwd?: string;
 }
@@ -46,32 +45,27 @@ export interface ExecutorOptions {
 async function loadAndExecute() {
   const {
     schemaPath,
-    babelOptions,
+    babelOptions: babelOptionsFromArgs,
     babelrcPath,
     cwd,
   } = await new Promise<ExecutorOptions>((resolve) => {
-    process.on('message', (message) => {
+    process.on('message', (message: string) => {
       resolve(JSON.parse(message));
     });
   });
 
-  const babelConfig = (() => {
-    // inline babelOptions takes precedence
-    if (babelOptions) return babelOptions;
+  const babelConfigFromBabelrcPath = (() => {
+    if (!babelrcPath) return {};
 
-    // if a babelrc path is provided, required it and return it
-    if (babelrcPath) {
-      const requiredBabelrc = require(babelrcPath);
-      return requiredBabelrc.default || requiredBabelrc;
-    }
-
-    return null;
+    const requiredBabelrc = require(babelrcPath);
+    return requiredBabelrc.default || requiredBabelrc;
   })();
 
   register({
-    ...defaultBabelOptions,
-    // any extra babelConfig overrides the `defaultBabelOptions`
-    ...babelConfig,
+    ...babelMerge(
+      defaultBabelOptions,
+      babelMerge(babelOptionsFromArgs || {}, babelConfigFromBabelrcPath),
+    ),
     cwd,
   });
 
