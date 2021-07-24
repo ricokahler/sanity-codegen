@@ -39,6 +39,9 @@ describe('normalizer', () => {
     const normalized = schemaNormalizer(rawSchema);
     // JSON serializable test
     expect(rawSchema).toEqual(JSON.parse(JSON.stringify(rawSchema)));
+
+    // TODO: probably a better idea to remove the snapshots and replace with
+    // `.toMatchObject`
     expect(normalized).toMatchSnapshot();
   });
 

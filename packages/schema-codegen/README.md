@@ -59,7 +59,7 @@ async function main() {
   const normalizedSchema = await schemaExtractor({
     schemaPath: './studio/schemas/schema.js',
   });
-  const typescriptSource = await generateTypes({ schema: normalizedSchema });
+  const typescriptSource = await generateTypes({ normalizedSchema });
 
   await fs.promises.writeFile('./schema.d.ts', typescriptSource);
 }
@@ -105,7 +105,7 @@ interface ExecutorOptions {
  * Sanity Studio browser environment.
  */
 export declare function schemaExtractor(
-  params: ExecutorOptions
+  params: ExecutorOptions,
 ): Promise<Sanity.SchemaDef.Schema>;
 ```
 
@@ -131,7 +131,11 @@ export declare function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema;
 import { ResolveConfigOptions } from 'prettier';
 
 export interface GenerateTypesOptions {
-  schema: Sanity.SchemaDef.Schema;
+  /**
+   * A normalized schema (result of the `schemaNormalizer`)
+   * @see schemaNormalizer
+   */
+  normalizedSchema: Sanity.SchemaDef.Schema;
   /**
    * Optionally provide a function that generates the typescript type identifer
    * from the sanity type name. Use this function to override the default and
@@ -163,12 +167,9 @@ export interface GenerateTypesOptions {
  *
  * @param param0 options
  */
-export declare function generateTypes({
-  schema: { documentTypes, topLevelTypes },
-  generateTypeName,
-  prettierResolveConfigOptions,
-  prettierResolveConfigPath,
-}: GenerateTypesOptions): Promise<string>;
+export declare function generateTypes(
+  options: GenerateTypesOptions,
+): Promise<string>;
 ```
 
 ### `defaultBabelOptions`

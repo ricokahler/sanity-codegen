@@ -2,7 +2,11 @@ import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 import { defaultGenerateTypeName } from './default-generate-type-name';
 
 export interface GenerateSchemaTypesOptions {
-  schema: Sanity.SchemaDef.Schema;
+  /**
+   * A normalized schema (result of the `schemaNormalizer`)
+   * @see schemaNormalizer
+   */
+  normalizedSchema: Sanity.SchemaDef.Schema;
   /**
    * Optionally provide a function that generates the typescript type identifer
    * from the sanity type name. Use this function to override the default and
@@ -37,7 +41,7 @@ type Segment = { node: Sanity.SchemaDef.SchemaNode; path: string | number };
  * @param param0 options
  */
 export async function generateSchemaTypes({
-  schema: { documents, registeredTypes },
+  normalizedSchema: { documents, registeredTypes },
   generateTypeName = defaultGenerateTypeName,
   prettierResolveConfigOptions,
   prettierResolveConfigPath,

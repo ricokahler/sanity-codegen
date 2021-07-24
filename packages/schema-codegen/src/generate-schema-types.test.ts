@@ -60,7 +60,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -186,7 +186,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -233,7 +233,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result.includes('name?: string')).toBe(true);
@@ -307,7 +307,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -405,7 +405,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo, bar]),
+      normalizedSchema: schemaNormalizer([foo, bar]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -518,7 +518,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo, bar, baz]),
+      normalizedSchema: schemaNormalizer([foo, bar, baz]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -586,7 +586,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -642,7 +642,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -699,7 +699,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -765,7 +765,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo, bar, baz]),
+      normalizedSchema: schemaNormalizer([foo, bar, baz]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -847,7 +847,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo, bar]),
+      normalizedSchema: schemaNormalizer([foo, bar]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -896,7 +896,7 @@ describe('generate-types', () => {
     };
 
     const result = await generateSchemaTypes({
-      schema: schemaNormalizer([foo]),
+      normalizedSchema: schemaNormalizer([foo]),
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -936,7 +936,7 @@ describe('generate-types', () => {
     let caught = false;
 
     try {
-      await generateSchemaTypes({ schema: schemaNormalizer([foo]) });
+      await generateSchemaTypes({ normalizedSchema: schemaNormalizer([foo]) });
     } catch (e) {
       caught = true;
       expect(e).toMatchInlineSnapshot(
