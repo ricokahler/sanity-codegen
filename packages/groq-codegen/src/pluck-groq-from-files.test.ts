@@ -4,7 +4,7 @@ describe('pluckGroqFromFile', () => {
   // TODO: better tests lol
   it('works', async () => {
     const results = await pluckGroqFromFiles({
-      cwd: __dirname,
+      root: __dirname,
       groqCodegenInclude: './__example-files__/**/*.ts',
       groqCodegenExclude: '**/*.fake-test.ts',
     });

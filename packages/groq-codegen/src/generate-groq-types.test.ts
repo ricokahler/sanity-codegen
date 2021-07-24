@@ -6,7 +6,7 @@ describe('generateGroqTypes', () => {
   // TODO: better tests lol
   it('works', async () => {
     const result = await generateGroqTypes({
-      cwd: __dirname,
+      root: __dirname,
       groqCodegenInclude: './__example-files__/**/*.ts',
       groqCodegenExclude: '**/*.fake-test.ts',
       normalizedSchema: schemaNormalizer(exampleSchema),

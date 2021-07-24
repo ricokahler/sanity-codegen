@@ -154,10 +154,10 @@ export interface PluckGroqFromFilesOptions {
    */
   groqCodegenExclude?: string | string[];
   /**
-   * Specify the current working direction used to resolve relative filenames.
+   * Specify the root used to resolve relative filenames.
    * By default this is `process.env.cwd()`
    */
-  cwd?: string;
+  root?: string;
   babelOptions?: Record<string, unknown>;
 }
 
