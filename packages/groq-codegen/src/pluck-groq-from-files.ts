@@ -59,6 +59,10 @@ export function pluckGroqFromSource({
     defaultPluckBabelOptions,
     babelOptions || {},
   );
+
+  // causes error "Error: Unknown option: .extensions."
+  delete combinedBabelOptions.extensions;
+
   const tree = parse(source, { ...combinedBabelOptions, filename });
 
   const pluckedQueries: Array<{ queryKey: string; query: string }> = [];
