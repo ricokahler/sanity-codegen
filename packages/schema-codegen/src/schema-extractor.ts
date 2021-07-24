@@ -5,23 +5,26 @@ import type { ExecutorResult, ExecutorOptions } from './schema-executor';
 /**
  * Takes in a Sanity Schema file path and returns a validated and normalized
  * schema.
- * 
+ *
  * Spins up a forked process where a new babel config is loaded to mimic a
  * Sanity Studio browser environment.
  */
 export async function schemaExtractor(params: ExecutorOptions) {
   const childProcess = fork(path.resolve(__dirname, './schema-executor'));
 
-  childProcess.send(
-    JSON.stringify({
-      schemaPath: path.resolve(process.cwd(), params.schemaPath),
-      babelrcPath: params.babelrcPath
-        ? path.resolve(process.cwd(), params.babelrcPath)
-        : undefined,
-      babelOptions: params.babelOptions,
-      cwd: params.cwd || process.cwd(),
-    })
-  );
+  const root = params.cwd || process.cwd();
+
+  const normalizedOptions: ExecutorOptions = {
+    schemaPath: path.resolve(root, params.schemaPath),
+    babelrcPath: params.babelrcPath
+      ? path.resolve(root, params.babelrcPath)
+      : undefined,
+    // TODO: consider throwing if babel options is not JSON serializable
+    babelOptions: params.babelOptions,
+    cwd: root,
+  };
+
+  childProcess.send(JSON.stringify(normalizedOptions));
 
   const message = await new Promise<string>((resolve) => {
     childProcess.on('message', resolve);
