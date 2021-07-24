@@ -112,10 +112,10 @@ export interface PluckGroqFromFilesOptions {
    */
   groqCodegenExclude?: string | string[];
   /**
-   * Specify the current working direction used to resolve relative filenames.
+   * Specify the root used to resolve relative filenames.
    * By default this is `process.env.cwd()`
    */
-  cwd?: string;
+  root?: string;
   babelOptions?: Record<string, unknown>;
 }
 
@@ -126,7 +126,7 @@ export interface PluckGroqFromFilesOptions {
 export async function pluckGroqFromFiles({
   groqCodegenInclude,
   groqCodegenExclude,
-  cwd = process.cwd(),
+  root = process.cwd(),
   babelOptions,
 }: PluckGroqFromFilesOptions) {
   let filenames: string[];
@@ -145,7 +145,7 @@ export async function pluckGroqFromFiles({
             (inclusion) =>
               new Promise<string[]>((resolve, reject) =>
                 // TODO: is there a static way to combined these globs?
-                glob(inclusion, { cwd }, (err, matches) => {
+                glob(inclusion, { cwd: root }, (err, matches) => {
                   if (err) reject(err);
                   else resolve(matches);
                 }),
@@ -156,7 +156,7 @@ export async function pluckGroqFromFiles({
     );
 
     filenames = Array.from(rawFilenames)
-      .map((rawFilename) => path.resolve(cwd, rawFilename))
+      .map((rawFilename) => path.resolve(root, rawFilename))
       .filter((filename) => {
         const exclusions = groqCodegenExclude
           ? Array.isArray(groqCodegenExclude)
@@ -175,7 +175,7 @@ export async function pluckGroqFromFiles({
       collection: filenames,
       maxConcurrency: 25,
       task: async (filename) => {
-        const buffer = await fs.promises.readFile(path.resolve(cwd, filename));
+        const buffer = await fs.promises.readFile(path.resolve(root, filename));
         const source = buffer.toString();
 
         return pluckGroqFromSource({ source, filename, babelOptions });
