@@ -65,7 +65,7 @@ async function main() {
   //    big typescript source file
   const codegenResult = await generateGroqTypes({
     groqCodegenInclude: ['./src/**/*.{js,ts,tsx}'],
-    groqCodegenExclude: ['**/*.test.{js,ts,tsx}'],
+    groqCodegenExclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
     schema,
   });
 
@@ -142,15 +142,19 @@ This package contains also more granular functions to better fit your use case. 
 ```ts
 export interface PluckGroqFromFilesOptions {
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs, or a function that returns a list of paths to specify the
-   * source files you want to generate types from.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)), a list of globs, or a
+   * function that returns a list of paths to specify the source files you want
+   * to generate types from.
+   *
+   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
+   * will not be used.
    */
   groqCodegenInclude: string | string[] | (() => Promise<string[]>);
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs to specify which source files you want to exclude from type
-   * generation.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
+   * specify which source files you want to exclude from type generation.
    */
   groqCodegenExclude?: string | string[];
   /**

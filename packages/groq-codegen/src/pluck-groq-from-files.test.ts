@@ -1,12 +1,11 @@
 import { pluckGroqFromFiles } from './pluck-groq-from-files';
 
 describe('pluckGroqFromFile', () => {
-  // TODO: better tests lol
-  it('works', async () => {
+  it('accepts and include and exclude and returns the plucked results', async () => {
     const results = await pluckGroqFromFiles({
       root: __dirname,
       groqCodegenInclude: './__example-files__/**/*.ts',
-      groqCodegenExclude: '**/*.fake-test.ts',
+      groqCodegenExclude: ['**/mock_node_modules', '**/*.fake-test.ts'],
     });
 
     expect(results).toMatchInlineSnapshot(`

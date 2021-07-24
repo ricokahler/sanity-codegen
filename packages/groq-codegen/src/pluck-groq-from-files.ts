@@ -1,5 +1,4 @@
-import glob from 'glob';
-import minimatch from 'minimatch';
+import globby from 'globby';
 import { parse, traverse } from '@babel/core';
 import babelMerge from 'babel-merge';
 import * as t from '@babel/types';
@@ -104,15 +103,19 @@ export function pluckGroqFromSource({
 
 export interface PluckGroqFromFilesOptions {
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs, or a function that returns a list of paths to specify the
-   * source files you want to generate types from.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)), a list of globs, or a
+   * function that returns a list of paths to specify the source files you want
+   * to generate types from.
+   * 
+   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
+   * will not be used.
    */
   groqCodegenInclude: string | string[] | (() => Promise<string[]>);
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs to specify which source files you want to exclude from type
-   * generation.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
+   * specify which source files you want to exclude from type generation.
    */
   groqCodegenExclude?: string | string[];
   /**
@@ -133,46 +136,27 @@ export async function pluckGroqFromFiles({
   root = process.cwd(),
   babelOptions,
 }: PluckGroqFromFilesOptions) {
-  let filenames: string[];
-
-  if (typeof groqCodegenInclude === 'function') {
-    filenames = await groqCodegenInclude();
-  } else {
-    const inclusions = Array.isArray(groqCodegenInclude)
+  const inclusions =
+    typeof groqCodegenInclude === 'function'
+      ? []
+      : Array.isArray(groqCodegenInclude)
       ? groqCodegenInclude
       : [groqCodegenInclude];
 
-    const rawFilenames = new Set(
-      (
-        await Promise.all(
-          inclusions.map(
-            (inclusion) =>
-              new Promise<string[]>((resolve, reject) =>
-                // TODO: is there a static way to combined these globs?
-                glob(inclusion, { cwd: root }, (err, matches) => {
-                  if (err) reject(err);
-                  else resolve(matches);
-                }),
-              ),
+  const exclusions = Array.isArray(groqCodegenExclude)
+    ? groqCodegenExclude
+    : [groqCodegenExclude];
+
+  const filenames = Array.from(
+    new Set(
+      typeof groqCodegenInclude === 'function'
+        ? await groqCodegenInclude()
+        : await globby(
+            [...inclusions, ...exclusions.map((pattern) => `!${pattern}`)],
+            { cwd: root },
           ),
-        )
-      ).flat(),
-    );
-
-    filenames = Array.from(rawFilenames)
-      .map((rawFilename) => path.resolve(root, rawFilename))
-      .filter((filename) => {
-        const exclusions = groqCodegenExclude
-          ? Array.isArray(groqCodegenExclude)
-            ? groqCodegenExclude
-            : [groqCodegenExclude]
-          : [];
-
-        return !exclusions.some((exclusion) =>
-          minimatch(filename, exclusion, { dot: true }),
-        );
-      });
-  }
+    ),
+  );
 
   const extractedQueries = (
     await pool({

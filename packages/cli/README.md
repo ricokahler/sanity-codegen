@@ -21,17 +21,21 @@ const config: SanityCodegenConfig = {
    */
   schemaPath: './schema',
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs, or a function that returns a list of paths to specify the
-   * source files you want to generate types from.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)), a list of globs, or a
+   * function that returns a list of paths to specify the source files you want
+   * to generate types from.
+   *
+   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
+   * will not be used.
    */
   groqCodegenInclude: ['./src/**/*.{js,jsx,ts,tsx}'],
   /**
-   * Specify a glob (powered by [`glob`](https://github.com/isaacs/node-glob)),
-   * a list of globs to specify which source files you want to exclude from type
-   * generation.
+   * Specify a glob (powered by
+   * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
+   * specify which source files you want to exclude from type generation.
    */
-  groqCodegenExclude: ['**/*.test.{js,jsx,ts,tsx}'],
+  groqCodegenExclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
   /**
    * Optionally provide a destination path to the resulting sanity schema types.
    * The default value is `schema-types.d.ts`
