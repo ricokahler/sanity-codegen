@@ -1,5 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import * as Parser from '@oclif/parser';
+import { CLIError } from '@oclif/errors';
 import { stripIndents } from 'common-tags';
 import path from 'path';
 import fs from 'fs';
@@ -66,24 +67,45 @@ export default class GroqCodegen extends Command {
 
   async run() {
     const { args, flags } = this.parse(GroqCodegen);
-    const { config, root, babelOptions } = await getConfig({ flags });
+    const { config, root, babelOptions } = await getConfig({
+      flags,
+      log: this.log.bind(this),
+    });
 
-    const schemaJsonInputPath = path.resolve(
-      root,
-      flags.schemaJsonInputPath ||
-        config?.schemaJsonInputPath ||
-        config?.schemaJsonOutputPath ||
-        'schema-def.json',
-    );
+    const normalizedSchema = config?.normalizedSchema
+      ? config.normalizedSchema
+      : await (async () => {
+          const schemaJsonInputPath = path.resolve(
+            root,
+            flags.schemaJsonInputPath ||
+              config?.schemaJsonInputPath ||
+              config?.schemaJsonOutputPath ||
+              'schema-def.json',
+          );
 
-    if (!fs.existsSync(schemaJsonInputPath)) {
-      throw new Error(
-        `Could not find \`schemaJsonInputPath\`. You may need to run \`npx sanity-codegen schema-codegen first.\``,
-      );
-    }
+          if (!fs.existsSync(schemaJsonInputPath)) {
+            throw new CLIError(
+              `Could not find \`schemaJsonInputPath\`. You may need to run \`npx sanity-codegen schema-codegen first.\``,
+            );
+          }
 
-    const schemaBuffer = await fs.promises.readFile(schemaJsonInputPath);
-    const normalizedSchema = JSON.parse(schemaBuffer.toString());
+          this.log(`Using schemaJson at "${schemaJsonInputPath}"`);
+
+          try {
+            const buffer = await fs.promises.readFile(schemaJsonInputPath);
+            const schema = JSON.parse(
+              buffer.toString(),
+            ) as Sanity.SchemaDef.Schema;
+            return schema;
+          } catch (e) {
+            const errorMessage =
+              typeof e?.message === 'string' ? ` Error: ${e.message}` : '';
+
+            throw new CLIError(
+              `Failed to read schemaJson at ${schemaJsonInputPath} .${errorMessage}`,
+            );
+          }
+        })();
 
     const groqCodegenInclude =
       (args.groqCodegenInclude as string | undefined) ||
@@ -106,14 +128,16 @@ export default class GroqCodegen extends Command {
       normalizedSchema,
     });
 
-    await fs.promises.writeFile(
-      path.resolve(
-        root,
-        flags.queryTypesOutputPath ||
-          config?.queryTypesOutputPath ||
-          'query-types.d.ts',
-      ),
-      result,
+    const queryTypesOutputPath = path.resolve(
+      root,
+      flags.queryTypesOutputPath ||
+        config?.queryTypesOutputPath ||
+        'query-types.d.ts',
+    );
+
+    await fs.promises.writeFile(queryTypesOutputPath, result);
+    this.log(
+      `\x1b[32m✓\x1b[0m  Wrote query types output to: ${queryTypesOutputPath}`,
     );
   }
 }

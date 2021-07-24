@@ -4,8 +4,10 @@ import fs from 'fs';
 import babelMerge from 'babel-merge';
 // @ts-expect-error no types for this
 import register, { revert } from '@babel/register';
-import { fileWalker } from './file-walker';
+import { CLIError } from '@oclif/errors';
+import { Command } from '@oclif/command';
 import { defaultBabelOptions } from '@sanity-codegen/schema-codegen';
+import { fileWalker } from './file-walker';
 import { SanityCodegenConfig } from './types';
 
 const requireDefaultExport = (modulePath: string) => {
@@ -19,9 +21,10 @@ interface GetConfigOptions {
     babelOptions?: string;
     babelrcPath?: string;
   };
+  log: Command['log'];
 }
 
-export async function getConfig({ flags }: GetConfigOptions) {
+export async function getConfig({ flags, log }: GetConfigOptions) {
   register(defaultBabelOptions);
 
   const configFilename = await fileWalker({
@@ -29,6 +32,10 @@ export async function getConfig({ flags }: GetConfigOptions) {
     filenameIfNotFound: 'sanity-codegen.config',
   });
   const configDirname = configFilename && path.dirname(configFilename);
+
+  if (configFilename) {
+    log(`Using sanity-codegen config found at: ${configFilename}`);
+  }
 
   const configFirstPass: SanityCodegenConfig | null =
     configFilename && requireDefaultExport(configFilename);
@@ -43,7 +50,7 @@ export async function getConfig({ flags }: GetConfigOptions) {
         try {
           return JSON.parse(flags.babelOptions) as Record<string, unknown>;
         } catch {
-          throw new Error(
+          throw new CLIError(
             'Failed to parse provided `babelOptions`. Please provide an escaped JSON string.',
           );
         }
@@ -58,8 +65,8 @@ export async function getConfig({ flags }: GetConfigOptions) {
     : null;
 
   if (babelrcPath && !fs.existsSync(babelrcPath)) {
-    throw new Error(
-      `Could not find babelrc from provided babelrcPath "${babelrcPath}"`,
+    throw new CLIError(
+      `Could not find babelrc from provided babelrcPath: ${babelrcPath}`,
     );
   }
 
@@ -67,12 +74,21 @@ export async function getConfig({ flags }: GetConfigOptions) {
   const babelOptionsFromBabelrc = (() => {
     if (!babelrcPath) return null;
 
+    const resolvedBabelrcPath = path.resolve(root || '', babelrcPath);
+
     try {
-      return requireDefaultExport(path.resolve(root || '', babelrcPath));
+      return requireDefaultExport(resolvedBabelrcPath);
     } catch {
-      return null;
+      throw new CLIError(
+        `Failed to load babelrc at path: ${resolvedBabelrcPath} ` +
+          `Ensure that this path is valid or remove the \`babelrcPath\` option.`,
+      );
     }
   })();
+
+  if (babelOptionsFromBabelrc) {
+    log(`Using babelrc config found at: ${babelrcPath}`);
+  }
 
   const babelOptions: Record<string, unknown> = babelMerge(
     defaultBabelOptions,
@@ -92,7 +108,5 @@ export async function getConfig({ flags }: GetConfigOptions) {
 
   revert();
 
-  const schemaPath = await (async () => {})();
-
-  return { config, babelrcPath, babelOptions, root, schemaPath };
+  return { config, babelrcPath, babelOptions, root };
 }
