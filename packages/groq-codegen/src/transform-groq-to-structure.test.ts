@@ -313,4 +313,35 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('object splat', () => {
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          {
+            name: 'author',
+            type: 'object',
+            fields: [{ name: 'name', type: 'string' }],
+          },
+          { name: 'publishDate', type: 'date' },
+        ],
+      },
+    ];
+
+    const query = `*[_type == 'book'] { ..., 'author': author.name }`;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _type: \\"book\\";
+        _id: string;
+        title?: string;
+        author: string | null;
+        publishDate?: string;
+      }[];
+      "
+    `);
+  });
 });

@@ -7,6 +7,7 @@ import {
   isStructureArray,
   wrapArray,
   unwrapReferences,
+  reduceObjectStructures,
 } from './utils';
 
 export interface TransformGroqToStructureOptions {
@@ -113,24 +114,63 @@ export function transformGroqToStructure({
     }
 
     case 'Object': {
-      return createStructure({
+      if (!node.attributes.length) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      const emptyObject = createStructure({
         type: 'Object',
         canBeNull: false,
         canBeOptional: false,
-        properties: node.attributes
-          .filter(
-            (attribute): attribute is Groq.ObjectAttributeValueNode =>
-              attribute.type === 'ObjectAttributeValue',
-          )
-          .map((attribute) => ({
-            key: attribute.name,
-            value: transformGroqToStructure({
-              node: attribute.value,
-              normalizedSchema,
-              scopes,
-            }),
-          })),
+        properties: [],
       });
+
+      const combinedObject =
+        node.attributes.reduce<Sanity.GroqCodegen.StructureNode>(
+          (acc, attribute) => {
+            switch (attribute.type) {
+              case 'ObjectAttributeValue': {
+                const value = transformGroqToStructure({
+                  node: attribute.value,
+                  normalizedSchema,
+                  scopes,
+                });
+
+                const singlePropertyObject = createStructure({
+                  type: 'Object',
+                  canBeNull: false,
+                  canBeOptional: false,
+                  properties: [{ key: attribute.name, value }],
+                });
+
+                return reduceObjectStructures(acc, singlePropertyObject);
+              }
+              case 'ObjectSplat': {
+                const value = transformGroqToStructure({
+                  node: attribute.value,
+                  normalizedSchema,
+                  scopes,
+                });
+
+                return reduceObjectStructures(acc, value);
+              }
+              case 'ObjectConditionalSplat': {
+                console.warn('Conditional splats are not current supported');
+                return createStructure({ type: 'Unknown' });
+              }
+              default: {
+                console.warn(
+                  // @ts-expect-error `attribute` should be of type never
+                  `Found unsupported object attribute type "${attribute.type}"`,
+                );
+                return createStructure({ type: 'Unknown' });
+              }
+            }
+          },
+          emptyObject,
+        );
+
+      return combinedObject;
     }
 
     case 'Or': {
