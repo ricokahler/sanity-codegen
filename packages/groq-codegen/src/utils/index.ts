@@ -4,6 +4,7 @@ export { createStructure } from './create-structure';
 export { objectHash, unorderedHash } from './hash';
 export { isStructureArray } from './is-structure-array';
 export { isStructureOptional } from './is-structure-optional';
+export { isStructureNull } from './is-structure-null';
 export { narrowStructure } from './narrow-structure';
 export { reduceObjectStructures } from './reduce-object-structures';
 export { removeOptional } from './remove-optional';

@@ -1,5 +1,6 @@
 import { createStructure } from './create-structure';
-import { isStructureArray } from './is-structure-array';
+import { isStructureNull } from './is-structure-null';
+import { isStructureOptional } from './is-structure-optional';
 import { unwrapArray } from './unwrap-array';
 import { wrapArray } from './wrap-array';
 
@@ -43,9 +44,10 @@ export function unwrapReferences(
       });
     }
     case 'Array': {
-      return isStructureArray(node)
-        ? wrapArray(unwrapReferences(unwrapArray(node.of)))
-        : unwrapReferences(node.of);
+      return wrapArray(unwrapReferences(unwrapArray(node.of)), {
+        canBeNull: isStructureNull(node),
+        canBeOptional: isStructureOptional(node),
+      });
     }
     case 'Lazy': {
       return createStructure({

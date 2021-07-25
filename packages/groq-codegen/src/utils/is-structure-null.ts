@@ -1,10 +1,10 @@
-export function isStructureOptional(
+export function isStructureNull(
   structure: Sanity.GroqCodegen.StructureNode,
 ): boolean {
-  return isOptional(structure, new Set());
+  return isNull(structure, new Set());
 }
 
-function isOptional(
+function isNull(
   node: Sanity.GroqCodegen.StructureNode,
   visitedNodes: Set<string>,
 ) {
@@ -12,19 +12,19 @@ function isOptional(
     case 'And':
     case 'Or': {
       // we use `some` here because that's the behavior we typically want.
-      // if one is marked as optional, the whole thing is optional
-      return node.children.some((child) => isOptional(child, visitedNodes));
+      // if one is marked as null, the whole thing is nullable
+      return node.children.some((child) => isNull(child, visitedNodes));
     }
     case 'Lazy': {
       const got = node.get();
       if (visitedNodes.has(got.hash)) return false;
-      return isOptional(node.get(), new Set([...visitedNodes, got.hash]));
+      return isNull(node.get(), new Set([...visitedNodes, got.hash]));
     }
     case 'Unknown': {
       return false;
     }
     default: {
-      return node.canBeOptional;
+      return node.canBeNull;
     }
   }
 }

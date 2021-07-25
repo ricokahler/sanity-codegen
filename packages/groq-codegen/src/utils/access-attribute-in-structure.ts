@@ -1,6 +1,7 @@
 import { wrapArray } from './wrap-array';
 import { createStructure } from './create-structure';
 import { removeOptional } from './remove-optional';
+import { isStructureNull } from './is-structure-null';
 import { isStructureOptional } from './is-structure-optional';
 import { addNull } from './add-null';
 import { unwrapArray } from './unwrap-array';
@@ -36,6 +37,10 @@ export function accessAttributeInStructure(
     case 'Array': {
       return wrapArray(
         accessAttributeInStructure(unwrapArray(node.of), attributeName),
+        {
+          canBeNull: isStructureNull(node),
+          canBeOptional: isStructureOptional(node),
+        },
       );
     }
     case 'Intrinsic': {
