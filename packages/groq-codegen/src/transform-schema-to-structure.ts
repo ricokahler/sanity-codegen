@@ -312,22 +312,30 @@ function transform(
         type: 'Object',
         properties: [
           {
-            key: 'slug',
+            key: '_type',
             value: createStructure({
-              type: 'Object',
-              properties: [
-                {
-                  key: 'current',
-                  value: createStructure({
-                    type: 'String',
-                    canBeNull: false,
-                    canBeOptional: false,
-                    value: null,
-                  }),
-                },
-              ],
+              type: 'String',
               canBeNull: false,
               canBeOptional: false,
+              value: 'slug',
+            }),
+          },
+          {
+            key: 'current',
+            value: createStructure({
+              type: 'String',
+              canBeNull: false,
+              canBeOptional: !node.codegen.required,
+              value: null,
+            }),
+          },
+          {
+            key: 'source',
+            value: createStructure({
+              type: 'String',
+              canBeNull: false,
+              canBeOptional: true,
+              value: null,
             }),
           },
         ],
