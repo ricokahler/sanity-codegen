@@ -1,5 +1,6 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
 import { createStructure } from './create-structure';
+import { objectHash, unorderedHash } from './hash';
 
 // TODO: could include things like defined checks or narrow based on types
 // TODO: also think about functions and how they could affect narrowing
@@ -10,20 +11,23 @@ import { createStructure } from './create-structure';
 // e.g. description == 'hello' would not accept structure nodes that have the
 // type of description as `number`
 type LogicExprNode =
-  | { type: 'And'; children: LogicExprNode[] }
-  | { type: 'Or'; children: LogicExprNode[] }
-  | { type: 'Not'; child: LogicExprNode }
-  | { type: 'Literal'; value: boolean }
+  | { type: 'And'; children: LogicExprNode[]; hash: string }
+  | { type: 'Or'; children: LogicExprNode[]; hash: string }
+  | { type: 'Not'; child: LogicExprNode; hash: string }
+  | { type: 'Literal'; value: boolean; hash: 'true' | 'false' }
   | {
       type: 'SingleVariableEquality';
       variable: string;
       literal: string | number;
+      hash: string;
     }
-  | { type: 'UnknownExpression'; originalExprNode: Groq.ExprNode };
+  | {
+      type: 'UnknownExpression';
+      originalExprNode: Groq.ExprNode;
+      hash: 'unknown';
+    };
 
 /**
- * @internal
- *
  * An internal function that takes in an GROQ ExprNode and returns a normalized
  * `LogicExprNode` node used to evaluate against a set of types described by a
  * `StructureNode`
@@ -31,45 +35,65 @@ type LogicExprNode =
  * @see `accept`
  */
 export function transformExprNodeToLogicExpr(
-  exprNode: Groq.ExprNode,
+  groqNode: Groq.ExprNode,
 ): LogicExprNode {
-  switch (exprNode.type) {
+  switch (groqNode.type) {
     case 'And':
     case 'Or': {
+      const children = [
+        transformExprNodeToLogicExpr(groqNode.left),
+        transformExprNodeToLogicExpr(groqNode.right),
+      ];
       return {
-        type: 'And',
-        children: [
-          transformExprNodeToLogicExpr(exprNode.left),
-          transformExprNodeToLogicExpr(exprNode.right),
-        ],
+        type: groqNode.type,
+        children,
+        hash: objectHash([
+          groqNode.type,
+          unorderedHash(children.map((i) => i.hash)),
+        ]),
       };
     }
 
+    case 'Group': {
+      return transformExprNodeToLogicExpr(groqNode.base);
+    }
+
     case 'Not': {
+      const child = transformExprNodeToLogicExpr(groqNode.base);
       return {
         type: 'Not',
-        child: transformExprNodeToLogicExpr(exprNode.base),
+        child,
+        hash: objectHash(['Not', child.hash]),
       };
     }
 
     case 'OpCall': {
-      switch (exprNode.op) {
+      switch (groqNode.op) {
         case '!=': {
+          const child = transformExprNodeToLogicExpr({ ...groqNode, op: '==' });
           return {
             type: 'Not',
-            child: transformExprNodeToLogicExpr({ ...exprNode, op: '==' }),
+            child,
+            hash: objectHash(['Not', child.hash]),
           };
         }
         case '==': {
-          // TODO consider AccessAttribute['base'] case
-          // e.g. the `_type` of `_type == 'foo'`
-          const variableIdentifierNode = [exprNode.left, exprNode.right].find(
-            (n): n is Extract<Groq.ExprNode, { type: 'AccessAttribute' }> =>
-              n.type === 'AccessAttribute',
+          const variableIdentifierNode = [groqNode.left, groqNode.right].find(
+            (n): n is Groq.AccessAttributeNode => n.type === 'AccessAttribute',
           );
 
+          // TODO consider this case
+          // e.g. `base._type == 'foo'`
+          if (variableIdentifierNode?.base) {
+            return {
+              type: 'UnknownExpression',
+              originalExprNode: groqNode,
+              hash: 'unknown',
+            };
+          }
+
           // e.g. the `'foo''` of `_type == 'foo'`
-          const valueNode = [exprNode.left, exprNode.right].find(
+          const valueNode = [groqNode.left, groqNode.right].find(
             (n): n is Extract<Groq.ExprNode, { type: 'Value' }> =>
               n.type === 'Value',
           );
@@ -80,223 +104,315 @@ export function transformExprNodeToLogicExpr(
             (typeof valueNode.value === 'string' ||
               typeof valueNode.value === 'number')
           ) {
-            return {
-              type: 'SingleVariableEquality',
+            const result = {
               variable: variableIdentifierNode.name,
               literal: valueNode.value,
+            };
+
+            return {
+              type: 'SingleVariableEquality',
+              ...result,
+              hash: objectHash(['SingleVariableEquality', result]),
             };
           }
 
           return {
             type: 'UnknownExpression',
-            originalExprNode: exprNode,
+            originalExprNode: groqNode,
+            hash: 'unknown',
           };
         }
 
         case 'in': {
-          if (exprNode.right.type === 'Array') {
+          if (groqNode.right.type === 'Array') {
+            const children = groqNode.right.elements.map(({ value, isSplat }) =>
+              transformExprNodeToLogicExpr({
+                ...groqNode,
+                op: isSplat ? 'in' : '==',
+                right: value,
+              }),
+            );
+
             return {
               type: 'Or',
-              children: exprNode.right.elements.map(({ value, isSplat }) =>
-                transformExprNodeToLogicExpr({
-                  ...exprNode,
-                  op: isSplat ? 'in' : '==',
-                  right: value,
-                }),
-              ),
+              children,
+              hash: objectHash([
+                'Or',
+                unorderedHash(children.map((i) => i.hash)),
+              ]),
             };
           }
 
           return {
             type: 'UnknownExpression',
-            originalExprNode: exprNode,
+            originalExprNode: groqNode,
+            hash: 'unknown',
           };
         }
 
         default: {
-          return { type: 'UnknownExpression', originalExprNode: exprNode };
+          return {
+            type: 'UnknownExpression',
+            originalExprNode: groqNode,
+            hash: 'unknown',
+          };
         }
       }
     }
 
+    case 'Value': {
+      if (groqNode.value === false) {
+        return {
+          type: 'Literal',
+          hash: 'false',
+          value: false,
+        };
+      }
+
+      if (groqNode.value === true) {
+        return {
+          type: 'Literal',
+          hash: 'true',
+          value: true,
+        };
+      }
+
+      return {
+        type: 'UnknownExpression',
+        originalExprNode: groqNode,
+        hash: 'unknown',
+      };
+    }
+
     default: {
-      return { type: 'UnknownExpression', originalExprNode: exprNode };
+      return {
+        type: 'UnknownExpression',
+        originalExprNode: groqNode,
+        hash: 'unknown',
+      };
     }
   }
 }
 
-// TODO: probably needs to be memoized
-function accept(
-  node: Sanity.GroqCodegen.StructureNode,
-  filter: LogicExprNode,
-): boolean | null {
-  switch (filter.type) {
-    case 'And': {
-      return filter.children
-        .map((child) => accept(node, child))
-        .filter((result): result is boolean => typeof result === 'boolean')
-        .every((result) => result);
-    }
-    case 'Or': {
-      return (
-        filter.children
-          .map((child) => accept(node, child))
-          .filter((result): result is boolean => typeof result === 'boolean')
-          // TODO: what happens when the filter removes all items?
-          // is it okay that some returns false?
-          .some((result) => result)
-      );
-    }
-    case 'Not': {
-      const result = accept(node, filter.child);
-      if (typeof result === 'boolean') return !result;
-      return null;
-    }
-    case 'Literal': {
-      return filter.value;
-    }
-    case 'SingleVariableEquality': {
-      switch (node.type) {
-        case 'Lazy': {
-          // TODO
-          throw new Error('TODO');
+const withMemo = <
+  Fn extends (
+    node: Sanity.GroqCodegen.StructureNode,
+    condition: LogicExprNode,
+    visitedNodes: Set<string>,
+  ) => any,
+>(
+  fn: Fn,
+): Fn => {
+  const cache = new Map<string, any>();
+
+  return ((node, condition, visitedNodes) => {
+    const key = `${node.hash}__${condition.hash}`;
+    if (cache.has(key)) return cache.get(key);
+
+    const result = fn(node, condition, visitedNodes);
+    cache.set(key, result);
+    return result;
+  }) as Fn;
+};
+
+export const accept = withMemo(
+  (structure, condition, visitedNodes): 'yes' | 'no' | 'unknown' => {
+    switch (condition.type) {
+      case 'And': {
+        const results = condition.children.map((child) =>
+          accept(structure, child, visitedNodes),
+        );
+
+        let foundUnknown = false;
+        for (const result of results) {
+          if (result === 'no') return 'no';
+          if (result === 'unknown') foundUnknown = true;
         }
-        case 'Reference': {
-          // TODO
-          throw new Error('TODO');
+        if (foundUnknown) return 'unknown';
+        return 'yes';
+      }
+      case 'Or': {
+        const results = condition.children.map((child) =>
+          accept(structure, child, visitedNodes),
+        );
+
+        let foundUnknown = false;
+        for (const result of results) {
+          if (result === 'yes') return 'yes';
+          if (result === 'unknown') foundUnknown = true;
         }
-        case 'Tuple': {
-          // TODO
-          throw new Error('TODO');
-        }
-        case 'And': {
-          return node.children
-            .map((child) => accept(child, filter))
-            .filter((result): result is boolean => typeof result === 'boolean')
-            .every((result) => result);
-        }
-        case 'Or': {
-          return node.children
-            .map((child) => accept(child, filter))
-            .filter((result): result is boolean => typeof result === 'boolean')
-            .some((result) => result);
-        }
-        case 'Boolean':
-        case 'Intrinsic':
-        case 'Number':
-        case 'String':
-        case 'Array': {
-          return false;
-        }
-        case 'Object': {
-          return !!node.properties.find((prop) => {
-            return (
-              prop.key === filter.variable &&
-              (prop.value.type === 'String' || prop.value.type === 'Number') &&
-              prop.value.value === filter.literal
+        if (foundUnknown) return 'unknown';
+        return 'no';
+      }
+      case 'Not': {
+        const result = accept(structure, condition.child, visitedNodes);
+        if (result === 'yes') return 'no';
+        if (result === 'no') return 'yes';
+        return 'unknown';
+      }
+      case 'Literal': {
+        return condition.value ? 'yes' : 'no';
+      }
+      case 'SingleVariableEquality': {
+        switch (structure.type) {
+          case 'Lazy': {
+            const got = structure.get();
+            if (visitedNodes.has(got.hash)) return 'no';
+            return accept(got, condition, new Set([...visitedNodes, got.hash]));
+          }
+          case 'And': {
+            const results = structure.children.map((child) =>
+              accept(child, condition, visitedNodes),
             );
-          });
-        }
-        case 'Unknown': {
-          throw new Error('TODO');
-        }
-        default: {
-          // @ts-expect-error
-          throw new Error(`${node.type} not implemented yet`);
+
+            for (const result of results) {
+              if (result === 'unknown') return 'unknown';
+              if (result === 'no') return 'no';
+            }
+
+            return 'yes';
+          }
+          case 'Or': {
+            const results = structure.children.map((child) =>
+              accept(child, condition, visitedNodes),
+            );
+
+            for (const result of results) {
+              if (result === 'unknown') return 'unknown';
+              if (result === 'yes') return 'yes';
+            }
+
+            return 'no';
+          }
+          case 'Boolean':
+          case 'Intrinsic':
+          case 'Number':
+          case 'String':
+          case 'Tuple':
+          case 'Array': {
+            return 'no';
+          }
+          case 'Reference': {
+            // TODO: this could be updated to fallback to an object structure
+            // with {_type: 'reference', _ref: string}
+            return 'no';
+          }
+          case 'Object': {
+            const matchingProperty = structure.properties.find(
+              (property) => property.key === condition.variable,
+            );
+
+            if (!matchingProperty) return 'unknown';
+
+            if (
+              'value' in matchingProperty.value &&
+              matchingProperty.value.value === condition.literal
+            ) {
+              return 'yes';
+            }
+
+            return 'no';
+          }
+          case 'Unknown': {
+            return 'unknown';
+          }
+          default: {
+            // @ts-expect-error
+            throw new Error(`${structure.type} not implemented yet`);
+          }
         }
       }
-    }
 
-    case 'UnknownExpression': {
-      return null;
-    }
+      case 'UnknownExpression': {
+        return 'unknown';
+      }
 
+      default: {
+        // @ts-expect-error
+        throw new Error(`${condition.type} not implemented yet`);
+      }
+    }
+  },
+);
+
+function narrowOr(
+  node: Sanity.GroqCodegen.StructureNode,
+  condition: LogicExprNode,
+): Sanity.GroqCodegen.StructureNode {
+  switch (node.type) {
+    case 'Or': {
+      const result = node.children
+        .filter((child) => accept(child, condition, new Set()) !== 'no')
+        .map((child) => narrowOr(child, condition));
+
+      if (!result.length) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return createStructure({ type: 'Or', children: result });
+    }
+    case 'Lazy': {
+      return createStructure({
+        type: 'Lazy',
+        get: () => narrowOr(node.get(), condition),
+        hashInput: ['NarrowOr', node.hash],
+      });
+    }
     default: {
-      // @ts-expect-error
-      throw new Error(`${filter.type} not implemented yet`);
+      switch (accept(node, condition, new Set())) {
+        case 'yes':
+          return node;
+        case 'no':
+          return createStructure({ type: 'Unknown' });
+        case 'unknown':
+          return node;
+      }
     }
   }
 }
 
 function narrow(
   node: Sanity.GroqCodegen.StructureNode,
-  filter: LogicExprNode,
+  condition: LogicExprNode,
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'Lazy': {
       return createStructure({
         type: 'Lazy',
-        get: () => narrow(node.get(), filter),
+        get: () => narrow(node.get(), condition),
         hashInput: ['Narrow', node.hash],
       });
     }
 
-    case 'Reference': {
-      // TODO: think about this
-      return node;
-    }
-
-    case 'Tuple': {
-      // TODO
-      throw new Error('TODO');
-    }
-
     case 'Or': {
-      return createStructure({
-        ...node,
-        children: node.children
-          // TODO: what happens when none are accepted?
-          .filter((n) => accept(n, filter)),
-        // TODO: what's the proper way to traverse this?
-        // .map((n) => narrow(n, filter)),
-      });
+      return narrowOr(node, condition);
     }
 
     case 'And': {
+      // TODO: should intersections combine object properties?
       return createStructure({
         ...node,
-        // TODO: what's the proper way to traverse this?
-        children: node.children.map((n) => narrow(n, filter)),
+        children: node.children.map((n) => narrow(n, condition)),
       });
-    }
-
-    case 'Array': {
-      return createStructure({
-        ...node,
-        of: narrow(node.of, filter),
-      });
-    }
-
-    case 'Object': {
-      return createStructure({
-        ...node,
-        // TODO (future): the GROQ filter may remove some properties
-        properties: node.properties.map(({ key, value }) => ({
-          key,
-          value: narrow(value, filter),
-        })),
-      });
-    }
-
-    case 'Boolean':
-    case 'Intrinsic':
-    case 'Number':
-    case 'String':
-    case 'Unknown': {
-      return node;
     }
 
     default: {
-      // TODO better comment
-      // @ts-expect-error
-      throw new Error(node.type);
+      switch (accept(node, condition, new Set())) {
+        case 'yes':
+          return node;
+        case 'unknown':
+          // benefit of the doubt, leave the node in the structure
+          return node;
+        case 'no':
+          return createStructure({ type: 'Unknown' });
+      }
     }
   }
 }
 
 export function narrowStructure(
   node: Sanity.GroqCodegen.StructureNode,
-  filter: Groq.ExprNode,
+  condition: Groq.ExprNode,
 ) {
-  return narrow(node, transformExprNodeToLogicExpr(filter));
+  return narrow(node, transformExprNodeToLogicExpr(condition));
 }
