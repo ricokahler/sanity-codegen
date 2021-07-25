@@ -298,8 +298,6 @@ function transform(
     case 'Reference': {
       return createStructure({
         type: 'Reference',
-        // TODO: this creates repeated types inside of a `Sanity.Reference<{}>`.
-        // the desired behavior is to have them named when unmodified
         to: createStructure({
           type: 'Or',
           children: node.to.map((n) => transform(n, normalizedSchema)),

@@ -213,15 +213,20 @@ describe('transformGroqToStructure', () => {
     ];
 
     const query = `
-      {
-        'foo': *[_type == 'book'].author->name.givenName
-      }
+      *[_type == 'book'] {author->}
     `;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        foo: (string | null)[];
-      };
+        author?: {
+          _type: \\"author\\";
+          _id: string;
+          name?: {
+            givenName?: string;
+            surname?: string;
+          };
+        };
+      }[];
       "
     `);
   });
