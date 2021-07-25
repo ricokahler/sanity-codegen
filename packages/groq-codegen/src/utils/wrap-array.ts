@@ -18,10 +18,6 @@ export function wrapArray(
         hashInput: ['WrapArray', node.hash],
       });
     }
-    case 'Array': {
-      // TODO: does this make sense?
-      return node;
-    }
     default: {
       return createStructure({
         type: 'Array',

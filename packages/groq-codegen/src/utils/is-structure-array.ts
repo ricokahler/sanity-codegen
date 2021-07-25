@@ -9,18 +9,17 @@ function isArray(
   visitedNodes: Set<string>,
 ) {
   switch (node.type) {
+    case 'Tuple':
     case 'Array': {
       return true;
     }
     case 'And':
     case 'Or': {
-      // TODO: is this `some` logic right?
-      return node.children.some((child) => isArray(child, visitedNodes));
+      return node.children.every((child) => isArray(child, visitedNodes));
     }
     case 'Lazy': {
       const got = node.get();
       if (visitedNodes.has(got.hash)) return false;
-
       return isArray(node.get(), new Set([...visitedNodes, got.hash]));
     }
     default: {

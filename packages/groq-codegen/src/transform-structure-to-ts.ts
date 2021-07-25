@@ -142,6 +142,10 @@ function transform(
       );
       break;
     }
+    case 'Tuple': {
+      tsType = t.tsTupleType(node.elements.map(next));
+      break;
+    }
     default: {
       // TODO: better comment
       // @ts-expect-error

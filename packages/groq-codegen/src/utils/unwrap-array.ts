@@ -8,6 +8,10 @@ export function unwrapArray(
       // TODO: what about `undefined`s and `null`s?
       return node.of;
     }
+    case 'Tuple': {
+      // TODO: what about `undefined`s and `null`s?
+      return createStructure({ type: 'Or', children: node.elements });
+    }
     case 'And':
     case 'Or': {
       return createStructure({

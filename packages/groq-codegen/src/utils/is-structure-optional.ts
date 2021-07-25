@@ -9,15 +9,6 @@ function isOptional(
   visitedNodes: Set<string>,
 ) {
   switch (node.type) {
-    case 'Object':
-    case 'String':
-    case 'Number':
-    case 'Boolean':
-    case 'Reference':
-    case 'Intrinsic':
-    case 'Array': {
-      return node.canBeOptional;
-    }
     case 'And':
     case 'Or': {
       return node.children.every((child) => isOptional(child, visitedNodes));
@@ -32,11 +23,7 @@ function isOptional(
       return false;
     }
     default: {
-      throw new Error(
-        // @ts-expect-error this should never happen because the above covers
-        // all cases
-        `Node type "${node.type}" is not implemented in isOptional`,
-      );
+      return node.canBeOptional;
     }
   }
 }
