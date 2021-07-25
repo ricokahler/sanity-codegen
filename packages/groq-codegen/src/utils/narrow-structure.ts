@@ -158,9 +158,15 @@ function accept(
     case 'SingleVariableEquality': {
       switch (node.type) {
         case 'Lazy': {
+          // TODO
           throw new Error('TODO');
         }
         case 'Reference': {
+          // TODO
+          throw new Error('TODO');
+        }
+        case 'Tuple': {
+          // TODO
           throw new Error('TODO');
         }
         case 'And': {
@@ -228,6 +234,11 @@ function narrow(
     case 'Reference': {
       // TODO: think about this
       return node;
+    }
+
+    case 'Tuple': {
+      // TODO
+      throw new Error('TODO');
     }
 
     case 'Or': {

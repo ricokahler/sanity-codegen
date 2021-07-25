@@ -344,4 +344,53 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('tuples', () => {
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'slug', type: 'slug' },
+        ],
+      },
+    ];
+
+    // a tuple that utilizes scopes
+    // the second param includes a projection
+    const query = `*[_type == 'book'] { 'tuple': [title, slug {current}] }`;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        tuple: [
+          string | null,
+          {
+            current: string | null;
+          }
+        ];
+      }[];
+      "
+    `);
+  });
+
+  test('array literals with spreads', () => {
+    const schema = [
+      {
+        name: 'book',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'slug', type: 'slug' },
+        ],
+      },
+    ];
+
+    const query = `[...*[_type == 'book'].title, ...*[_type == 'book'].slug.current]`;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = ((string | null) | (string | null))[];
+      "
+    `);
+  });
 });

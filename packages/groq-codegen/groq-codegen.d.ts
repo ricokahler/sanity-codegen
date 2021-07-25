@@ -14,6 +14,7 @@ declare namespace Sanity {
       | OrNode
       | ArrayNode
       | ObjectNode
+      | TupleNode
       | StringNode
       | NumberNode
       | BooleanNode
@@ -47,6 +48,20 @@ declare namespace Sanity {
       canBeNull: boolean;
       canBeOptional: boolean;
       of: StructureNode;
+      hash: string;
+    };
+
+    /**
+     * This is analogous to
+     * [TypeScript tuples](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types)
+     * — an array with a fixed length of elements, each element's type is noted
+     * in the tuple. e.g. `[string, number]`
+     */
+    type TupleNode = {
+      type: 'Tuple';
+      canBeNull: boolean;
+      canBeOptional: boolean;
+      elements: StructureNode[];
       hash: string;
     };
 

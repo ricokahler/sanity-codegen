@@ -173,6 +173,53 @@ export function transformGroqToStructure({
       return combinedObject;
     }
 
+    case 'Array': {
+      // if there is a splat in the array literal then…
+      if (node.elements.some((element) => element.isSplat)) {
+        return createStructure({
+          // …we can't map to tuple type
+          type: 'Array',
+          canBeNull: false,
+          canBeOptional: false,
+          of: createStructure({
+            type: 'Or',
+            children: node.elements.map((element) => {
+              if (element.isSplat) {
+                return unwrapArray(
+                  transformGroqToStructure({
+                    node: element.value,
+                    scopes,
+                    normalizedSchema,
+                  }),
+                );
+              }
+
+              return transformGroqToStructure({
+                node: element.value,
+                scopes,
+                normalizedSchema,
+              });
+            }),
+          }),
+        });
+      }
+
+      // if there are no splats found, we can list each type out as a tuple
+      // to allow for better DX with decomposition
+      return createStructure({
+        type: 'Tuple',
+        canBeNull: false,
+        canBeOptional: false,
+        elements: node.elements.map((element) =>
+          transformGroqToStructure({
+            node: element.value,
+            scopes,
+            normalizedSchema,
+          }),
+        ),
+      });
+    }
+
     case 'Or': {
       return createStructure({
         type: 'Or',

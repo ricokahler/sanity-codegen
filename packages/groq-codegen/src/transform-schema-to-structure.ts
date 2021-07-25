@@ -140,7 +140,9 @@ function transform(
                     ],
                   }),
                   // the rest
-                  ...(node.of || []).map((child) => transform(child, normalizedSchema)),
+                  ...(node.of || []).map((child) =>
+                    transform(child, normalizedSchema),
+                  ),
                 ],
               }),
             }),

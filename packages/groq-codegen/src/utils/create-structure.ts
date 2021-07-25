@@ -64,6 +64,13 @@ export function createStructure({
         ]),
       };
     }
+    case 'Tuple': {
+      const { elements, ...rest } = node;
+      return {
+        ...node,
+        hash: objectHash([rest, elements.map((element) => element.hash)]),
+      };
+    }
     case 'Reference': {
       const { to, ...rest } = node;
       return {
