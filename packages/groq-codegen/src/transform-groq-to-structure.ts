@@ -1,5 +1,10 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
-import { narrowStructure, createStructure } from './utils';
+import {
+  narrowStructure,
+  createStructure,
+  isStructureOptional,
+  isStructureNull,
+} from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 import {
   accessAttributeInStructure,
@@ -70,7 +75,15 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      return narrowStructure(baseResult, node.expr);
+      if (!isStructureArray(baseResult)) {
+        // TODO: warn that filter was used on non-array base
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return wrapArray(narrowStructure(unwrapArray(baseResult), node.expr), {
+        canBeOptional: false,
+        canBeNull: isStructureNull(baseResult),
+      });
     }
 
     case 'This': {
@@ -110,7 +123,12 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      return baseResultHadArray ? wrapArray(exprResult) : exprResult;
+      return baseResultHadArray
+        ? wrapArray(exprResult, {
+            canBeNull: isStructureNull(baseResult),
+            canBeOptional: isStructureOptional(baseResult),
+          })
+        : exprResult;
     }
 
     case 'Object': {

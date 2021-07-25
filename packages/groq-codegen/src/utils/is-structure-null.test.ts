@@ -1,9 +1,9 @@
 import { createStructure } from './create-structure';
-import { isStructureOptional } from './is-structure-optional';
+import { isStructureNull } from './is-structure-null';
 
-describe('isStructureOptional', () => {
+describe('isStructureNull', () => {
   it('traverses the structure to determine whether or not some leaf nodes are optional', () => {
-    const optionalStructure = createStructure({
+    const nullStructure = createStructure({
       type: 'Or',
       children: [
         createStructure({
@@ -11,8 +11,8 @@ describe('isStructureOptional', () => {
           children: [
             createStructure({
               type: 'String',
-              canBeNull: false,
-              canBeOptional: true,
+              canBeNull: true,
+              canBeOptional: false,
               value: null,
             }),
           ],
@@ -22,8 +22,8 @@ describe('isStructureOptional', () => {
           children: [
             createStructure({
               type: 'Number',
-              canBeNull: false,
-              canBeOptional: true,
+              canBeNull: true,
+              canBeOptional: false,
               value: null,
             }),
           ],
@@ -31,9 +31,9 @@ describe('isStructureOptional', () => {
       ],
     });
 
-    expect(isStructureOptional(optionalStructure)).toBe(true);
+    expect(isStructureNull(nullStructure)).toBe(true);
 
-    const nonOptionalStructure = createStructure({
+    const nonNullStructure = createStructure({
       type: 'Or',
       children: [
         createStructure({
@@ -62,7 +62,7 @@ describe('isStructureOptional', () => {
       ],
     });
 
-    expect(isStructureOptional(nonOptionalStructure)).toBe(false);
+    expect(isStructureNull(nonNullStructure)).toBe(false);
   });
 
   it('returns false if a loop in the structure is found', () => {
@@ -87,11 +87,11 @@ describe('isStructureOptional', () => {
       ],
     });
 
-    expect(isStructureOptional(selfReferencingStructure)).toBe(false);
+    expect(isStructureNull(selfReferencingStructure)).toBe(false);
   });
 
   it('returns false for unknown nodes', () => {
     const unknownStructure = createStructure({ type: 'Unknown' });
-    expect(isStructureOptional(unknownStructure)).toBe(false);
+    expect(isStructureNull(unknownStructure)).toBe(false);
   });
 });

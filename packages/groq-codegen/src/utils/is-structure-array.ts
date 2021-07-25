@@ -1,6 +1,8 @@
 export function isStructureArray(
   structure: Sanity.GroqCodegen.StructureNode,
-): boolean {
+): structure is Sanity.GroqCodegen.Only<
+  Sanity.GroqCodegen.ArrayNode | Sanity.GroqCodegen.TupleNode
+> {
   return isArray(structure, new Set());
 }
 
