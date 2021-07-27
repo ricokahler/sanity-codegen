@@ -235,7 +235,12 @@ async function generateTypes({
         : intrinsic.name || intrinsic.type;
 
       const typeClause = `_type: '${typeName}'; `;
-      const assetClause = 'asset: SanityAsset;';
+      const assetClause = `asset: SanityReference<${
+        intrinsic.type === 'image'
+          ? 'SanityImageAsset'
+          : // TODO: add types for non-image assets
+            'any'
+      }>;`;
       const imageSpecificClause =
         intrinsic.type === 'image'
           ? `
@@ -409,6 +414,11 @@ async function generateTypes({
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from 'sanity-codegen';
 
       export type {
@@ -423,6 +433,11 @@ async function generateTypes({
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
   `,
     ...types

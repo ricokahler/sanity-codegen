@@ -41,15 +41,23 @@ export type SanityKeyedReference<_T> = {
 };
 
 /**
- * Assets in Sanity follow the same structure as references however
- * the string in _ref can be formatted differently than a document.
+ * This was an incorrect type. See here:
+ * https://github.com/ricokahler/sanity-codegen/issues/165
+ *
+ * @deprecated
  */
 export type SanityAsset = SanityReference<any>;
 
+/**
+ * @deprecated
+ */
 export interface SanityImage {
   asset: SanityAsset;
 }
 
+/**
+ * @deprecated
+ */
 export interface SanityFile {
   asset: SanityAsset;
 }
@@ -92,3 +100,52 @@ export interface SanityImageHotspot {
 }
 
 export type SanityKeyed<T> = T extends object ? T & { _key: string } : T;
+
+export interface SanityImageAsset extends SanityDocument {
+  _type: 'sanity.imageAsset';
+  assetId: string;
+  extension: string;
+  metadata: SanityImageMetadata;
+  mimeType: string;
+  originalFilename: string;
+  path: string;
+  sha1hash: string;
+  size: number;
+  uploadId: string;
+  url: string;
+}
+
+export interface SanityImageMetadata {
+  _type: 'sanity.imageMetadata';
+  dimensions: SanityImageDimensions;
+  hasAlpha: boolean;
+  isOpaque: boolean;
+  lqip: string;
+  palette: SanityImagePalette;
+}
+
+export interface SanityImageDimensions {
+  _type: 'sanity.imageDimensions';
+  aspectRatio: number;
+  height: number;
+  width: number;
+}
+
+export interface SanityImagePalette {
+  _type: 'sanity.imagePalette';
+  darkMuted: SanityImagePaletteSwatch;
+  darkVibrant: SanityImagePaletteSwatch;
+  dominant: SanityImagePaletteSwatch;
+  lightMuted: SanityImagePaletteSwatch;
+  lightVibrant: SanityImagePaletteSwatch;
+  muted: SanityImagePaletteSwatch;
+  vibrant: SanityImagePaletteSwatch;
+}
+
+export interface SanityImagePaletteSwatch {
+  _type: 'sanity.imagePaletteSwatch';
+  background: string;
+  foreground: string;
+  population: number;
+  title: string;
+}

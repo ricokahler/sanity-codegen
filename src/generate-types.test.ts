@@ -73,6 +73,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -87,6 +92,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -104,7 +114,7 @@ describe('generate-types', () => {
          */
         image?: {
           _type: \\"image\\";
-          asset: SanityAsset;
+          asset: SanityReference<SanityImageAsset>;
           crop?: SanityImageCrop;
           hotspot?: SanityImageHotspot;
         };
@@ -172,7 +182,7 @@ describe('generate-types', () => {
          */
         image?: {
           _type: \\"image\\";
-          asset: SanityAsset;
+          asset: SanityReference<SanityImageAsset>;
           crop?: SanityImageCrop;
           hotspot?: SanityImageHotspot;
         };
@@ -182,7 +192,7 @@ describe('generate-types', () => {
          *
          *
          */
-        file?: { _type: \\"file\\"; asset: SanityAsset };
+        file?: { _type: \\"file\\"; asset: SanityReference<any> };
 
         /**
          * geopoint — \`geopoint\`
@@ -233,6 +243,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -247,6 +262,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -300,6 +320,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -314,6 +339,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -391,6 +421,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -405,6 +440,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       export type Foo = {
@@ -508,6 +548,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -522,11 +567,16 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       export type Foo = {
         _type: \\"foo\\";
-        asset: SanityAsset;
+        asset: SanityReference<SanityImageAsset>;
         crop?: SanityImageCrop;
         hotspot?: SanityImageHotspot;
 
@@ -547,7 +597,7 @@ describe('generate-types', () => {
          */
         nestedImage?: {
           _type: \\"image\\";
-          asset: SanityAsset;
+          asset: SanityReference<SanityImageAsset>;
           crop?: SanityImageCrop;
           hotspot?: SanityImageHotspot;
 
@@ -566,7 +616,7 @@ describe('generate-types', () => {
          */
         nestedFile?: {
           _type: \\"file\\";
-          asset: SanityAsset;
+          asset: SanityReference<any>;
           /**
            * Other Description — \`number\`
            *
@@ -651,6 +701,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -665,6 +720,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -755,6 +815,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -769,6 +834,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       export type FooSlug = { _type: \\"fooSlug\\"; current: string };
@@ -828,6 +898,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -842,6 +917,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -913,6 +993,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -927,6 +1012,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -1003,6 +1093,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1017,6 +1112,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -1121,6 +1221,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1135,6 +1240,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
@@ -1197,6 +1307,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1211,6 +1326,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       export type Foo = {
@@ -1405,6 +1525,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       } from \\"sanity-codegen\\";
 
       export type {
@@ -1419,6 +1544,11 @@ describe('generate-types', () => {
         SanityImageCrop,
         SanityImageHotspot,
         SanityKeyed,
+        SanityImageAsset,
+        SanityImageMetadata,
+        SanityImageDimensions,
+        SanityImagePalette,
+        SanityImagePaletteSwatch,
       };
 
       /**
