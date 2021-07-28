@@ -299,6 +299,37 @@ export function transformGroqToStructure({
       });
     }
 
+    case 'Value': {
+      switch (typeof node.value) {
+        case 'string': {
+          return createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: false,
+            value: node.value,
+          });
+        }
+        case 'number': {
+          return createStructure({
+            type: 'Number',
+            canBeNull: false,
+            canBeOptional: false,
+            value: node.value,
+          });
+        }
+        case 'boolean': {
+          return createStructure({
+            type: 'Boolean',
+            canBeNull: false,
+            canBeOptional: false,
+          });
+        }
+        default: {
+          return createStructure({ type: 'Unknown' });
+        }
+      }
+    }
+
     default: {
       console.warn(`"${node.type}" not implemented yet.`);
 

@@ -398,4 +398,19 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('literal values', () => {
+    const query = `{'hello': 'world', 'foo': {'bar': 4, 'beep': false}}`;
+
+    expect(print(query, [])).toMatchInlineSnapshot(`
+      "type Query = {
+        hello: \\"world\\";
+        foo: {
+          bar: number;
+          beep: boolean;
+        };
+      };
+      "
+    `);
+  });
 });
