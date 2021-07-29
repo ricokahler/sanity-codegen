@@ -6,9 +6,7 @@
 
 # Sanity Codegen ✨ · [![codecov](https://codecov.io/gh/ricokahler/sanity-codegen/branch/main/graph/badge.svg?token=tsUGZsR5QG)](https://codecov.io/gh/ricokahler/sanity-codegen) [![github status checks](https://badgen.net/github/checks/ricokahler/sanity-codegen/main)](https://github.com/ricokahler/sanity-codegen/actions) [![bundlephobia](https://badgen.net/bundlephobia/minzip/sanity-codegen)](https://bundlephobia.com/result?p=sanity-codegen)
 
-Generate TypeScript types from your Sanity schemas
-
-> **Note:** If you're using Sanity with GraphQL, we recommend using [`graphql-codegen`](https://www.graphql-code-generator.com/) instead of this project. GraphQL Codegen is not specific to Sanity and works with any GraphQL endpoint (including Sanity's!). Sanity Codegen is inspired by GraphQL Codegen but is instead specific to TypeScript code generation from Sanity Schemas [and eventually GROQ](https://github.com/ricokahler/sanity-codegen/issues/5).
+> Generate TypeScript types from your Sanity schemas
 
 ## Demos
 
@@ -156,6 +154,10 @@ main().catch((e) => {
   process.exit(1);
 });
 ```
+
+## Usage with GraphQL
+
+If you're using Sanity with GraphQL, we recommend using [`graphql-codegen`](https://www.graphql-code-generator.com/) instead of this project. GraphQL Codegen is not specific to Sanity and works with any GraphQL endpoint (including Sanity's!). Sanity Codegen is inspired by GraphQL Codegen but is instead specific to TypeScript code generation from Sanity Schemas [and eventually GROQ](https://github.com/ricokahler/sanity-codegen/issues/5).
 
 ## Typed Client (⚠️ Experimental)
 
