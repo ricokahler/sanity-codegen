@@ -1,17 +1,17 @@
 import { createStructure } from './create-structure';
-import { isStructureArray } from './is-structure-array';
+import { isStructure } from './is-structure';
 
 export function unwrapArray(
   node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
-  if (isStructureArray(node)) return unwrap(node);
+  if (isStructure(node, (n) => ['Array', 'Tuple'].includes(n.type))) {
+    return unwrap(node);
+  }
   return node;
 }
 
 function unwrap(
-  node: Sanity.GroqCodegen.Only<
-    Sanity.GroqCodegen.ArrayNode | Sanity.GroqCodegen.TupleNode
-  >,
+  node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
   switch (node.type) {
     case 'Array': {
@@ -33,6 +33,12 @@ function unwrap(
         get: () => unwrap(node.get()),
         hashInput: ['UnwrapArray', node.hash],
       });
+    }
+    default: {
+      throw new Error(
+        `unwrap-array found leaf node "${node.type}" but expected either Tuple Or Array. ` +
+          `This is a bug in sanity-codegen, please open an issue.`,
+      );
     }
   }
 }

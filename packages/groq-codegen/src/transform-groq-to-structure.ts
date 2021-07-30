@@ -4,16 +4,14 @@ import {
   createStructure,
   isStructureOptional,
   isStructureNull,
-} from './utils';
-import { transformSchemaToStructure } from './transform-schema-to-structure';
-import {
   accessAttributeInStructure,
   unwrapArray,
-  isStructureArray,
   wrapArray,
   unwrapReferences,
   reduceObjectStructures,
+  isStructure,
 } from './utils';
+import { transformSchemaToStructure } from './transform-schema-to-structure';
 
 export interface TransformGroqToStructureOptions {
   /**
@@ -75,7 +73,11 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      if (!isStructureArray(baseResult)) {
+      const structureIsArray = isStructure(baseResult, (n) =>
+        ['Array', 'Tuple'].includes(n.type),
+      );
+
+      if (!structureIsArray) {
         // TODO: warn that filter was used on non-array base
         return createStructure({ type: 'Unknown' });
       }
@@ -112,7 +114,9 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      const baseResultHadArray = isStructureArray(baseResult);
+      const baseResultHadArray = isStructure(baseResult, (n) =>
+        ['Array', 'Tuple'].includes(n.type),
+      );
 
       const exprResult = transformGroqToStructure({
         node: node.expr,

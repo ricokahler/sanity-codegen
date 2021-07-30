@@ -1,5 +1,5 @@
 import { createStructure } from './create-structure';
-import { isStructureArray } from './is-structure-array';
+import { isStructure } from './is-structure';
 import { unwrapArray } from './unwrap-array';
 
 describe('unwrapArray', () => {
@@ -87,7 +87,9 @@ describe('unwrapArray', () => {
       ],
     });
 
-    expect(isStructureArray(orStructure)).toBe(false);
+    expect(
+      isStructure(orStructure, (n) => ['Array', 'Tuple'].includes(n.type)),
+    ).toBe(false);
 
     const result = unwrapArray(orStructure);
     expect(result).toEqual(orStructure);
@@ -159,6 +161,10 @@ describe('unwrapArray', () => {
 
     const unwrappedStructure = unwrapArray(lazyStructure);
 
-    expect(isStructureArray(unwrappedStructure)).toBe(false);
+    expect(
+      isStructure(unwrappedStructure, (n) =>
+        ['Array', 'Tuple'].includes(n.type),
+      ),
+    ).toBe(false);
   });
 });

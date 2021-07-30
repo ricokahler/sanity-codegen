@@ -1159,4 +1159,12 @@ describe('narrowStructure', () => {
   it.todo(
     '(tentative) adds a string literal value for SingleVariableEquality matches',
   );
+  it.todo(
+    '(tentative) supports joins references',
+    //   *[_type == 'author'] {
+    //     // this could know which types will show up here by scanning all
+    //     // documents and finding the ones that have a type ref to the parent
+    //     'references': *[references(^._id)]
+    //   }
+  );
 });

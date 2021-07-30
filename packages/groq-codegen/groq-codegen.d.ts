@@ -115,15 +115,5 @@ declare namespace Sanity {
     };
 
     type UnknownNode = { type: 'Unknown'; hash: 'unknown' };
-
-    /**
-     * Recursive type that asserts a limited subtree.
-     * Considers `And`, `Or`, and `Lazy` as wrapper types.
-     */
-    type Only<Node extends Sanity.GroqCodegen.StructureNode> =
-      | Node
-      | { type: 'And'; children: Only<Node>[]; hash: string }
-      | { type: 'Or'; children: Only<Node>[]; hash: string }
-      | { type: 'Lazy'; get: () => Only<Node>; hash: string };
   }
 }
