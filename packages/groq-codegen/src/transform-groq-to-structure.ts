@@ -242,24 +242,6 @@ export function transformGroqToStructure({
       });
     }
 
-    case 'Or': {
-      return createStructure({
-        type: 'Or',
-        children: [
-          transformGroqToStructure({
-            node: node.left,
-            scopes,
-            normalizedSchema,
-          }),
-          transformGroqToStructure({
-            node: node.right,
-            scopes,
-            normalizedSchema,
-          }),
-        ],
-      });
-    }
-
     case 'AccessAttribute': {
       if (node.base) {
         const baseResult = transformGroqToStructure({
@@ -332,6 +314,37 @@ export function transformGroqToStructure({
           return createStructure({ type: 'Unknown' });
         }
       }
+    }
+
+    case 'Or':
+    case 'And': {
+      const leftResult = transformGroqToStructure({
+        node: node.left,
+        normalizedSchema,
+        scopes: scopes,
+      });
+
+      const rightResult = transformGroqToStructure({
+        node: node.right,
+        normalizedSchema,
+        scopes: scopes,
+      });
+
+      // TODO: could warn in these cases
+      if (!isStructure(leftResult, (n) => n.type === 'Boolean')) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      if (!isStructure(rightResult, (n) => n.type === 'Boolean')) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return createStructure({
+        type: 'Boolean',
+        canBeNull: isStructureNull(leftResult) || isStructureNull(rightResult),
+        canBeOptional:
+          isStructureOptional(leftResult) || isStructureOptional(rightResult),
+      });
     }
 
     default: {
