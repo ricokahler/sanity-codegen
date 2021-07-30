@@ -1,8 +1,7 @@
 import { wrapArray } from './wrap-array';
 import { createStructure } from './create-structure';
 import { removeOptional } from './remove-optional';
-import { isStructureNull } from './is-structure-null';
-import { isStructureOptional } from './is-structure-optional';
+import { isStructureNull, isStructureOptional } from './is-structure';
 import { addNull } from './add-null';
 import { unwrapArray } from './unwrap-array';
 

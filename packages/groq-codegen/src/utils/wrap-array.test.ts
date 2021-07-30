@@ -1,5 +1,5 @@
 import { createStructure } from './create-structure';
-import { isStructure } from './is-structure';
+import { isStructureArray } from './is-structure';
 import { wrapArray } from './wrap-array';
 
 describe('wrapArray', () => {
@@ -47,9 +47,7 @@ describe('wrapArray', () => {
       canBeOptional: false,
     });
 
-    expect(
-      isStructure(arrayStructure, (n) => ['Array', 'Tuple'].includes(n.type)),
-    ).toBe(true);
+    expect(isStructureArray(arrayStructure)).toBe(true);
     expect(arrayStructure).toMatchObject({
       type: 'Or',
       children: [
@@ -86,8 +84,6 @@ describe('wrapArray', () => {
       canBeNull: false,
       canBeOptional: false,
     });
-    expect(
-      isStructure(arrayStructure, (n) => ['Array', 'Tuple'].includes(n.type)),
-    ).toBe(true);
+    expect(isStructureArray(arrayStructure)).toBe(true);
   });
 });

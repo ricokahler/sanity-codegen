@@ -1,12 +1,10 @@
 import { createStructure } from './create-structure';
-import { isStructure } from './is-structure';
+import { isStructureArray } from './is-structure';
 
 export function unwrapArray(
   node: Sanity.GroqCodegen.StructureNode,
 ): Sanity.GroqCodegen.StructureNode {
-  if (isStructure(node, (n) => ['Array', 'Tuple'].includes(n.type))) {
-    return unwrap(node);
-  }
+  if (isStructureArray(node)) return unwrap(node);
   return node;
 }
 

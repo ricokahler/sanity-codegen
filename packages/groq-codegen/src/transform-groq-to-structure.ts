@@ -4,12 +4,13 @@ import {
   createStructure,
   isStructureOptional,
   isStructureNull,
+  isStructureArray,
+  isStructureBoolean,
   accessAttributeInStructure,
   unwrapArray,
   wrapArray,
   unwrapReferences,
   reduceObjectStructures,
-  isStructure,
 } from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 
@@ -73,11 +74,7 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      const structureIsArray = isStructure(baseResult, (n) =>
-        ['Array', 'Tuple'].includes(n.type),
-      );
-
-      if (!structureIsArray) {
+      if (!isStructureArray(baseResult)) {
         // TODO: warn that filter was used on non-array base
         return createStructure({ type: 'Unknown' });
       }
@@ -114,9 +111,7 @@ export function transformGroqToStructure({
         normalizedSchema,
       });
 
-      const baseResultHadArray = isStructure(baseResult, (n) =>
-        ['Array', 'Tuple'].includes(n.type),
-      );
+      const baseResultHadArray = isStructureArray(baseResult);
 
       const exprResult = transformGroqToStructure({
         node: node.expr,
@@ -331,11 +326,11 @@ export function transformGroqToStructure({
       });
 
       // TODO: could warn in these cases
-      if (!isStructure(leftResult, (n) => n.type === 'Boolean')) {
+      if (!isStructureBoolean(leftResult)) {
         return createStructure({ type: 'Unknown' });
       }
 
-      if (!isStructure(rightResult, (n) => n.type === 'Boolean')) {
+      if (!isStructureBoolean(rightResult)) {
         return createStructure({ type: 'Unknown' });
       }
 
