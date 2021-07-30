@@ -1,7 +1,7 @@
 import { createStructure } from './create-structure';
-import { isStructureArray } from './is-structure-array';
+import { isStructure } from './is-structure';
 
-describe('isStructureArray', () => {
+describe('isStructure', () => {
   it('traverses the structure to determine whether or not some leaf nodes are arrays', () => {
     const arrayStructure = createStructure({
       type: 'Or',
@@ -31,7 +31,9 @@ describe('isStructureArray', () => {
       ],
     });
 
-    expect(isStructureArray(arrayStructure)).toBe(true);
+    expect(
+      isStructure(arrayStructure, (n) => ['Array', 'Tuple'].includes(n.type)),
+    ).toBe(true);
 
     const nonArrayStructure = createStructure({
       type: 'Or',
@@ -51,7 +53,11 @@ describe('isStructureArray', () => {
       ],
     });
 
-    expect(isStructureArray(nonArrayStructure)).toBe(false);
+    expect(
+      isStructure(nonArrayStructure, (n) =>
+        ['Array', 'Tuple'].includes(n.type),
+      ),
+    ).toBe(false);
   });
 
   it('returns false if a loop in the structure is found', () => {
@@ -76,6 +82,8 @@ describe('isStructureArray', () => {
       ],
     });
 
-    expect(isStructureArray(selfReferencingStructure)).toBe(false);
+    expect(
+      isStructure(selfReferencingStructure, (n) => n.type === 'Array'),
+    ).toBe(false);
   });
 });

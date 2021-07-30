@@ -413,4 +413,15 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('boolean operators', () => {
+    const query = `{'foo': true && true || (false || true)}`;
+
+    expect(print(query, [])).toMatchInlineSnapshot(`
+"type Query = {
+  foo: boolean;
+};
+"
+`);
+  });
 });

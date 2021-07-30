@@ -11,6 +11,8 @@ export function reduceObjectStructures(
           `reduceObjectStructures call. Please open an issue.`,
       );
     }
+
+    // TODO: for `And`s, should we combine the objects?
     case 'And':
     case 'Or': {
       return createStructure({
