@@ -6,6 +6,8 @@ import {
   isStructureNull,
   isStructureArray,
   isStructureBoolean,
+  isStructureNumber,
+  isStructureString,
   accessAttributeInStructure,
   unwrapArray,
   wrapArray,
@@ -340,6 +342,122 @@ export function transformGroqToStructure({
         canBeOptional:
           isStructureOptional(leftResult) || isStructureOptional(rightResult),
       });
+    }
+
+    case 'OpCall': {
+      const leftStructure = transformGroqToStructure({
+        node: node.left,
+        scopes,
+        normalizedSchema,
+      });
+      const rightStructure = transformGroqToStructure({
+        node: node.right,
+        scopes,
+        normalizedSchema,
+      });
+
+      const canBeNull =
+        isStructureNull(leftStructure) || isStructureNull(rightStructure);
+      const canBeOptional =
+        isStructureOptional(leftStructure) ||
+        isStructureOptional(rightStructure);
+
+      switch (node.op) {
+        case '*':
+        case '**':
+        case '-':
+        case '/':
+        case '%': {
+          if (
+            !isStructureNumber(leftStructure) ||
+            !isStructureNumber(rightStructure)
+          ) {
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'Number',
+            canBeNull,
+            canBeOptional,
+            value: null,
+          });
+        }
+        case '<=':
+        case '<':
+        case '>':
+        case '>=': {
+          if (
+            !isStructureNumber(leftStructure) ||
+            !isStructureNumber(rightStructure)
+          ) {
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'Boolean',
+            canBeNull:
+              isStructureNull(leftStructure) || isStructureNull(rightStructure),
+            canBeOptional:
+              isStructureOptional(leftStructure) ||
+              isStructureOptional(rightStructure),
+          });
+        }
+        case '!=':
+        case '==':
+        case 'in':
+        case 'match': {
+          return createStructure({
+            type: 'Boolean',
+            canBeNull:
+              isStructureNull(leftStructure) || isStructureNull(rightStructure),
+            canBeOptional:
+              isStructureOptional(leftStructure) ||
+              isStructureOptional(rightStructure),
+          });
+        }
+        case '+': {
+          if (
+            isStructureNumber(leftStructure) &&
+            isStructureNumber(rightStructure)
+          ) {
+            return createStructure({
+              type: 'Number',
+              canBeNull,
+              canBeOptional,
+              value: null,
+            });
+          }
+
+          if (
+            isStructureString(leftStructure) &&
+            isStructureString(rightStructure)
+          ) {
+            const leftStringStructure =
+              leftStructure as Sanity.GroqCodegen.StringNode;
+            const rightStringStructure =
+              rightStructure as Sanity.GroqCodegen.StringNode;
+
+            return createStructure({
+              type: 'String',
+              canBeNull,
+              canBeOptional,
+              value:
+                leftStringStructure.value === null
+                  ? null
+                  : rightStringStructure.value === null
+                  ? null
+                  : `${leftStringStructure.value}${rightStringStructure.value}`,
+            });
+          }
+
+          return createStructure({ type: 'Unknown' });
+        }
+        default: {
+          throw new Error(
+            `Found expected operator "${node.op}". Please open an issue.`,
+          );
+        }
+      }
     }
 
     default: {

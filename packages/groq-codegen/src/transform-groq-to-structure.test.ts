@@ -418,10 +418,97 @@ describe('transformGroqToStructure', () => {
     const query = `{'foo': true && true || (false || true)}`;
 
     expect(print(query, [])).toMatchInlineSnapshot(`
-"type Query = {
-  foo: boolean;
-};
-"
-`);
+      "type Query = {
+        foo: boolean;
+      };
+      "
+    `);
+  });
+
+  test('arithmetic operators', () => {
+    expect(print('4 * 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print('4 ** 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print('4 - 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print('4 / 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print('4 % 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print("4 % 'nonsense'", [])).toMatchInlineSnapshot(`
+      "type Query = unknown;
+      "
+    `);
+  });
+
+  test('logic operators', () => {
+    expect(print('4 <= 5', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print('4 < 5', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print('4 > 5', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print('4 >= 5', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print("4 < 'nonsense'", [])).toMatchInlineSnapshot(`
+      "type Query = unknown;
+      "
+    `);
+  });
+
+  test('equality/membership', () => {
+    expect(print("_type == 'book'", [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print("_type != 'book'", [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print("_type in ['book']", [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print("value match 'text'", [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+  });
+
+  test('+ concatenation with strings', () => {
+    expect(print("'hello' + 'world'", [])).toMatchInlineSnapshot(`
+      "type Query = \\"helloworld\\";
+      "
+    `);
+    expect(print("4 + 'nonsense'", [])).toMatchInlineSnapshot(`
+      "type Query = unknown;
+      "
+    `);
+  });
+
+  test('+ concatenation with numbers', () => {
+    expect(print('4 + 5', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
   });
 });
