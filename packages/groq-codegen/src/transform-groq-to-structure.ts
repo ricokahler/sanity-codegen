@@ -88,7 +88,14 @@ export function transformGroqToStructure({
     }
 
     case 'This': {
+      // TODO: could warn here
       return scope || createStructure({ type: 'Unknown' });
+    }
+
+    case 'Parent': {
+      const parentScope = scopes[scopes.length - 2];
+      // TODO: could warn here
+      return parentScope || createStructure({ type: 'Unknown' });
     }
 
     case 'AccessElement': {
