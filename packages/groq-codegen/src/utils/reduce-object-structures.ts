@@ -2,7 +2,8 @@ import { createStructure } from './create-structure';
 
 export function reduceObjectStructures(
   source: Sanity.GroqCodegen.StructureNode,
-  override: Sanity.GroqCodegen.StructureNode,
+  incoming: Sanity.GroqCodegen.StructureNode,
+  mode: 'replace' | 'union',
 ): Sanity.GroqCodegen.StructureNode {
   switch (source.type) {
     default: {
@@ -18,7 +19,7 @@ export function reduceObjectStructures(
       return createStructure({
         ...source,
         children: source.children.map((sourceChild) =>
-          reduceObjectStructures(sourceChild, override),
+          reduceObjectStructures(sourceChild, incoming, mode),
         ),
       });
     }
@@ -26,51 +27,73 @@ export function reduceObjectStructures(
       return createStructure({
         type: 'Lazy',
         hashInput: ['ReduceObjectStructuresSource', source.hash],
-        get: () => reduceObjectStructures(source.get(), override),
+        get: () => reduceObjectStructures(source.get(), incoming, mode),
       });
     }
     case 'Object': {
-      switch (override.type) {
+      switch (incoming.type) {
         default: {
           // TODO: show contextual warning. potentially throw and catch
           // downstream for more context.
           console.warn(
-            `Attempted to use ObjectSplat for unsupported type "${override.type}"`,
+            `Attempted to use ObjectSplat for unsupported type "${incoming.type}"`,
           );
           return createStructure({ type: 'Unknown' });
         }
         case 'And':
         case 'Or': {
           return createStructure({
-            ...override,
-            children: override.children.map((overrideChilde) =>
-              reduceObjectStructures(source, overrideChilde),
+            ...incoming,
+            children: incoming.children.map((incomingChild) =>
+              reduceObjectStructures(source, incomingChild, mode),
             ),
           });
         }
         case 'Lazy': {
           return createStructure({
             type: 'Lazy',
-            hashInput: ['ReduceObjectStructuresOverride', override.hash],
-            get: () => reduceObjectStructures(source, override.get()),
+            hashInput: ['ReduceObjectStructuresOverride', incoming.hash],
+            get: () => reduceObjectStructures(source, incoming.get(), mode),
           });
         }
         case 'Object': {
           type Property = Sanity.GroqCodegen.ObjectNode['properties'][number];
 
-          const resolvedProperties = Array.from(
-            [...source.properties, ...override.properties]
-              .reduce<Map<string, Property>>((map, property) => {
-                map.set(property.key, property);
-                return map;
-              }, new Map())
-              .values(),
-          );
+          const resolvedProperties =
+            mode === 'replace'
+              ? Array.from(
+                  [...source.properties, ...incoming.properties]
+                    .reduce<Map<string, Property>>((map, property) => {
+                      map.set(property.key, property);
+                      return map;
+                    }, new Map())
+                    .values(),
+                )
+              : Array.from(
+                  [...source.properties, ...incoming.properties]
+                    .reduce<Map<string, Property>>((map, property) => {
+                      const existingProperty = map.get(property.key);
+
+                      if (existingProperty) {
+                        map.set(property.key, {
+                          key: property.key,
+                          value: createStructure({
+                            type: 'Or',
+                            children: [existingProperty.value, property.value],
+                          }),
+                        });
+                      } else {
+                        map.set(property.key, property);
+                      }
+                      return map;
+                    }, new Map())
+                    .values(),
+                );
 
           return createStructure({
             type: 'Object',
-            canBeNull: source.canBeNull || override.canBeNull,
-            canBeOptional: source.canBeOptional || override.canBeOptional,
+            canBeNull: source.canBeNull || incoming.canBeNull,
+            canBeOptional: source.canBeOptional || incoming.canBeOptional,
             properties: resolvedProperties,
           });
         }

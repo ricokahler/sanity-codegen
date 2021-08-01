@@ -2,6 +2,7 @@ import * as Groq from 'groq-js/dist/nodeTypes';
 import {
   addNull,
   removeOptional,
+  addOptionalToProperties,
   narrowStructure,
   createStructure,
   isStructureOptional,
@@ -178,7 +179,11 @@ export function transformGroqToStructure({
                   ],
                 });
 
-                return reduceObjectStructures(acc, singlePropertyObject);
+                return reduceObjectStructures(
+                  acc,
+                  singlePropertyObject,
+                  'replace',
+                );
               }
               case 'ObjectSplat': {
                 const value = transformGroqToStructure({
@@ -187,11 +192,20 @@ export function transformGroqToStructure({
                   scopes,
                 });
 
-                return reduceObjectStructures(acc, value);
+                return reduceObjectStructures(acc, value, 'replace');
               }
               case 'ObjectConditionalSplat': {
-                console.warn('Conditional splats are not current supported');
-                return createStructure({ type: 'Unknown' });
+                const value = transformGroqToStructure({
+                  node: attribute.value,
+                  scopes,
+                  normalizedSchema,
+                });
+
+                return reduceObjectStructures(
+                  acc,
+                  addOptionalToProperties(value),
+                  'union',
+                );
               }
               default: {
                 console.warn(
