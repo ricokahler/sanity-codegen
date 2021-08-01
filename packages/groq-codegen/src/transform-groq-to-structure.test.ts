@@ -573,12 +573,12 @@ describe('transformGroqToStructure', () => {
       "type Query = {
         name: string | null;
         child: {
-          name: Ref_9R9gymHBbUQvcqZ4;
+          name: Ref_kBJnT9NNls99Pl23;
           parentName: string | null;
         };
       }[];
 
-      type Ref_9R9gymHBbUQvcqZ4 = string | null;
+      type Ref_kBJnT9NNls99Pl23 = string | null;
       "
     `);
   });

@@ -125,23 +125,23 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         _type: \\"jsonDoc\\";
         _id: string;
-        jsonLike?: Ref_SSiWDRALho7Xz4SR;
+        jsonLike?: Ref_OPCr9vJ2bTocbVvm;
       }[];
 
-      type Ref_SSiWDRALho7Xz4SR = (
+      type Ref_OPCr9vJ2bTocbVvm = (
         | string
         | number
         | boolean
-        | Ref_SSiWDRALho7Xz4SR[]
+        | Ref_OPCr9vJ2bTocbVvm[]
         | {
             properties?: {
               key?: string;
-              value?: Ref_SSiWDRALho7Xz4SR;
+              value?: Ref_OPCr9vJ2bTocbVvm;
             }[];
           }
       )[];
       "
-      `);
+    `);
   });
 
   it('transforms references', () => {
