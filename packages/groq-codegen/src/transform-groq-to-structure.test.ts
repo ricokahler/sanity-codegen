@@ -500,6 +500,10 @@ describe('transformGroqToStructure', () => {
       "type Query = boolean;
       "
     `);
+    expect(print('3 in 2...4', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
   });
 
   test('+ concatenation with strings', () => {

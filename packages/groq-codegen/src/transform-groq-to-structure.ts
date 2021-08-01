@@ -505,6 +505,42 @@ export function transformGroqToStructure({
       }
     }
 
+    case 'InRange': {
+      const baseResult = transformGroqToStructure({
+        node: node.base,
+        scopes,
+        normalizedSchema,
+      });
+
+      const leftResult = transformGroqToStructure({
+        node: node.left,
+        scopes,
+        normalizedSchema,
+      });
+
+      const rightResult = transformGroqToStructure({
+        node: node.right,
+        scopes,
+        normalizedSchema,
+      });
+
+      if (!isStructureNumber(baseResult)) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return createStructure({
+        type: 'Boolean',
+        canBeNull:
+          isStructureNull(baseResult) ||
+          isStructureNull(leftResult) ||
+          isStructureNull(rightResult),
+        canBeOptional:
+          isStructureOptional(baseResult) ||
+          isStructureOptional(leftResult) ||
+          isStructureOptional(rightResult),
+      });
+    }
+
     default: {
       console.warn(`"${node.type}" not implemented yet.`);
 
