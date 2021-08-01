@@ -362,6 +362,26 @@ export function transformGroqToStructure({
       });
     }
 
+    case 'Pos':
+    case 'Neg': {
+      const baseResult = transformGroqToStructure({
+        node: node.base,
+        scopes,
+        normalizedSchema,
+      });
+
+      if (!isStructureNumber(baseResult)) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return createStructure({
+        type: 'Number',
+        canBeNull: isStructureNull(baseResult),
+        canBeOptional: isStructureOptional(baseResult),
+        value: null,
+      });
+    }
+
     case 'OpCall': {
       const leftStructure = transformGroqToStructure({
         node: node.left,

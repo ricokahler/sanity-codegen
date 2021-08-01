@@ -450,6 +450,14 @@ describe('transformGroqToStructure', () => {
       "type Query = unknown;
       "
     `);
+    expect(print('-4', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print('+4', [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
   });
 
   test('logic operators', () => {
