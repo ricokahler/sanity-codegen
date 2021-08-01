@@ -254,6 +254,85 @@ describe('transformGroqToStructure', () => {
     `);
   });
 
+  test('conditional splat', () => {
+    const query = `*[_type=='movie']{
+      ...,
+      releaseDate >= '2018-06-01' => {
+        "kind": 'new',
+        "screenings": *[_type == 'screening' && movie._ref == ^._id],
+        "news": *[_type == 'news' && movie._ref == ^._id],
+      },
+      popularity > 20 && rating > 7.0 => {
+        "kind": 'popular',
+        "awards": *[_type == 'award' && movie._ref == ^._id],
+      },
+    }`;
+
+    const schema = [
+      {
+        name: 'movie',
+        type: 'document',
+        fields: [
+          { name: 'releaseDate', type: 'date', codegen: { required: true } },
+          { name: 'popularity', type: 'number', codegen: { required: true } },
+          { name: 'rating', type: 'number', codegen: { required: true } },
+        ],
+      },
+      {
+        name: 'screening',
+        type: 'document',
+        fields: [
+          {
+            name: 'screeningTitle',
+            type: 'string',
+            codegen: { required: true },
+          },
+        ],
+      },
+      {
+        name: 'news',
+        type: 'document',
+        fields: [
+          { name: 'newsTitle', type: 'string', codegen: { required: true } },
+        ],
+      },
+      {
+        name: 'award',
+        type: 'document',
+        fields: [
+          { name: 'awardTitle', type: 'string', codegen: { required: true } },
+        ],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _type: \\"movie\\";
+        _id: string;
+        releaseDate: string;
+        popularity: number;
+        rating: number;
+        kind?: \\"new\\" | \\"popular\\";
+        screenings?: {
+          _type: \\"screening\\";
+          _id: string;
+          screeningTitle: string;
+        }[];
+        news?: {
+          _type: \\"news\\";
+          _id: string;
+          newsTitle: string;
+        }[];
+        awards?: {
+          _type: \\"award\\";
+          _id: string;
+          awardTitle: string;
+        }[];
+      }[];
+      "
+    `);
+  });
+
   test('grouping', () => {
     const query = `
       ({ 'foo': *[_type == 'book'].name }).foo

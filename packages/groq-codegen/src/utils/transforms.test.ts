@@ -5,6 +5,8 @@ import {
   unwrapReferences,
   unwrapArray,
   removeOptional,
+  addOptional,
+  addOptionalToProperties,
 } from './transforms';
 import { isStructureArray } from './is-structure';
 import { transformSchemaToStructure } from '../transform-schema-to-structure';
@@ -527,6 +529,60 @@ describe('removeOptional', () => {
           type: 'Or',
           children: [{ type: 'Number', canBeOptional: false }],
         },
+      ],
+    });
+  });
+});
+
+describe('addOptional', () => {
+  it('adds optional to leaf nodes', () => {
+    const stringStructure = createStructure({
+      type: 'String',
+      canBeNull: false,
+      canBeOptional: false,
+      value: null,
+    });
+
+    expect(addOptional(stringStructure)).toMatchObject({
+      type: 'String',
+      canBeOptional: true,
+    });
+  });
+});
+
+describe('addOptionalToProperties', () => {
+  it('adds optional to the properties of leaf nodes', () => {
+    const andStructure = createStructure({
+      type: 'Object',
+      properties: [
+        {
+          key: 'a',
+          value: createStructure({
+            type: 'String',
+            canBeOptional: false,
+            canBeNull: false,
+            value: null,
+          }),
+        },
+        {
+          key: 'b',
+          value: createStructure({
+            type: 'Number',
+            canBeOptional: false,
+            canBeNull: false,
+            value: null,
+          }),
+        },
+      ],
+      canBeNull: false,
+      canBeOptional: false,
+    });
+
+    expect(addOptionalToProperties(andStructure)).toMatchObject({
+      type: 'Object',
+      properties: [
+        { key: 'a', value: { type: 'String', canBeOptional: true } },
+        { key: 'b', value: { type: 'Number', canBeOptional: true } },
       ],
     });
   });

@@ -55,6 +55,29 @@ export const addNull = createTransform({
   transform: (node) => createStructure({ ...node, canBeNull: true }),
 });
 
+export const addOptional = createTransform({
+  namespace: 'AddNull',
+  accept: (node) => node.type !== 'Unknown',
+  transform: (node) => createStructure({ ...node, canBeOptional: true }),
+});
+
+export const addOptionalToProperties = createTransform<
+  Extract<LeafNode, { type: 'Object' }>
+>({
+  namespace: 'AddOptionalToProperties',
+  accept: (node) => node.type === 'Object',
+  transform: (node) =>
+    createStructure({
+      type: 'Object',
+      canBeNull: node.canBeNull,
+      canBeOptional: node.canBeOptional,
+      properties: node.properties.map(({ key, value }) => ({
+        key,
+        value: addOptional(value),
+      })),
+    }),
+});
+
 export const removeOptional = createTransform({
   namespace: 'RemoveOptional',
   accept: (node) => node.type !== 'Unknown',

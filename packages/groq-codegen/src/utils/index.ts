@@ -12,7 +12,9 @@ export {
 } from './is-structure';
 export { narrowStructure } from './narrow-structure';
 export {
+  addOptional,
   removeOptional,
+  addOptionalToProperties,
   addNull,
   unwrapArray,
   unwrapReferences,

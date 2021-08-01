@@ -54,6 +54,7 @@ describe('reduceObjectStructures', () => {
     const combinedStructure = reduceObjectStructures(
       objectStructureA,
       objectStructureB,
+      'replace',
     );
 
     expect(combinedStructure).toMatchObject({
@@ -65,7 +66,7 @@ describe('reduceObjectStructures', () => {
     });
   });
 
-  it('the second parameter overrides any properties on the first parameter', () => {
+  it('the second parameter replaces any properties on the first parameter if the mode is replace', () => {
     const objectStructureA = createStructure({
       type: 'Object',
       canBeNull: false,
@@ -103,12 +104,63 @@ describe('reduceObjectStructures', () => {
     const combinedStructure = reduceObjectStructures(
       objectStructureA,
       objectStructureB,
+      'replace',
     ) as Sanity.GroqCodegen.ObjectNode;
 
     expect(combinedStructure.properties).toHaveLength(1);
     const [property] = combinedStructure.properties;
 
     expect(property.value.type).toBe('Number');
+  });
+
+  it('the second parameter combines any properties on the first parameter if the mode is union', () => {
+    const objectStructureA = createStructure({
+      type: 'Object',
+      canBeNull: false,
+      canBeOptional: false,
+      properties: [
+        {
+          key: 'foo',
+          value: createStructure({
+            type: 'String',
+            canBeOptional: false,
+            canBeNull: false,
+            value: null,
+          }),
+        },
+      ],
+    });
+
+    const objectStructureB = createStructure({
+      type: 'Object',
+      canBeNull: false,
+      canBeOptional: false,
+      properties: [
+        {
+          key: 'foo',
+          value: createStructure({
+            type: 'Number',
+            canBeOptional: false,
+            canBeNull: false,
+            value: null,
+          }),
+        },
+      ],
+    });
+
+    const combinedStructure = reduceObjectStructures(
+      objectStructureA,
+      objectStructureB,
+      'union',
+    ) as Sanity.GroqCodegen.ObjectNode;
+
+    expect(combinedStructure.properties).toHaveLength(1);
+    const [property] = combinedStructure.properties;
+
+    expect(property.value).toMatchObject({
+      type: 'Or',
+      children: [{ type: 'String' }, { type: 'Number' }],
+    });
   });
 
   it('combines structures that includes `And`s and `Or`s', () => {
@@ -149,6 +201,7 @@ describe('reduceObjectStructures', () => {
         children: [createObj([a, b]), createObj([c, d])],
       }),
       createObj([e, f]),
+      'replace',
     );
     expect(abefAndCdef).toMatchObject({
       type: 'And',
@@ -167,6 +220,7 @@ describe('reduceObjectStructures', () => {
         type: 'And',
         children: [createObj([a, b]), createObj([c, d])],
       }),
+      'replace',
     );
 
     expect(combo).toMatchObject({
@@ -234,7 +288,7 @@ describe('reduceObjectStructures', () => {
     });
 
     expect(() =>
-      reduceObjectStructures(stringStructure, objectStructure),
+      reduceObjectStructures(stringStructure, objectStructure, 'replace'),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Found unsupported source node type \\"String\\" in reduceObjectStructures call. Please open an issue."`,
     );
@@ -256,7 +310,7 @@ describe('reduceObjectStructures', () => {
     });
 
     expect(
-      reduceObjectStructures(objectStructure, stringStructure),
+      reduceObjectStructures(objectStructure, stringStructure, 'replace'),
     ).toMatchObject({ type: 'Unknown' });
 
     expect((console.warn as jest.Mock).mock.calls).toMatchInlineSnapshot(`
@@ -318,6 +372,7 @@ describe('reduceObjectStructures', () => {
     const combinedStructure = reduceObjectStructures(
       lazyStructureA,
       lazyStructureB,
+      'replace',
     );
 
     // using `transformStructureToTs` because it evaluates lazy nodes
