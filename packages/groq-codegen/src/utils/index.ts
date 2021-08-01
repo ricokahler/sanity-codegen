@@ -1,5 +1,4 @@
 export { accessAttributeInStructure } from './access-attribute-in-structure';
-export { addNull } from './add-null';
 export { createStructure } from './create-structure';
 export { objectHash, unorderedHash } from './hash';
 export {
@@ -9,10 +8,14 @@ export {
   isStructureBoolean,
   isStructureNumber,
   isStructureString,
+  isStructureObject,
 } from './is-structure';
 export { narrowStructure } from './narrow-structure';
+export {
+  removeOptional,
+  addNull,
+  unwrapArray,
+  unwrapReferences,
+} from './transforms';
 export { reduceObjectStructures } from './reduce-object-structures';
-export { removeOptional } from './remove-optional';
-export { unwrapArray } from './unwrap-array';
-export { unwrapReferences } from './unwrap-references';
 export { wrapArray } from './wrap-array';

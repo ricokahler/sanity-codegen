@@ -114,6 +114,13 @@ declare namespace Sanity {
       hash: string;
     };
 
-    type UnknownNode = { type: 'Unknown'; hash: 'unknown' };
+    type UnknownNode = {
+      type: 'Unknown';
+      hash: 'unknown';
+      // Note: these won't be used but are here for type conformance with other
+      // leaf nodes
+      canBeNull?: boolean;
+      canBeOptional?: boolean;
+    };
   }
 }

@@ -1,9 +1,7 @@
-import { wrapArray } from './wrap-array';
 import { createStructure } from './create-structure';
-import { removeOptional } from './remove-optional';
 import { isStructureNull, isStructureOptional } from './is-structure';
-import { addNull } from './add-null';
-import { unwrapArray } from './unwrap-array';
+import { addNull, unwrapArray, removeOptional } from './transforms';
+import { wrapArray } from './wrap-array';
 
 export function accessAttributeInStructure(
   node: Sanity.GroqCodegen.StructureNode,
