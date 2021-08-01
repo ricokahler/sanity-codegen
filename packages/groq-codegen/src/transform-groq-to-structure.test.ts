@@ -519,4 +519,40 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('parent operator', () => {
+    const schema = [
+      {
+        name: 'person',
+        type: 'document',
+        fields: [
+          { name: 'name', type: 'string' },
+          { name: 'child', type: 'person' },
+        ],
+      },
+    ];
+
+    const query = `
+      *[_type == 'person'] {
+        name,
+        child {
+          name,
+          'parentName': ^.name
+        }
+      }
+    `;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        name: string | null;
+        child: {
+          name: Ref_9R9gymHBbUQvcqZ4;
+          parentName: string | null;
+        };
+      }[];
+
+      type Ref_9R9gymHBbUQvcqZ4 = string | null;
+      "
+    `);
+  });
 });
