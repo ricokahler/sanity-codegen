@@ -49,6 +49,29 @@ describe('transformGroqToStructure', () => {
     `);
   });
 
+  test('element access', () => {
+    const schema = [
+      {
+        name: 'doc',
+        type: 'document',
+        fields: [
+          {
+            name: 'array',
+            type: 'array',
+            of: [{ name: 'number', type: 'number' }],
+          },
+        ],
+      },
+    ];
+
+    const query = `(*[_type == 'doc'][0].array[])[0]`;
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = number | null;
+      "
+    `);
+  });
+
   test('nested attribute access', () => {
     const schema = [
       {
