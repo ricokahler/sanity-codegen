@@ -15,8 +15,6 @@ function createIsStructure({ accept, mode }: Params) {
     node: Sanity.GroqCodegen.StructureNode,
     visitedNodes: Set<string>,
   ): boolean {
-    if (cache.has(node.hash)) return cache.get(node.hash)!;
-
     if (node.type === 'Lazy') {
       const got = node.get();
       if (visitedNodes.has(got.hash)) return false;
@@ -27,13 +25,15 @@ function createIsStructure({ accept, mode }: Params) {
       return node.children[mode]((child) => is(child, visitedNodes));
     }
 
-    const result = !!accept(node);
-    cache.set(node.hash, result);
-    return result;
+    return !!accept(node);
   }
 
   return function isStructure(structure: Sanity.GroqCodegen.StructureNode) {
-    return is(structure, new Set());
+    if (cache.has(structure.hash)) return cache.get(structure.hash)!;
+    const result = is(structure, new Set());
+
+    cache.set(structure.hash, result);
+    return result;
   };
 }
 
@@ -65,4 +65,9 @@ export const isStructureNull = createIsStructure({
 export const isStructureOptional = createIsStructure({
   accept: (n) => (n.type === 'Unknown' ? false : n.canBeOptional),
   mode: 'some',
+});
+
+export const isStructureObject = createIsStructure({
+  accept: (n) => n.type === 'Object',
+  mode: 'every',
 });
