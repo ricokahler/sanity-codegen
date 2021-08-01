@@ -143,7 +143,7 @@ describe('transformGroqToStructure', () => {
           _type: \\"book\\";
           _id: string;
           title?: string;
-          author?: Sanity.Reference<Ref_f660DNqVmvjOxRqf>;
+          author?: Sanity.Reference<Ref_KzFNrrTOF4EAqoE8>;
         }[];
         authors: {
           _type: \\"author\\";
@@ -152,7 +152,7 @@ describe('transformGroqToStructure', () => {
         }[];
       };
 
-      type Ref_f660DNqVmvjOxRqf =
+      type Ref_KzFNrrTOF4EAqoE8 =
         | {
             _type: \\"author\\";
             _id: string;
@@ -160,7 +160,7 @@ describe('transformGroqToStructure', () => {
           }
         | undefined;
       "
-      `);
+    `);
   });
 
   test('filter with ands', () => {
@@ -241,7 +241,7 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        author?: {
+        author: {
           _type: \\"author\\";
           _id: string;
           name?: {
@@ -573,12 +573,12 @@ describe('transformGroqToStructure', () => {
       "type Query = {
         name: string | null;
         child: {
-          name: Ref_kBJnT9NNls99Pl23;
+          name: Ref_CIEVexfrSLq1v8Jp;
           parentName: string | null;
         };
       }[];
 
-      type Ref_kBJnT9NNls99Pl23 = string | null;
+      type Ref_CIEVexfrSLq1v8Jp = string | null;
       "
     `);
   });

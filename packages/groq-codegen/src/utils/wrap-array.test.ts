@@ -77,7 +77,7 @@ describe('wrapArray', () => {
     const lazyNode = createStructure({
       type: 'Lazy',
       get: () => andStructure,
-      hashInput: ['Lazy', stringStructure.hash],
+      hashInput: ['TransformLazy', stringStructure.hash],
     });
 
     const arrayStructure = wrapArray(lazyNode, {

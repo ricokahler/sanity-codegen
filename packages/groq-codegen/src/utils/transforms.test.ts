@@ -397,7 +397,7 @@ describe('unwrapArray', () => {
     const lazyStructure = createStructure({
       type: 'Lazy',
       get: () => andStructure,
-      hashInput: ['Lazy', andStructure.hash],
+      hashInput: ['TransformLazyB', andStructure.hash],
     });
 
     const unwrappedStructure = unwrapArray(lazyStructure);
@@ -481,7 +481,7 @@ describe('wrapArray', () => {
     const lazyNode = createStructure({
       type: 'Lazy',
       get: () => andStructure,
-      hashInput: ['Lazy', stringStructure.hash],
+      hashInput: ['TransformLazyA', stringStructure.hash],
     });
 
     const arrayStructure = wrapArray(lazyNode, {

@@ -337,11 +337,11 @@ describe('reduceObjectStructures', () => {
 
     expect(prettier.format(result, { parser: 'typescript' }))
       .toMatchInlineSnapshot(`
-      "type Query = Ref_bw4XhxB1IrPNJJSi;
+      "type Query = Ref_eY40ckHgc1aBLiUT;
 
-      type Ref_bw4XhxB1IrPNJJSi = Ref_6dh68KfWXVQa4yvb;
+      type Ref_eY40ckHgc1aBLiUT = Ref_KnGUCqqw6xTWoHJJ;
 
-      type Ref_6dh68KfWXVQa4yvb = {
+      type Ref_KnGUCqqw6xTWoHJJ = {
         foo: string;
         bar: number;
       };

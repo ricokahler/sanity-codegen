@@ -125,18 +125,18 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         _type: \\"jsonDoc\\";
         _id: string;
-        jsonLike?: Ref_OPCr9vJ2bTocbVvm;
+        jsonLike?: Ref_DlZ0e6uttB2pCr6l;
       }[];
 
-      type Ref_OPCr9vJ2bTocbVvm = (
+      type Ref_DlZ0e6uttB2pCr6l = (
         | string
         | number
         | boolean
-        | Ref_OPCr9vJ2bTocbVvm[]
+        | Ref_DlZ0e6uttB2pCr6l[]
         | {
             properties?: {
               key?: string;
-              value?: Ref_OPCr9vJ2bTocbVvm;
+              value?: Ref_DlZ0e6uttB2pCr6l;
             }[];
           }
       )[];
@@ -165,29 +165,29 @@ describe('transformStructureToTs', () => {
     const result = transformStructureToTs({ structure });
 
     expect(print(result)).toMatchInlineSnapshot(`
-      "type Everything = (
-        | {
-            _type: \\"book\\";
-            _id: string;
-            title?: string;
-            author?: Sanity.Reference<Ref_f660DNqVmvjOxRqf>;
-          }
-        | {
-            _type: \\"author\\";
-            _id: string;
-            name?: string;
-          }
-      )[];
+"type Everything = (
+  | {
+      _type: \\"book\\";
+      _id: string;
+      title?: string;
+      author?: Sanity.Reference<Ref_KzFNrrTOF4EAqoE8>;
+    }
+  | {
+      _type: \\"author\\";
+      _id: string;
+      name?: string;
+    }
+)[];
 
-      type Ref_f660DNqVmvjOxRqf =
-        | {
-            _type: \\"author\\";
-            _id: string;
-            name?: string;
-          }
-        | undefined;
-      "
-      `);
+type Ref_KzFNrrTOF4EAqoE8 =
+  | {
+      _type: \\"author\\";
+      _id: string;
+      name?: string;
+    }
+  | undefined;
+"
+`);
   });
 
   it('correctly encodes `undefined`s and `null`s', () => {
