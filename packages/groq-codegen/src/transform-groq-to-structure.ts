@@ -1,5 +1,7 @@
 import * as Groq from 'groq-js/dist/nodeTypes';
 import {
+  addNull,
+  removeOptional,
   narrowStructure,
   createStructure,
   isStructureOptional,
@@ -109,7 +111,7 @@ export function transformGroqToStructure({
         return createStructure({ type: 'Unknown' });
       }
 
-      return unwrapArray(baseResult);
+      return addNull(removeOptional(unwrapArray(baseResult)));
     }
 
     case 'Projection': {
