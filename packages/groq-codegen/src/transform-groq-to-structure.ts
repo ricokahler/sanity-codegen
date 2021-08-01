@@ -318,13 +318,13 @@ export function transformGroqToStructure({
       const leftResult = transformGroqToStructure({
         node: node.left,
         normalizedSchema,
-        scopes: scopes,
+        scopes,
       });
 
       const rightResult = transformGroqToStructure({
         node: node.right,
         normalizedSchema,
-        scopes: scopes,
+        scopes,
       });
 
       // TODO: could warn in these cases
@@ -341,6 +341,24 @@ export function transformGroqToStructure({
         canBeNull: isStructureNull(leftResult) || isStructureNull(rightResult),
         canBeOptional:
           isStructureOptional(leftResult) || isStructureOptional(rightResult),
+      });
+    }
+
+    case 'Not': {
+      const baseResult = transformGroqToStructure({
+        node: node.base,
+        scopes,
+        normalizedSchema,
+      });
+
+      if (!isStructureBoolean(baseResult)) {
+        return createStructure({ type: 'Unknown' });
+      }
+
+      return createStructure({
+        type: 'Boolean',
+        canBeNull: isStructureNull(baseResult),
+        canBeOptional: isStructureOptional(baseResult),
       });
     }
 

@@ -415,12 +415,12 @@ describe('transformGroqToStructure', () => {
   });
 
   test('boolean operators', () => {
-    const query = `{'foo': true && true || (false || true)}`;
-
-    expect(print(query, [])).toMatchInlineSnapshot(`
-      "type Query = {
-        foo: boolean;
-      };
+    expect(print('true && true || (false || true)', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
+      "
+    `);
+    expect(print('!false', [])).toMatchInlineSnapshot(`
+      "type Query = boolean;
       "
     `);
   });
