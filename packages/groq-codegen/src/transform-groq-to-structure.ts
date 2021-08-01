@@ -168,7 +168,14 @@ export function transformGroqToStructure({
                   type: 'Object',
                   canBeNull: false,
                   canBeOptional: false,
-                  properties: [{ key: attribute.name, value }],
+                  properties: [
+                    {
+                      key: attribute.name,
+                      value: isStructureOptional(value)
+                        ? addNull(removeOptional(value))
+                        : value,
+                    },
+                  ],
                 });
 
                 return reduceObjectStructures(acc, singlePropertyObject);

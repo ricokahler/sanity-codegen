@@ -248,7 +248,7 @@ describe('transformGroqToStructure', () => {
             givenName?: string;
             surname?: string;
           };
-        };
+        } | null;
       }[];
       "
     `);
