@@ -74,11 +74,11 @@ describe('isStructureArray', () => {
                 createStructure({
                   type: 'Lazy',
                   get: () => selfReferencingStructure,
-                  hashInput: ['testing', '1'],
+                  hashInput: ['isStructureTesting', '1'],
                 }),
               ],
             }),
-          hashInput: ['testing', '2'],
+          hashInput: ['isStructureTesting', '2'],
         }),
       ],
     });

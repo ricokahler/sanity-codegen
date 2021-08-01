@@ -24,14 +24,14 @@ describe('generateGroqTypes', () => {
             author?: {
               name?: string;
             };
-            description?: Ref_caMDjBkRyWfDFcqV;
+            description?: Ref_HJH7omUg5em8a4Ad;
           }[];
           type BookAuthor = {
             name?: string;
           } | null;
           type BookTitles = (string | null)[];
 
-          type Ref_caMDjBkRyWfDFcqV = {
+          type Ref_HJH7omUg5em8a4Ad = {
             _key: string;
             _type: \\"block\\";
             children: {

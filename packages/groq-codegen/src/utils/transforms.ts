@@ -19,8 +19,7 @@ export function createTransform<R extends LeafNode>({
     const cache = new Map<string, StructureNode>();
 
     return (node: StructureNode) => {
-      // TODO: figure out why caching isn't working
-      // if (cache.has(node.hash)) return cache.get(node.hash)!;
+      if (cache.has(node.hash)) return cache.get(node.hash)!;
       const result = fn(node);
       cache.set(node.hash, result);
       return result;
@@ -53,13 +52,13 @@ export function createTransform<R extends LeafNode>({
 export const addNull = createTransform({
   namespace: 'AddNull',
   accept: (node) => node.type !== 'Unknown',
-  transform: (node) => ({ ...node, canBeNull: true }),
+  transform: (node) => createStructure({ ...node, canBeNull: true }),
 });
 
 export const removeOptional = createTransform({
   namespace: 'RemoveOptional',
   accept: (node) => node.type !== 'Unknown',
-  transform: (node) => ({ ...node, canBeOptional: false }),
+  transform: (node) => createStructure({ ...node, canBeOptional: false }),
 });
 
 const _unwrapArray = createTransform<
