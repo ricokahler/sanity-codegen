@@ -333,6 +333,40 @@ describe('transformGroqToStructure', () => {
     `);
   });
 
+  test('select operator', () => {
+    const query = `
+      *[_type == 'movie'] {
+        ...,
+        "popularity": select(
+          popularity > 20 => "high",
+          popularity > 10 => "medium",
+          "low"
+        )
+      }
+    `;
+
+    const schema = [
+      {
+        name: 'movie',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'popularity', type: 'number' },
+        ],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _type: \\"movie\\";
+        _id: string;
+        title?: string;
+        popularity: \\"high\\" | \\"medium\\" | \\"low\\";
+      }[];
+      "
+    `);
+  });
+
   test('grouping', () => {
     const query = `
       ({ 'foo': *[_type == 'book'].name }).foo
