@@ -643,6 +643,21 @@ export function transformGroqToStructure({
           });
         }
 
+        case 'identity': {
+          if (node.args.length) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          // https://www.sanity.io/docs/groq-functions#ba5eef75ed4a
+          return createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: false,
+            value: null,
+          });
+        }
+
         default: {
           console.warn(`Function "${node.name}" is not currently supported.`);
           return createStructure({ type: 'Unknown' });

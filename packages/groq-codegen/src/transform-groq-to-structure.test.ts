@@ -790,4 +790,13 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('identity', () => {
+    const query = `identity()`;
+
+    expect(print(query, [])).toMatchInlineSnapshot(`
+      "type Query = string;
+      "
+    `);
+  });
 });
