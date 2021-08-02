@@ -685,8 +685,45 @@ export function transformGroqToStructure({
           });
         }
 
+        case 'lower':
+        case 'upper': {
+          if (node.args.length !== 1) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          const [base] = node.args;
+          const baseResult = transformGroqToStructure({
+            node: base,
+            scopes,
+            normalizedSchema,
+          });
+
+          if (!isStructureString(baseResult)) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'String',
+            canBeNull:
+              isStructureNull(baseResult) || isStructureOptional(baseResult),
+            canBeOptional: false,
+            value:
+              baseResult.type !== 'String'
+                ? null
+                : typeof baseResult.value !== 'string'
+                ? null
+                : node.name === 'upper'
+                ? baseResult.value.toUpperCase()
+                : baseResult.value.toLowerCase(),
+          });
+        }
+
         default: {
-          console.warn(`Function "${node.name}" is not currently supported.`);
+          console.warn(
+            `Function "${node.name}" is not currently supported in the given context. Please open an issue.`,
+          );
           return createStructure({ type: 'Unknown' });
         }
       }

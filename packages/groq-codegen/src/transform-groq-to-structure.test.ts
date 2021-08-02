@@ -822,4 +822,15 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('upper/lower', () => {
+    expect(print(`upper('test')`, [])).toMatchInlineSnapshot(`
+      "type Query = \\"TEST\\";
+      "
+    `);
+    expect(print(`lower('TEST')`, [])).toMatchInlineSnapshot(`
+      "type Query = \\"test\\";
+      "
+    `);
+  });
 });
