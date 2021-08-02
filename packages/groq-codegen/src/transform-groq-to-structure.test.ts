@@ -716,4 +716,36 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('scoring', () => {
+    const query = `
+      *[_type == "post"] 
+        | score(
+          title match "GROQ" || description match "GROQ",
+          boost(movieRating > 8, 3)
+        ) 
+        | order(_score desc) 
+        { _score, title }
+    `;
+
+    const schema = [
+      {
+        name: 'post',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'description', type: 'string' },
+          { name: 'movieRating', type: 'number' },
+        ],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _score: number;
+        title: string | null;
+      }[];
+      "
+    `);
+  });
 });

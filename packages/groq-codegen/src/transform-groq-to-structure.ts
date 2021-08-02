@@ -16,6 +16,7 @@ import {
   wrapArray,
   unwrapReferences,
   reduceObjectStructures,
+  isStructureObject,
 } from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 
@@ -598,6 +599,55 @@ export function transformGroqToStructure({
           });
 
           return baseResult;
+        }
+        case 'score': {
+          const baseResult = transformGroqToStructure({
+            node: node.base,
+            scopes,
+            normalizedSchema,
+          });
+
+          const baseIsArray = isStructureArray(baseResult);
+
+          if (!baseIsArray) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          const arrayOf = unwrapArray(baseResult);
+          if (!isStructureObject(arrayOf)) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          const objectWithUnderscoreScore = createStructure({
+            type: 'Object',
+            canBeNull: false,
+            canBeOptional: false,
+            properties: [
+              {
+                key: '_score',
+                value: createStructure({
+                  type: 'Number',
+                  canBeNull: false,
+                  canBeOptional: false,
+                  value: null,
+                }),
+              },
+            ],
+          });
+
+          return wrapArray(
+            reduceObjectStructures(
+              arrayOf,
+              objectWithUnderscoreScore,
+              'replace',
+            ),
+            {
+              canBeNull: isStructureNull(baseResult),
+              canBeOptional: isStructureOptional(baseResult),
+            },
+          );
         }
         default: {
           console.warn(
