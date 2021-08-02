@@ -102,6 +102,13 @@ export function transformGroqToStructure({
       return parentScope || createStructure({ type: 'Unknown' });
     }
 
+    case 'Parameter': {
+      // Not very easy to know what the intended type of a parameter is so we
+      // convert it to `Unknown`. For some cases (such as filtering), this
+      // shouldn't have an impact on the resulting types
+      return createStructure({ type: 'Unknown' });
+    }
+
     case 'AccessElement': {
       const baseResult = transformGroqToStructure({
         node: node.base,
@@ -840,6 +847,7 @@ export function transformGroqToStructure({
     }
 
     default: {
+      // @ts-expect-error Should never happen because we support all nodes
       console.warn(`"${node.type}" not implemented yet.`);
 
       return createStructure({ type: 'Unknown' });

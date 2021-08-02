@@ -862,4 +862,42 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('parameter', () => {
+    const query = `*[_type == 'movie' && slug.current == $slug] {
+      'inputSlug': $slug,
+      ...,
+    }`;
+
+    const schema = [
+      {
+        name: 'movie',
+        type: 'document',
+        fields: [
+          { name: 'slug', type: 'slug' },
+          { name: 'title', type: 'string' },
+        ],
+      },
+      {
+        name: 'person',
+        type: 'document',
+        fields: [{ name: 'name', type: 'string' }],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _id: string;
+        _type: \\"movie\\";
+        inputSlug: unknown;
+        slug?: {
+          _type: \\"slug\\";
+          current?: string;
+          source?: string;
+        };
+        title?: string;
+      }[];
+      "
+    `);
+  });
 });
