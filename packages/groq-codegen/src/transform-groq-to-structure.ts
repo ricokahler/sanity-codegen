@@ -629,6 +629,20 @@ export function transformGroqToStructure({
           });
         }
 
+        case 'defined':
+        case 'references': {
+          if (node.args.length !== 1) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'Boolean',
+            canBeNull: false,
+            canBeOptional: false,
+          });
+        }
+
         default: {
           console.warn(`Function "${node.name}" is not currently supported.`);
           return createStructure({ type: 'Unknown' });
