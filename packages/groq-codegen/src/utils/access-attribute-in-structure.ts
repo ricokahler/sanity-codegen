@@ -47,7 +47,8 @@ export function accessAttributeInStructure(
       return createStructure({
         type: 'Lazy',
         get: () => accessAttributeInStructure(node.get(), attributeName),
-        hashInput: ['AccessAttributeInStructure', node.hash],
+        hashNamespace: 'AccessAttributeInStructure',
+        hashInput: node.hash,
       });
     }
     case 'Reference': {

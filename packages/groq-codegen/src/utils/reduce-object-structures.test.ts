@@ -343,7 +343,8 @@ describe('reduceObjectStructures', () => {
     const lazyStructureA = createStructure({
       type: 'Lazy',
       get: () => objectStructureA,
-      hashInput: ['LazyA', objectStructureA.hash],
+      hashNamespace: 'ReduceObjectStructuresTest',
+      hashInput: objectStructureA.hash,
     });
 
     const objectStructureB = createStructure({
@@ -366,7 +367,8 @@ describe('reduceObjectStructures', () => {
     const lazyStructureB = createStructure({
       type: 'Lazy',
       get: () => objectStructureB,
-      hashInput: ['LazyB', objectStructureB.hash],
+      hashNamespace: 'ReduceObjectStructuresTest',
+      hashInput: objectStructureB.hash,
     });
 
     const combinedStructure = reduceObjectStructures(
@@ -392,15 +394,15 @@ describe('reduceObjectStructures', () => {
 
     expect(prettier.format(result, { parser: 'typescript' }))
       .toMatchInlineSnapshot(`
-      "type Query = Ref_eY40ckHgc1aBLiUT;
+        "type Query = Ref_E3PCrAmCZKcFJzGW;
 
-      type Ref_eY40ckHgc1aBLiUT = Ref_KnGUCqqw6xTWoHJJ;
+        type Ref_E3PCrAmCZKcFJzGW = Ref_ZvbaUPszlbsBoyFW;
 
-      type Ref_KnGUCqqw6xTWoHJJ = {
-        foo: string;
-        bar: number;
-      };
-      "
-    `);
+        type Ref_ZvbaUPszlbsBoyFW = {
+          foo: string;
+          bar: number;
+        };
+        "
+      `);
   });
 });

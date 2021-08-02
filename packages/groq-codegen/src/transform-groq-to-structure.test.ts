@@ -143,7 +143,7 @@ describe('transformGroqToStructure', () => {
           _type: \\"book\\";
           _id: string;
           title?: string;
-          author?: Sanity.Reference<Ref_KzFNrrTOF4EAqoE8>;
+          author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
         }[];
         authors: {
           _type: \\"author\\";
@@ -152,7 +152,7 @@ describe('transformGroqToStructure', () => {
         }[];
       };
 
-      type Ref_KzFNrrTOF4EAqoE8 =
+      type Ref_V6v9ba7CZlBTDAJv =
         | {
             _type: \\"author\\";
             _id: string;
@@ -683,17 +683,17 @@ describe('transformGroqToStructure', () => {
     `;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-      "type Query = {
-        name: string | null;
-        child: {
-          name: Ref_CIEVexfrSLq1v8Jp;
-          parentName: string | null;
-        };
-      }[];
+"type Query = {
+  name: string | null;
+  child: {
+    name: Ref_SK2KgD2fYguV6rRI;
+    parentName: string | null;
+  };
+}[];
 
-      type Ref_CIEVexfrSLq1v8Jp = string | null;
-      "
-    `);
+type Ref_SK2KgD2fYguV6rRI = string | null;
+"
+`);
   });
 
   test('ordering', () => {

@@ -355,7 +355,8 @@ function narrowOr(
       return createStructure({
         type: 'Lazy',
         get: () => narrowOr(node.get(), condition),
-        hashInput: ['NarrowOr', node.hash],
+        hashNamespace: 'NarrowOr',
+        hashInput: node.hash,
       });
     }
     default: {
@@ -380,7 +381,8 @@ function narrow(
       return createStructure({
         type: 'Lazy',
         get: () => narrow(node.get(), condition),
-        hashInput: ['Narrow', node.hash],
+        hashNamespace: 'Narrow',
+        hashInput: node.hash,
       });
     }
 
