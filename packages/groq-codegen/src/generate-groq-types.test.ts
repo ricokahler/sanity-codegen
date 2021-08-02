@@ -18,13 +18,13 @@ describe('generateGroqTypes', () => {
       declare namespace Sanity {
         namespace Queries {
           type AllBooks = {
-            _type: \\"book\\";
             _id: string;
-            title?: string;
+            _type: \\"book\\";
             author?: {
               name?: string;
             };
             description?: Ref_nuzgEiYXYVXpHKNC;
+            title?: string;
           }[];
           type BookAuthor = {
             name?: string;

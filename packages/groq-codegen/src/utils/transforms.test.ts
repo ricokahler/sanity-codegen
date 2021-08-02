@@ -78,8 +78,8 @@ describe('addNull', () => {
         {
           type: 'And',
           children: [
-            { type: 'Number', canBeNull: true },
             { type: 'Boolean', canBeNull: true },
+            { type: 'Number', canBeNull: true },
           ],
         },
         {
@@ -104,6 +104,12 @@ describe('addNull', () => {
       type: 'And',
       children: [
         createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: '9e4fd28c8c0c590f',
+        }),
+        createStructure({
           type: 'Lazy',
           get: () => selfReferencingStructure,
           hashNamespace: 'TransformsTest',
@@ -120,7 +126,7 @@ describe('addNull', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"Vh6jCmRcUKLX2P1H"`);
+    expect(result.hash).toMatchInlineSnapshot(`"1CEICo1x0S7FGJqQ"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });
@@ -165,16 +171,11 @@ describe('unwrapReferences', () => {
 
     const unwrappedReference = unwrapReferences(referenceNode);
     expect(unwrappedReference).toMatchObject({
-      type: 'Or',
-      children: [
-        {
-          type: 'Object',
-          properties: [
-            { key: '_type', value: { value: 'author' } },
-            { key: '_id', value: { type: 'String' } },
-            { key: 'name', value: { type: 'String' } },
-          ],
-        },
+      type: 'Object',
+      properties: [
+        { key: '_type', value: { value: 'author' } },
+        { key: '_id', value: { type: 'String' } },
+        { key: 'name', value: { type: 'String' } },
       ],
     });
   });
@@ -184,12 +185,18 @@ describe('unwrapReferences', () => {
       type: 'String',
       canBeNull: false,
       canBeOptional: false,
-      value: null,
+      value: '05eee5bdc16d6c78',
     });
 
     const andStructure = createStructure({
       type: 'And',
       children: [
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'f22c57c6c053f097',
+        }),
         createStructure({
           type: 'Lazy',
           get: () => stringStructure,
@@ -210,8 +217,22 @@ describe('unwrapReferences', () => {
       type: 'Or',
       children: [
         createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'b30b38b613d4aa02',
+        }),
+        createStructure({
           type: 'And',
-          children: [referenceStructure],
+          children: [
+            createStructure({
+              type: 'String',
+              canBeNull: false,
+              canBeOptional: false,
+              value: '63b72f9656e6329e',
+            }),
+            referenceStructure,
+          ],
         }),
       ],
     });
@@ -226,12 +247,18 @@ describe('unwrapReferences', () => {
     const unwrapped = unwrapReferences(
       lazyStructure,
     ) as Sanity.GroqCodegen.LazyNode;
+
     expect(unwrapped.get()).toMatchObject({
       type: 'Or',
       children: [
+        { type: 'String', value: 'b30b38b613d4aa02' },
         {
           type: 'And',
-          children: [{ type: 'And', children: [{ type: 'String' }] }],
+          children: [
+            { type: 'String', value: '63b72f9656e6329e' },
+            { type: 'String', value: '05eee5bdc16d6c78' },
+            { type: 'String', value: 'f22c57c6c053f097' },
+          ],
         },
       ],
     });
@@ -528,12 +555,9 @@ describe('removeOptional', () => {
     expect(removeOptional(structure)).toMatchObject({
       type: 'And',
       children: [
-        { type: 'Unknown' },
         { type: 'String', canBeOptional: false },
-        {
-          type: 'Or',
-          children: [{ type: 'Number', canBeOptional: false }],
-        },
+        { type: 'Number', canBeOptional: false },
+        { type: 'Unknown' },
       ],
     });
   });

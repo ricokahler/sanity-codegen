@@ -16,13 +16,8 @@ describe('transformSchemaToStructure', () => {
     expect(structure).toMatchObject({
       type: 'Array',
       of: {
-        type: 'Or',
-        children: [
-          {
-            type: 'Object',
-            properties: [{ key: '_type' }, { key: '_id' }, { key: 'title' }],
-          },
-        ],
+        type: 'Object',
+        properties: [{ key: '_type' }, { key: '_id' }, { key: 'title' }],
       },
     });
   });
@@ -54,31 +49,19 @@ describe('transformSchemaToStructure', () => {
     expect(structure).toMatchObject({
       type: 'Array',
       of: {
-        type: 'Or',
-        children: [
+        type: 'Object',
+        properties: [
+          { key: '_type', value: { type: 'String', value: 'book' } },
+          { key: '_id', value: { type: 'String' } },
           {
-            type: 'Object',
-            properties: [
-              { key: '_type', value: { type: 'String', value: 'book' } },
-              { key: '_id', value: { type: 'String' } },
-              {
-                key: 'authors',
-                value: {
-                  type: 'Array',
-                  of: {
-                    type: 'Or',
-                    children: [
-                      {
-                        type: 'Object',
-                        properties: [
-                          { key: 'name', value: { type: 'String' } },
-                        ],
-                      },
-                    ],
-                  },
-                },
+            key: 'authors',
+            value: {
+              type: 'Array',
+              of: {
+                type: 'Object',
+                properties: [{ key: 'name', value: { type: 'String' } }],
               },
-            ],
+            },
           },
         ],
       },
@@ -123,86 +106,64 @@ describe('transformSchemaToStructure', () => {
     expect(structure).toMatchObject({
       type: 'Array',
       of: {
-        type: 'Or',
-        children: [
+        type: 'Object',
+        properties: [
+          { key: '_type', value: { type: 'String', value: 'book' } },
+          { key: '_id', value: { type: 'String' } },
+          { key: 'title', value: { type: 'String' } },
           {
-            type: 'Object',
-            properties: [
-              { key: '_type', value: { type: 'String', value: 'book' } },
-              { key: '_id', value: { type: 'String' } },
-              { key: 'title', value: { type: 'String' } },
-              {
-                key: 'description',
-                value: {
-                  type: 'Array',
-                  of: {
-                    type: 'Or',
-                    children: [
-                      {
-                        type: 'Object',
-                        properties: [
-                          { key: '_key', value: { type: 'String' } },
+            key: 'description',
+            value: {
+              type: 'Array',
+              of: {
+                type: 'Object',
+                properties: [
+                  { key: '_key', value: { type: 'String' } },
+                  { key: '_type', value: { type: 'String', value: 'block' } },
+                  {
+                    key: 'children',
+                    value: {
+                      type: 'Array',
+                      of: {
+                        type: 'Or',
+                        children: [
                           {
-                            key: '_type',
-                            value: { type: 'String', value: 'block' },
+                            type: 'Object',
+                            properties: [
+                              { key: 'num', value: { type: 'Number' } },
+                            ],
                           },
                           {
-                            key: 'children',
-                            value: {
-                              type: 'Array',
-                              of: {
-                                type: 'Or',
-                                children: [
-                                  {
-                                    type: 'Object',
-                                    properties: [
-                                      {
-                                        key: '_key',
-                                        value: { type: 'String' },
-                                      },
-                                      {
-                                        key: '_type',
-                                        value: {
-                                          type: 'String',
-                                          value: 'span',
-                                        },
-                                      },
-                                      {
-                                        key: 'marks',
-                                        value: {
-                                          type: 'Array',
-                                          of: { type: 'Unknown' },
-                                        },
-                                      },
-                                      {
-                                        key: 'text',
-                                        value: { type: 'String' },
-                                      },
-                                    ],
-                                  },
-                                  { type: 'Lazy' },
-                                  {
-                                    type: 'Object',
-                                    properties: [
-                                      { key: 'num', value: { type: 'Number' } },
-                                    ],
-                                  },
-                                ],
+                            type: 'Object',
+                            properties: [
+                              { key: '_key', value: { type: 'String' } },
+                              {
+                                key: '_type',
+                                value: { type: 'String', value: 'span' },
                               },
-                            },
+                              {
+                                key: 'marks',
+                                value: {
+                                  type: 'Array',
+                                  of: { type: 'Unknown' },
+                                },
+                              },
+                              { key: 'text', value: { type: 'String' } },
+                            ],
                           },
-                          {
-                            key: 'markDefs',
-                            value: { type: 'Array', of: { type: 'Unknown' } },
-                          },
-                          { key: 'style', value: { type: 'String' } },
+                          { type: 'Lazy' },
                         ],
                       },
-                    ],
+                    },
                   },
-                },
+                  {
+                    key: 'markDefs',
+                    value: { type: 'Array', of: { type: 'Unknown' } },
+                  },
+                  { key: 'style', value: { type: 'String' } },
+                ],
               },
-            ],
+            },
           },
         ],
       },

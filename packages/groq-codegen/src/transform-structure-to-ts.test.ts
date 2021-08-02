@@ -59,20 +59,20 @@ describe('transformStructureToTs', () => {
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = (
         | {
-            _type: \\"book\\";
             _id: string;
-            title?: string;
-            author?: {
-              name?: string;
-            };
-          }
-        | {
             _type: \\"movie\\";
-            _id: string;
-            title?: string;
             leadActor?: {
               name?: string;
             };
+            title?: string;
+          }
+        | {
+            _id: string;
+            _type: \\"book\\";
+            author?: {
+              name?: string;
+            };
+            title?: string;
           }
       )[];
       "
@@ -123,22 +123,22 @@ describe('transformStructureToTs', () => {
 
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
-        _type: \\"jsonDoc\\";
         _id: string;
+        _type: \\"jsonDoc\\";
         jsonLike?: Ref_pxNMb9L8LUZKppbq;
       }[];
 
       type Ref_pxNMb9L8LUZKppbq = (
-        | string
-        | number
-        | boolean
-        | Ref_pxNMb9L8LUZKppbq[]
         | {
             properties?: {
               key?: string;
               value?: Ref_pxNMb9L8LUZKppbq;
             }[];
           }
+        | boolean
+        | string
+        | number
+        | Ref_pxNMb9L8LUZKppbq[]
       )[];
       "
     `);
@@ -167,22 +167,22 @@ describe('transformStructureToTs', () => {
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = (
         | {
-            _type: \\"book\\";
             _id: string;
-            title?: string;
-            author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
+            _type: \\"author\\";
+            name?: string;
           }
         | {
-            _type: \\"author\\";
             _id: string;
-            name?: string;
+            _type: \\"book\\";
+            author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
+            title?: string;
           }
       )[];
 
       type Ref_V6v9ba7CZlBTDAJv =
         | {
-            _type: \\"author\\";
             _id: string;
+            _type: \\"author\\";
             name?: string;
           }
         | undefined;
@@ -245,10 +245,10 @@ describe('transformStructureToTs', () => {
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
         a: {
-          _type: \\"requiredDoc\\";
           _id: string;
-          requiredString: string;
+          _type: \\"requiredDoc\\";
           optionalString?: string;
+          requiredString: string;
         }[];
         b: {
           foo: string;

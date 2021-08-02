@@ -41,8 +41,8 @@ describe('transformGroqToStructure', () => {
     const result = print(query, schema);
     expect(result).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"book\\";
         _id: string;
+        _type: \\"book\\";
         name?: string;
       }[];
       "
@@ -106,8 +106,8 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        title: string | null;
         authorGivenName: string | null;
+        title: string | null;
       }[];
       "
     `);
@@ -139,23 +139,23 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        books: {
-          _type: \\"book\\";
-          _id: string;
-          title?: string;
-          author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
-        }[];
         authors: {
-          _type: \\"author\\";
           _id: string;
+          _type: \\"author\\";
           name?: string;
+        }[];
+        books: {
+          _id: string;
+          _type: \\"book\\";
+          author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
+          title?: string;
         }[];
       };
 
       type Ref_V6v9ba7CZlBTDAJv =
         | {
-            _type: \\"author\\";
             _id: string;
+            _type: \\"author\\";
             name?: string;
           }
         | undefined;
@@ -182,11 +182,11 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"movie\\";
         _id: string;
-        title?: string;
+        _type: \\"movie\\";
         popularity?: number;
         releaseDate?: string;
+        title?: string;
       }[];
       "
     `);
@@ -242,8 +242,8 @@ describe('transformGroqToStructure', () => {
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         author: {
-          _type: \\"author\\";
           _id: string;
+          _type: \\"author\\";
           name?: {
             givenName?: string;
             surname?: string;
@@ -307,26 +307,26 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"movie\\";
         _id: string;
-        releaseDate: string;
-        popularity: number;
-        rating: number;
-        kind?: \\"new\\" | \\"popular\\";
-        screenings?: {
-          _type: \\"screening\\";
+        _type: \\"movie\\";
+        awards?: {
           _id: string;
-          screeningTitle: string;
+          _type: \\"award\\";
+          awardTitle: string;
         }[];
+        kind?: \\"new\\" | \\"popular\\";
         news?: {
-          _type: \\"news\\";
           _id: string;
+          _type: \\"news\\";
           newsTitle: string;
         }[];
-        awards?: {
-          _type: \\"award\\";
+        popularity: number;
+        rating: number;
+        releaseDate: string;
+        screenings?: {
           _id: string;
-          awardTitle: string;
+          _type: \\"screening\\";
+          screeningTitle: string;
         }[];
       }[];
       "
@@ -358,10 +358,10 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"movie\\";
         _id: string;
+        _type: \\"movie\\";
+        popularity: \\"medium\\" | \\"high\\" | \\"low\\";
         title?: string;
-        popularity: \\"high\\" | \\"medium\\" | \\"low\\";
       }[];
       "
     `);
@@ -405,8 +405,8 @@ describe('transformGroqToStructure', () => {
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         firstThreeBooks: {
-          _type: \\"book\\";
           _id: string;
+          _type: \\"book\\";
           title?: string;
         }[];
         firstThreeTitles: (string | null)[];
@@ -476,11 +476,11 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"book\\";
         _id: string;
-        title?: string;
+        _type: \\"book\\";
         author: string | null;
         publishDate?: string;
+        title?: string;
       }[];
       "
     `);
@@ -527,10 +527,17 @@ describe('transformGroqToStructure', () => {
       },
     ];
 
-    const query = `[...*[_type == 'book'].title, ...*[_type == 'book'].slug.current]`;
+    const query = `[...*[_type == 'book'] { title }, ...*[_type == 'book'] { 'slug': slug.current }]`;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-      "type Query = ((string | null) | (string | null))[];
+      "type Query = (
+        | {
+            title: string | null;
+          }
+        | {
+            slug: string | null;
+          }
+      )[];
       "
     `);
   });
@@ -540,11 +547,11 @@ describe('transformGroqToStructure', () => {
 
     expect(print(query, [])).toMatchInlineSnapshot(`
       "type Query = {
-        hello: \\"world\\";
         foo: {
           bar: number;
           beep: boolean;
         };
+        hello: \\"world\\";
       };
       "
     `);
@@ -683,17 +690,17 @@ describe('transformGroqToStructure', () => {
     `;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-"type Query = {
-  name: string | null;
-  child: {
-    name: Ref_SK2KgD2fYguV6rRI;
-    parentName: string | null;
-  };
-}[];
+      "type Query = {
+        child: {
+          name: Ref_SK2KgD2fYguV6rRI;
+          parentName: string | null;
+        };
+        name: string | null;
+      }[];
 
-type Ref_SK2KgD2fYguV6rRI = string | null;
-"
-`);
+      type Ref_SK2KgD2fYguV6rRI = string | null;
+      "
+    `);
   });
 
   test('ordering', () => {
@@ -709,8 +716,8 @@ type Ref_SK2KgD2fYguV6rRI = string | null;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"movie\\";
         _id: string;
+        _type: \\"movie\\";
         title?: string;
       }[];
       "

@@ -1,6 +1,112 @@
 import { createStructure } from './create-structure';
 
-describe('createStructureNode', () => {
+describe('simplify', () => {
+  it('de-dupes And and Or structures', () => {
+    const andStructure = createStructure({
+      type: 'And',
+      children: [
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'one',
+        }),
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'one',
+        }),
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'two',
+        }),
+      ],
+    });
+
+    expect(andStructure).toMatchObject({
+      type: 'And',
+      children: [
+        { type: 'String', value: 'one' },
+        { type: 'String', value: 'two' },
+      ],
+    });
+  });
+
+  it('flattens And and Or structures', () => {
+    const andStructure = createStructure({
+      type: 'And',
+      children: [
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'foo',
+        }),
+        createStructure({
+          type: 'And',
+          children: [
+            createStructure({
+              type: 'And',
+              children: [
+                createStructure({
+                  type: 'String',
+                  canBeNull: false,
+                  canBeOptional: false,
+                  value: 'bar',
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+
+    expect(andStructure).toMatchObject({
+      type: 'And',
+      children: [
+        { type: 'String', value: 'foo' },
+        { type: 'String', value: 'bar' },
+      ],
+    });
+  });
+
+  it('unwraps And and Or structures', () => {
+    const andStructure = createStructure({
+      type: 'And',
+      children: [
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'foo',
+        }),
+        createStructure({
+          type: 'And',
+          children: [
+            createStructure({
+              type: 'And',
+              children: [
+                createStructure({
+                  type: 'String',
+                  canBeNull: false,
+                  canBeOptional: false,
+                  value: 'foo',
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+
+    expect(andStructure).toMatchObject({ type: 'String', value: 'foo' });
+  });
+});
+
+describe('createStructure', () => {
   it('takes in a partial structure node without a hash and adds the hash', () => {
     const node = createStructure({
       type: 'String',
@@ -17,10 +123,10 @@ describe('createStructureNode', () => {
       type: 'String',
       canBeNull: false,
       canBeOptional: false,
-      value: null,
+      value: 'a36cf4f3a1bf836f',
     });
-    const mockStringHashGet = jest.fn(() => 'string hash');
-    Object.defineProperty(stringStructure, 'hash', { get: mockStringHashGet });
+    const mockStringValueGet = jest.fn(() => 'string hash');
+    Object.defineProperty(stringStructure, 'hash', { get: mockStringValueGet });
 
     const nestedArray = createStructure({
       type: 'Array',
@@ -37,19 +143,33 @@ describe('createStructureNode', () => {
       canBeNull: false,
       canBeOptional: false,
     });
-    const mockReferenceHashGet = jest.fn(() => 'reference hash');
-    Object.defineProperty(nestedReference, 'hash', {
-      get: mockReferenceHashGet,
-    });
 
     const node = createStructure({
       type: 'And',
-      children: [nestedReference],
+      children: [
+        createStructure({
+          type: 'Or',
+          children: [
+            nestedReference,
+            createStructure({
+              type: 'Number',
+              canBeNull: false,
+              canBeOptional: false,
+              value: null,
+            }),
+          ],
+        }),
+        createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: null,
+        }),
+      ],
     });
 
-    expect(node.hash).toMatchInlineSnapshot(`"c3ltzMeZa39hF3gI"`);
-    expect(mockStringHashGet).toHaveBeenCalledTimes(1);
+    expect(node.hash).toMatchInlineSnapshot(`"bou2qePtdtadkhFe"`);
+    expect(mockStringValueGet).toHaveBeenCalledTimes(1);
     expect(mockArrayHashGet).toHaveBeenCalledTimes(1);
-    expect(mockReferenceHashGet).toHaveBeenCalledTimes(1);
   });
 });
