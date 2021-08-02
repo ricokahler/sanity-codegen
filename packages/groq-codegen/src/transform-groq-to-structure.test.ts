@@ -748,4 +748,28 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('coalesce', () => {
+    const query = `
+      *[_type == 'movie'] { 'displayName': coalesce(title, popularity) }
+    `;
+
+    const schema = [
+      {
+        name: 'movie',
+        type: 'document',
+        fields: [
+          { name: 'title', type: 'string' },
+          { name: 'popularity', type: 'number' },
+        ],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        displayName: (string | null) | (number | null);
+      }[];
+      "
+    `);
+  });
 });
