@@ -604,6 +604,31 @@ export function transformGroqToStructure({
           });
         }
 
+        case 'count': {
+          if (node.args.length !== 1) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          const [base] = node.args;
+          const baseResult = transformGroqToStructure({
+            node: base,
+            scopes,
+            normalizedSchema,
+          });
+
+          if (!isStructureArray(baseResult)) {
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'Number',
+            canBeNull: isStructureNull(baseResult),
+            canBeOptional: false,
+            value: null,
+          });
+        }
+
         default: {
           console.warn(`Function "${node.name}" is not currently supported.`);
           return createStructure({ type: 'Unknown' });
