@@ -49,13 +49,10 @@ function transform(
         type: 'Lazy',
         // Note that the hash inputs are a function of the resulting getter
         // value. This is necessary to prevent weird caching behavior.
-        hashInput: [
-          'TransformSchemaToStructure',
-          referencedType.name,
-          // need to include a schema hash for tests because schemas can have
-          // the same referencedType.name and cause unwanted collisions
-          schemaHash,
-        ],
+        hashNamespace: 'TransformSchemaToStructure',
+        // need to include a schema hash for tests because schemas can have
+        // the same referencedType.name and cause unwanted collisions
+        hashInput: `${schemaHash}:${referencedType.name}`,
         get: () => transform(referencedType, normalizedSchema, schemaHash),
       });
     }

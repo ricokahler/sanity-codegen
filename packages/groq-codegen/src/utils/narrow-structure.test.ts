@@ -138,7 +138,8 @@ describe('accept', () => {
     const lazyStructure = createStructure({
       type: 'Lazy',
       get: mockGet,
-      hashInput: ['LazyNarrowStructureTest', objectStructure.hash],
+      hashNamespace: 'LazyNarrowStructureTest',
+      hashInput: objectStructure.hash,
     });
     const typeIsFoo = transformExprNodeToLogicExpr(parse(`_type == 'foo'`));
 
@@ -714,7 +715,8 @@ describe('accept', () => {
       const lazyStructure = createStructure({
         type: 'Lazy',
         get: () => objectStructure,
-        hashInput: ['NarrowStructureTesting'],
+        hashNamespace: 'NarrowStructureTesting',
+        hashInput: '',
       });
       const objectStructure = createStructure({
         type: 'Object',
@@ -746,19 +748,22 @@ describe('accept', () => {
       const firstLazyStructure = createStructure({
         type: 'Lazy',
         get: () => intermediateLazyStructure,
-        hashInput: ['NarrowStructureFirst'],
+        hashNamespace: 'NarrowStructureTesting',
+        hashInput: 'NarrowStructureFirst',
       });
 
       const intermediateLazyStructure = createStructure({
         type: 'Lazy',
         get: () => finalLazyStructure,
-        hashInput: ['NarrowStructureFirstIntermediate'],
+        hashNamespace: 'NarrowStructureTesting',
+        hashInput: 'Intermediate',
       });
 
       const finalLazyStructure = createStructure({
         type: 'Lazy',
         get: () => firstLazyStructure,
-        hashInput: ['NarrowStructureFirstFinal'],
+        hashNamespace: 'NarrowStructureTesting',
+        hashInput: 'Final',
       });
 
       const typeIsFoo = transformExprNodeToLogicExpr(parse(`_type == 'foo'`));
@@ -1044,7 +1049,8 @@ describe('narrowStructure', () => {
     const lazyStructure = createStructure({
       type: 'Lazy',
       get: () => objectStructure,
-      hashInput: ['NarrowStructureFirstLazy', objectStructure.hash],
+      hashNamespace: 'NarrowStructureTesting',
+      hashInput: 'Lazy',
     });
 
     const result = narrowStructure(

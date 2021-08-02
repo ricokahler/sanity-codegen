@@ -267,7 +267,8 @@ describe('accessAttributeInStructure', () => {
         createStructure({
           type: 'Lazy',
           get: () => selfReferencingStructure,
-          hashInput: ['self', 'referencing', 'structure'],
+          hashNamespace: 'SelfReferencingStructure',
+          hashInput: '',
         }),
       ],
     });
@@ -281,7 +282,7 @@ describe('accessAttributeInStructure', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"S5NxOy11dCn2iZ6j"`);
+    expect(result.hash).toMatchInlineSnapshot(`"Q4Kjyxb2pEQam7jg"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });

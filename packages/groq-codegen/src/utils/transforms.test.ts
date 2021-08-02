@@ -106,7 +106,8 @@ describe('addNull', () => {
         createStructure({
           type: 'Lazy',
           get: () => selfReferencingStructure,
-          hashInput: ['self', 'referencing', 'structure'],
+          hashNamespace: 'TransformsTest',
+          hashInput: 'SelfReferencingStructure',
         }),
       ],
     });
@@ -119,7 +120,7 @@ describe('addNull', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"MZPEB8522Kw90BYI"`);
+    expect(result.hash).toMatchInlineSnapshot(`"Vh6jCmRcUKLX2P1H"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });
@@ -192,7 +193,8 @@ describe('unwrapReferences', () => {
         createStructure({
           type: 'Lazy',
           get: () => stringStructure,
-          hashInput: ['Lazy', stringStructure.hash],
+          hashNamespace: 'TransformsTest',
+          hashInput: stringStructure.hash,
         }),
       ],
     });
@@ -217,7 +219,8 @@ describe('unwrapReferences', () => {
     const lazyStructure = createStructure({
       type: 'Lazy',
       get: () => orStructure,
-      hashInput: ['Testing', orStructure.hash],
+      hashNamespace: 'TransformsTest',
+      hashInput: orStructure.hash,
     });
 
     const unwrapped = unwrapReferences(
@@ -399,7 +402,8 @@ describe('unwrapArray', () => {
     const lazyStructure = createStructure({
       type: 'Lazy',
       get: () => andStructure,
-      hashInput: ['TransformLazyB', andStructure.hash],
+      hashNamespace: 'TransformsTest',
+      hashInput: andStructure.hash,
     });
 
     const unwrappedStructure = unwrapArray(lazyStructure);
@@ -483,7 +487,8 @@ describe('wrapArray', () => {
     const lazyNode = createStructure({
       type: 'Lazy',
       get: () => andStructure,
-      hashInput: ['TransformLazyA', stringStructure.hash],
+      hashNamespace: 'TransformsTest',
+      hashInput: stringStructure.hash,
     });
 
     const arrayStructure = wrapArray(lazyNode, {

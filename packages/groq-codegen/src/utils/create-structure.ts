@@ -2,7 +2,8 @@ import { unorderedHash, objectHash } from './hash';
 
 // LazyNode is a special case, see the jsdoc comment below
 type LazyNodeWithoutHash = Omit<Sanity.GroqCodegen.LazyNode, 'hash'> & {
-  hashInput: any[];
+  hashNamespace: string;
+  hashInput: string;
 };
 
 type StructureNodeTypes = Exclude<
@@ -82,11 +83,11 @@ export function createStructure({
       return { type: 'Unknown', hash: 'unknown' };
     }
     case 'Lazy': {
-      const { hashInput, ...rest } = node;
+      const { hashInput, hashNamespace, ...rest } = node;
       return {
         // this is `rest` on purpose
         ...rest,
-        hash: objectHash(['Lazy', ...hashInput]),
+        hash: objectHash(['Lazy', hashNamespace, hashInput]),
       };
     }
     default: {

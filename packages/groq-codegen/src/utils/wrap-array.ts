@@ -16,7 +16,8 @@ export function wrapArray(
       return createStructure({
         type: 'Lazy',
         get: () => wrapArray(node.get(), options),
-        hashInput: ['WrapArray', node.hash],
+        hashNamespace: 'WrapArray',
+        hashInput: node.hash,
       });
     }
     default: {

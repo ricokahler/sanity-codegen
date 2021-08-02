@@ -26,7 +26,8 @@ export function reduceObjectStructures(
     case 'Lazy': {
       return createStructure({
         type: 'Lazy',
-        hashInput: ['ReduceObjectStructuresSource', source.hash],
+        hashNamespace: 'ReduceObjectStructuresSource',
+        hashInput: source.hash,
         get: () => reduceObjectStructures(source.get(), incoming, mode),
       });
     }
@@ -52,7 +53,8 @@ export function reduceObjectStructures(
         case 'Lazy': {
           return createStructure({
             type: 'Lazy',
-            hashInput: ['ReduceObjectStructuresOverride', incoming.hash],
+            hashNamespace: 'ReduceObjectStructuresIncoming',
+            hashInput: incoming.hash,
             get: () => reduceObjectStructures(source, incoming.get(), mode),
           });
         }

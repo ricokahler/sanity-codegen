@@ -38,7 +38,8 @@ export function createTransform<R extends LeafNode>({
       return createStructure({
         type: 'Lazy',
         get: () => transform(node.get()),
-        hashInput: [namespace, node.hash],
+        hashNamespace: namespace,
+        hashInput: node.hash,
       });
     }
 
