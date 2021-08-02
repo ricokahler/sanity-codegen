@@ -147,14 +147,14 @@ describe('accessAttributeInStructure', () => {
     expect(accessAttributeInStructure(structure, 'foo')).toMatchObject({
       type: 'Or',
       children: [
-        { type: 'String' },
         {
           type: 'And',
           children: [
-            { type: 'Number' },
             { type: 'Array', of: { type: 'Boolean' } },
+            { type: 'Number' },
           ],
         },
+        { type: 'String' },
       ],
     });
   });
@@ -188,8 +188,8 @@ describe('accessAttributeInStructure', () => {
     });
 
     expect(accessAttributeInStructure(arrayStructure, 'foo')).toMatchObject({
-      type: 'Or',
-      children: [{ type: 'Array', of: { type: 'String' } }],
+      type: 'Array',
+      of: { type: 'String' },
     });
   });
 
@@ -265,6 +265,12 @@ describe('accessAttributeInStructure', () => {
       type: 'And',
       children: [
         createStructure({
+          type: 'String',
+          canBeNull: false,
+          canBeOptional: false,
+          value: 'ff575b0d653d48ba',
+        }),
+        createStructure({
           type: 'Lazy',
           get: () => selfReferencingStructure,
           hashNamespace: 'SelfReferencingStructure',
@@ -282,7 +288,7 @@ describe('accessAttributeInStructure', () => {
     const lazy2 = pull1.children[0] as Sanity.GroqCodegen.LazyNode;
     const pull2 = lazy2.get() as Sanity.GroqCodegen.AndNode;
 
-    expect(result.hash).toMatchInlineSnapshot(`"Q4Kjyxb2pEQam7jg"`);
+    expect(result.hash).toMatchInlineSnapshot(`"21HOIiGzX9YLXsgi"`);
     expect(pull1.hash).toBe(result.hash);
     expect(pull1.hash).toBe(pull2.hash);
   });

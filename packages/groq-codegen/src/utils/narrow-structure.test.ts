@@ -581,7 +581,7 @@ describe('accept', () => {
                   type: 'String',
                   canBeNull: false,
                   canBeOptional: false,
-                  value: 'bar',
+                  value: 'foo',
                 }),
               },
             ],
@@ -815,15 +815,8 @@ describe('narrowStructure', () => {
 
     const result = narrowStructure(input, parse(`_type == 'foo'`));
     expect(result).toMatchObject({
-      type: 'Or',
-      children: [
-        {
-          type: 'Object',
-          properties: [
-            { key: '_type', value: { type: 'String', value: 'foo' } },
-          ],
-        },
-      ],
+      type: 'Object',
+      properties: [{ key: '_type', value: { type: 'String', value: 'foo' } }],
     });
   });
 
@@ -892,22 +885,14 @@ describe('narrowStructure', () => {
       type: 'And',
       children: [
         {
-          type: 'Or',
-          children: [
-            {
-              type: 'Object',
-              properties: [
-                {
-                  key: '_type',
-                  value: { type: 'String', value: 'foo' },
-                },
-              ],
-            },
-          ],
+          type: 'Object',
+          properties: [{ key: 'title', value: { type: 'String' } }],
         },
         {
           type: 'Object',
-          properties: [{ key: 'title', value: { type: 'String' } }],
+          properties: [
+            { key: '_type', value: { type: 'String', value: 'foo' } },
+          ],
         },
       ],
     });
@@ -996,15 +981,15 @@ describe('narrowStructure', () => {
         {
           type: 'Object',
           properties: [
-            { key: '_type', value: { value: 'movie' } },
-            { key: 'x', value: { value: 'foo' } },
+            { key: '_type', value: { value: 'book' } },
+            { key: 'x', value: { value: 'bar' } },
           ],
         },
         {
           type: 'Object',
           properties: [
-            { key: '_type', value: { value: 'book' } },
-            { key: 'x', value: { value: 'bar' } },
+            { key: '_type', value: { value: 'movie' } },
+            { key: 'x', value: { value: 'foo' } },
           ],
         },
       ],
@@ -1015,15 +1000,10 @@ describe('narrowStructure', () => {
       parse(`_type in ['movie', 'book'] && x == 'foo'`),
     );
     expect(resultAnd).toMatchObject({
-      type: 'Or',
-      children: [
-        {
-          type: 'Object',
-          properties: [
-            { key: '_type', value: { value: 'movie' } },
-            { key: 'x', value: { value: 'foo' } },
-          ],
-        },
+      type: 'Object',
+      properties: [
+        { key: '_type', value: { value: 'movie' } },
+        { key: 'x', value: { value: 'foo' } },
       ],
     });
   });

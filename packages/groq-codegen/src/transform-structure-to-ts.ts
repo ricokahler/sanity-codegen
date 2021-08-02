@@ -76,7 +76,11 @@ function transform(
 
   switch (node.type) {
     case 'And': {
-      tsType = t.tsIntersectionType(node.children.map(next));
+      tsType = t.tsIntersectionType(
+        node.children
+          .sort((a, b) => a.hash.localeCompare(b.hash, 'en'))
+          .map(next),
+      );
       break;
     }
     case 'Boolean': {
@@ -94,25 +98,31 @@ function transform(
     }
     case 'Object': {
       tsType = t.tsTypeLiteral(
-        node.properties.map(({ key, value }) => {
-          const valueIsOptional = isStructureOptional(value);
+        node.properties
+          .sort((a, b) => a.key.localeCompare(b.key, 'en'))
+          .map(({ key, value }) => {
+            const valueIsOptional = isStructureOptional(value);
 
-          const propertySignature = t.tsPropertySignature(
-            t.stringLiteral(key),
-            t.tsTypeAnnotation(
-              next(valueIsOptional ? removeOptional(value) : value),
-            ),
-          );
+            const propertySignature = t.tsPropertySignature(
+              t.stringLiteral(key),
+              t.tsTypeAnnotation(
+                next(valueIsOptional ? removeOptional(value) : value),
+              ),
+            );
 
-          propertySignature.optional = valueIsOptional;
+            propertySignature.optional = valueIsOptional;
 
-          return propertySignature;
-        }),
+            return propertySignature;
+          }),
       );
       break;
     }
     case 'Or': {
-      tsType = t.tsUnionType(node.children.map(next));
+      tsType = t.tsUnionType(
+        node.children
+          .sort((a, b) => a.hash.localeCompare(b.hash, 'en'))
+          .map(next),
+      );
       break;
     }
     case 'String': {

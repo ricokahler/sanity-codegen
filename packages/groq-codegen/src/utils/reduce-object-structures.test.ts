@@ -164,19 +164,17 @@ describe('reduceObjectStructures', () => {
   });
 
   it('combines structures that includes `And`s and `Or`s', () => {
-    const stringStructure = createStructure({
-      type: 'String',
+    const str = {
+      type: 'String' as const,
       canBeNull: false,
       canBeOptional: false,
-      value: null,
-    });
+    };
 
-    const numberStructure = createStructure({
-      type: 'Number',
+    const num = {
+      type: 'Number' as const,
       canBeNull: false,
       canBeOptional: false,
-      value: null,
-    });
+    };
 
     const createObj = (
       properties: Sanity.GroqCodegen.ObjectNode['properties'],
@@ -188,12 +186,14 @@ describe('reduceObjectStructures', () => {
         properties,
       });
 
-    const a = { key: 'a', value: stringStructure };
-    const b = { key: 'b', value: numberStructure };
-    const c = { key: 'c', value: stringStructure };
-    const d = { key: 'd', value: numberStructure };
-    const e = { key: 'e', value: stringStructure };
-    const f = { key: 'f', value: numberStructure };
+    // if no value is provided then they will all have the same hash and will
+    // be de-duplicated
+    const a = { key: 'a', value: createStructure({ ...str, value: 'a' }) };
+    const b = { key: 'b', value: createStructure({ ...num, value: 0xb }) };
+    const c = { key: 'c', value: createStructure({ ...str, value: 'c' }) };
+    const d = { key: 'd', value: createStructure({ ...num, value: 0xc }) };
+    const e = { key: 'e', value: createStructure({ ...str, value: 'e' }) };
+    const f = { key: 'f', value: createStructure({ ...num, value: 0xf }) };
 
     const abefAndCdef = reduceObjectStructures(
       createStructure({
@@ -233,16 +233,16 @@ describe('reduceObjectStructures', () => {
               type: 'Object',
               properties: [
                 { key: 'e', value: { type: 'String' } },
-                { key: 'a', value: { type: 'String' } },
-                { key: 'b', value: { type: 'Number' } },
+                { key: 'c', value: { type: 'String' } },
+                { key: 'd', value: { type: 'Number' } },
               ],
             },
             {
               type: 'Object',
               properties: [
                 { key: 'e', value: { type: 'String' } },
-                { key: 'c', value: { type: 'String' } },
-                { key: 'd', value: { type: 'Number' } },
+                { key: 'a', value: { type: 'String' } },
+                { key: 'b', value: { type: 'Number' } },
               ],
             },
           ],
@@ -254,16 +254,16 @@ describe('reduceObjectStructures', () => {
               type: 'Object',
               properties: [
                 { key: 'f', value: { type: 'Number' } },
-                { key: 'a', value: { type: 'String' } },
-                { key: 'b', value: { type: 'Number' } },
+                { key: 'c', value: { type: 'String' } },
+                { key: 'd', value: { type: 'Number' } },
               ],
             },
             {
               type: 'Object',
               properties: [
                 { key: 'f', value: { type: 'Number' } },
-                { key: 'c', value: { type: 'String' } },
-                { key: 'd', value: { type: 'Number' } },
+                { key: 'a', value: { type: 'String' } },
+                { key: 'b', value: { type: 'Number' } },
               ],
             },
           ],
@@ -399,8 +399,8 @@ describe('reduceObjectStructures', () => {
         type Ref_E3PCrAmCZKcFJzGW = Ref_ZvbaUPszlbsBoyFW;
 
         type Ref_ZvbaUPszlbsBoyFW = {
-          foo: string;
           bar: number;
+          foo: string;
         };
         "
       `);

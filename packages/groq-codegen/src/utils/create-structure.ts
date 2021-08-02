@@ -26,15 +26,46 @@ type InputNode = (StructureNodeWithoutHash | LazyNodeWithoutHash) & {
   hash?: string;
 };
 
-/**
- * Adds hashes new `StructureNode`s by looking at the current node's properties.
- * If the node has children (e.g. `And`s/`Or`s), then the hash will also use
- * the direct children's hash as an input.
- *
- * Note: the `LazyNode` is a special case because it's not possible to derive a
- * hash automatically without pulling the lazy value.
- */
-export function createStructure({
+type Transform = (
+  node: Sanity.GroqCodegen.StructureNode,
+) => Sanity.GroqCodegen.StructureNode;
+
+const memoize = (transform: Transform): Transform => {
+  const cache = new Map<string, Sanity.GroqCodegen.StructureNode>();
+
+  return (node) => {
+    if (cache.has(node.hash)) return cache.get(node.hash)!;
+    const result = transform(node);
+    cache.set(node.hash, result);
+    return result;
+  };
+};
+
+export const simplify = memoize((node: Sanity.GroqCodegen.StructureNode) => {
+  if (node.type !== 'And' && node.type !== 'Or') return node;
+
+  const children = Array.from(
+    node.children
+      .map(simplify)
+      .reduce<Map<string, Sanity.GroqCodegen.StructureNode>>((map, child) => {
+        if (child.type === node.type) {
+          for (const nestedChild of child.children) {
+            map.set(nestedChild.hash, nestedChild);
+          }
+        } else {
+          map.set(child.hash, child);
+        }
+        return map;
+      }, new Map())
+      .values(),
+  ).sort((a, b) => a.hash.localeCompare(b.hash, 'en'));
+
+  if (children.length === 0) return ensureHash({ type: 'Unknown' });
+  if (children.length === 1) return children[0];
+  return ensureHash({ ...node, children });
+});
+
+function ensureHash({
   // remove an pre-existing hash
   hash: _hash,
   ...node
@@ -98,3 +129,18 @@ export function createStructure({
     }
   }
 }
+
+/**
+ * Adds hashes to new `StructureNode`s by looking at the current node's
+ * properties. If the node has children (e.g. `And`s/`Or`s), then the hash will
+ * use the direct children's hash as an input (this makes all hash computation
+ * shallow).
+ *
+ * The result of this is then ran through `simplify` function memoized by the
+ * node's resulting hash.
+ *
+ * Note: the `LazyNode` is a special case because it's not possible to derive a
+ * hash automatically without pulling the lazy value so a `hashNamespace` and
+ * a `hashInput` are required.
+ */
+export const createStructure = (node: InputNode) => simplify(ensureHash(node));
