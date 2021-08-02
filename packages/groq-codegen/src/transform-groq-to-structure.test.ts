@@ -799,4 +799,27 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('length', () => {
+    expect(print(`length([1,2,3])`, [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print(`length('testing')`, [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(
+      print(`length((*[_type == 'foo'][0]).foo)`, [
+        {
+          name: 'foo',
+          type: 'document',
+          fields: [{ name: 'foo', type: 'string' }],
+        },
+      ]),
+    ).toMatchInlineSnapshot(`
+      "type Query = number | null;
+      "
+    `);
+  });
 });
