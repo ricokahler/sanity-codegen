@@ -720,6 +720,47 @@ export function transformGroqToStructure({
           });
         }
 
+        case 'now': {
+          if (node.args.length) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: false,
+            value: null,
+          });
+        }
+
+        case 'round': {
+          if (node.args.length <= 0 || node.args.length > 2) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          const [first, second] = node.args.map((n) =>
+            transformGroqToStructure({
+              node: n,
+              scopes,
+              normalizedSchema,
+            }),
+          );
+
+          if (!isStructureNumber(first) && !isStructureNumber(second)) {
+            // TODO: warn here
+            return createStructure({ type: 'Unknown' });
+          }
+
+          return createStructure({
+            type: 'Number',
+            canBeNull: isStructureNull(first) || isStructureOptional(first),
+            canBeOptional: false,
+            value: null,
+          });
+        }
+
         default: {
           console.warn(
             `Function "${node.name}" is not currently supported in the given context. Please open an issue.`,

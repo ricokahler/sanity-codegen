@@ -833,4 +833,26 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('now', () => {
+    expect(print(`now()`, [])).toMatchInlineSnapshot(`
+      "type Query = string;
+      "
+    `);
+  });
+
+  test('round', () => {
+    expect(print(`round(4.5)`, [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print(`round(4.5, 2)`, [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+    expect(print(`round('nope', 'wrong')`, [])).toMatchInlineSnapshot(`
+      "type Query = unknown;
+      "
+    `);
+  });
 });
