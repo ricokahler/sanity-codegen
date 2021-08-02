@@ -222,6 +222,28 @@ export function transformGroqToStructure({
       return combinedObject;
     }
 
+    case 'Select': {
+      const children = node.alternatives.map((alternative) =>
+        transformGroqToStructure({
+          node: alternative.value,
+          scopes,
+          normalizedSchema,
+        }),
+      );
+
+      if (node.fallback) {
+        children.push(
+          transformGroqToStructure({
+            node: node.fallback,
+            scopes,
+            normalizedSchema,
+          }),
+        );
+      }
+
+      return createStructure({ type: 'Or', children });
+    }
+
     case 'Array': {
       // if there is a splat in the array literal then…
       if (node.elements.some((element) => element.isSplat)) {
