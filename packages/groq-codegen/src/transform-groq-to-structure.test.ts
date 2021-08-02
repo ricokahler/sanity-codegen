@@ -772,4 +772,13 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('count', () => {
+    const query = `count([])`;
+
+    expect(print(query, [])).toMatchInlineSnapshot(`
+      "type Query = number;
+      "
+    `);
+  });
 });
