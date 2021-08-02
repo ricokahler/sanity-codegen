@@ -326,7 +326,9 @@ export function transformGroqToStructure({
 
     case 'Slice':
     case 'Group':
-    case 'ArrayCoerce': {
+    case 'ArrayCoerce':
+    case 'Asc':
+    case 'Desc': {
       return transformGroqToStructure({
         node: node.base,
         scopes,
@@ -584,6 +586,26 @@ export function transformGroqToStructure({
           isStructureOptional(leftResult) ||
           isStructureOptional(rightResult),
       });
+    }
+
+    case 'PipeFuncCall': {
+      switch (node.name) {
+        case 'order': {
+          const baseResult = transformGroqToStructure({
+            node: node.base,
+            scopes,
+            normalizedSchema,
+          });
+
+          return baseResult;
+        }
+        default: {
+          console.warn(
+            `Pipped function "${node.name}" is not currently supported.`,
+          );
+          return createStructure({ type: 'Unknown' });
+        }
+      }
     }
 
     default: {

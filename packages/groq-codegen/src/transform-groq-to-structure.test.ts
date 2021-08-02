@@ -695,4 +695,25 @@ describe('transformGroqToStructure', () => {
       "
     `);
   });
+
+  test('ordering', () => {
+    const query = `*[_type == "movie"] | order(_createdAt asc)`;
+
+    const schema = [
+      {
+        name: 'movie',
+        type: 'document',
+        fields: [{ name: 'title', type: 'string' }],
+      },
+    ];
+
+    expect(print(query, schema)).toMatchInlineSnapshot(`
+      "type Query = {
+        _type: \\"movie\\";
+        _id: string;
+        title?: string;
+      }[];
+      "
+    `);
+  });
 });
