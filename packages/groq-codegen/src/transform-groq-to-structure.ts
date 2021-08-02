@@ -589,6 +589,28 @@ export function transformGroqToStructure({
       });
     }
 
+    case 'FuncCall': {
+      switch (node.name) {
+        case 'coalesce': {
+          return createStructure({
+            type: 'Or',
+            children: node.args.map((arg) =>
+              transformGroqToStructure({
+                node: arg,
+                scopes,
+                normalizedSchema,
+              }),
+            ),
+          });
+        }
+
+        default: {
+          console.warn(`Function "${node.name}" is not currently supported.`);
+          return createStructure({ type: 'Unknown' });
+        }
+      }
+    }
+
     case 'PipeFuncCall': {
       switch (node.name) {
         case 'order': {
