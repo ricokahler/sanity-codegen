@@ -329,6 +329,7 @@ function normalizeList(
  * @param types raw sanity schema in the form of a type array
  * @returns normalized sanity schema
  */
+// TODO: refactor this API to take in a config object instead of a single argument
 export function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema {
   const allRegisteredTypes = types.map((i) => normalizeType(i, []));
 
