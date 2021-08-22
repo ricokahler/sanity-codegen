@@ -8,7 +8,8 @@ import { ResolveExpressionError } from '../resolve-expression-error';
 const staticPluckerNotice =
   `Note: the current GROQ plucker can only extract static values from your ` +
   `source code with very limited support for resolving template ` +
-  `expressions. See here for more info: TODO add link`;
+  `expressions. See here for more info:\n` +
+  `https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expressionsupport`;
 
 function tryStringifyNode(node: t.Node) {
   try {

@@ -145,9 +145,10 @@ describe('resolveExpression', () => {
     });
 
     await expect(promise).rejects.toMatchInlineSnapshot(`
-            [Error: Unable to resolve query expression \`new Date()\` in 
-             Note: the current GROQ plucker can only extract static values from your source code with very limited support for resolving template expressions. See here for more info: TODO add link]
-          `);
+[Error: Unable to resolve query expression \`new Date()\` in 
+ Note: the current GROQ plucker can only extract static values from your source code with very limited support for resolving template expressions. See here for more info:
+https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expressionsupport]
+`);
   });
 
   it("throws if the variable declaration doesn't include an assignment", async () => {

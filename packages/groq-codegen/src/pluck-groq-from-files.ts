@@ -47,6 +47,7 @@ export interface PluckGroqFromSourceOptions {
   resolvePluckedFile?: (request: string) => string | Promise<string>;
 }
 
+// TODO: update this link to main when published
 /**
  * Given a source file as a string, this function will extract the queries and
  * their corresponding query keys.
@@ -60,11 +61,18 @@ export interface PluckGroqFromSourceOptions {
  *
  * The first argument of the call expression must be a string literal and the
  * second argument must be a tagged template literal expression with the tag
- * begin exactly `groq`. The 3rd argument (i.e. query parameters) does not need
- * to be present.
+ * matching the one provided (default is `groq`). The 3rd argument
+ * (i.e. query parameters) does not need to be present.
+ *
+ * For the second argument (the query), there is some limited support for
+ * template literals with expressions in them.
+ *
+ * See [here][0] for more info.
  *
  * This function also accepts an babel options configuration object that is
  * merged with a provided default configuration.
+ *
+ * [0]: https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expressionsupport
  */
 export async function pluckGroqFromSource({
   source,

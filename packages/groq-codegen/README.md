@@ -188,14 +188,26 @@ export interface PluckGroqFromSourceOptions {
    */
   source: string;
   /**
-   * An incoming filename (sent to babel)
+   * An incoming filename. This is sent to babel and the pathname is also used
+   * to resolve relative files
    */
-  filename?: string;
+  filename: string;
+  /**
+   * The template tag to look for when plucking GROQ queries. Defaults to
+   * `groq`.
+   */
+  groqTagName?: string;
   /**
    * Babel options configuration object that is merged with a provided default
    * configuration.
    */
   babelOptions?: Record<string, unknown>;
+  /**
+   * A function used to resolve imports across different files. Defaults to
+   * `require.resolve` (Note: babel is registered so `require.resolve` requests
+   * will go through babel).
+   */
+  resolvePluckedFile?: (request: string) => string | Promise<string>;
 }
 
 /**
@@ -211,11 +223,18 @@ export interface PluckGroqFromSourceOptions {
  *
  * The first argument of the call expression must be a string literal and the
  * second argument must be a tagged template literal expression with the tag
- * begin exactly `groq`. The 3rd argument (i.e. query parameters) does not need
- * to be present.
+ * matching the one provided (default is `groq`). The 3rd argument
+ * (i.e. query parameters) does not need to be present.
+ *
+ * For the second argument (the query), there is some limited support for
+ * template literals with expressions in them.
+ *
+ * See [here][0] for more info.
  *
  * This function also accepts an babel options configuration object that is
  * merged with a provided default configuration.
+ *
+ * [0]: https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expressionsupport
  */
 export declare function pluckGroqFromSource(
   options: PluckGroqFromSourceOptions,
@@ -224,6 +243,40 @@ export declare function pluckGroqFromSource(
   query: string;
 }[];
 ````
+
+#### Expression support
+
+It's not currently possible for the query plucker to execute any code that makes up your query. This is due to the different environment your code runs in vs what sanity-codegen runs in. Sanity-codegen runs in node.js and your code most likely runs in the browser. We try not to make assumptions on environments so instead of executing the code that makes up your query, we statically pluck and combine the different expressions into one string from many different files.
+
+This means, in order to pluck a query from your source code, it must be made of entirely static expressions.
+
+For example, the following is allowed:
+
+```js
+// ✅ all of these expressions are static
+const type = 'book';
+
+const projection = `
+  {
+    'name': title,
+    'description': summary,
+  }
+`;
+
+const myQuery = groq`
+  *[_type == '${type}' && _id == $id] ${projection}
+`;
+
+export function getEntity(id) {
+  return sanity.query('QueryKey', myQuery, { id });
+}
+```
+
+Notice how there are no dynamic expressions where javascript needs to be executed in order to pluck the query.
+
+If you do need to use dynamic variables, use [GROQ parameters](https://www.sanity.io/docs/groq-parameters) and feed those in as the 3rd argument of `sanity.query`.
+
+<!-- TODO: add bad example that won't work -->
 
 ### `generateGroqTypes()`
 
