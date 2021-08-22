@@ -5,23 +5,39 @@
 import sanity from './blah/configured-client';
 // @ts-ignore
 import groq from 'groq';
+import bookType, { bookProjection, alias } from './example-queries';
+import bookTypeAgain from './export-default';
+import { defaultAlias } from './default-reexport';
 
 export const getStaticProps = async () => {
   const author = await sanity.query(
-    'BookAuthor',
+    'BookAuthorUsesDefaultAlias',
     groq`
-      *[_type == 'book'][0].author
+      *[_type == '${defaultAlias}'][0].author
     `,
   );
 
   sanity.query(
-    'BookTitles',
+    'BookTitlesUsesDefaultExport',
     groq`
-      *[_type == 'book'].title
+      *[_type == '${bookType}'].title
     `,
   );
 
-  sanity.query('AllBooks', groq`*[_type == 'book']`);
+  sanity.query(
+    'AllBooksUsesDefaultReexport',
+    groq`*[_type == '${bookTypeAgain}'].title`,
+  );
+
+  sanity.query(
+    'AllBooksUsesNamedDeclaredExport',
+    groq`*[_type == 'book'] ${bookProjection}`,
+  );
+
+  sanity.query(
+    'AllBooksUsesNameSpecifiedExport',
+    groq`*[_type == 'book'] ${alias}`,
+  );
 
   return { props: { author } };
 };

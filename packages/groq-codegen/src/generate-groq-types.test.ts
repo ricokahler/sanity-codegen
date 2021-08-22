@@ -17,41 +17,30 @@ describe('generateGroqTypes', () => {
 
       declare namespace Sanity {
         namespace Queries {
-          type AllBooks = {
-            _id: string;
-            _type: \\"book\\";
-            author?: {
-              name?: string;
-            };
-            description?: Ref_nuzgEiYXYVXpHKNC;
-            title?: string;
+          type AllBooksUsesDefaultReexport = (string | null)[];
+          type AllBooksUsesNamedDeclaredExport = {
+            authorName: string | null;
+            title: string | null;
           }[];
-          type BookAuthor = {
+          type AllBooksUsesNameSpecifiedExport = {
+            authorName: string | null;
+            title: string | null;
+          }[];
+          type BookAuthorUsesDefaultAlias = {
             name?: string;
           } | null;
-          type BookTitles = (string | null)[];
-
-          type Ref_nuzgEiYXYVXpHKNC = {
-            _key: string;
-            _type: \\"block\\";
-            children: {
-              _key: string;
-              _type: \\"span\\";
-              marks?: unknown[];
-              text?: string;
-            }[];
-            markDefs?: unknown[];
-            style?: string;
-          }[];
+          type BookTitlesUsesDefaultExport = (string | null)[];
 
           /**
            * A keyed type of all the codegen'ed queries. This type is used for
            * TypeScript meta programming purposes only.
            */
           type QueryMap = {
-            BookAuthor: BookAuthor;
-            BookTitles: BookTitles;
-            AllBooks: AllBooks;
+            BookAuthorUsesDefaultAlias: BookAuthorUsesDefaultAlias;
+            BookTitlesUsesDefaultExport: BookTitlesUsesDefaultExport;
+            AllBooksUsesDefaultReexport: AllBooksUsesDefaultReexport;
+            AllBooksUsesNamedDeclaredExport: AllBooksUsesNamedDeclaredExport;
+            AllBooksUsesNameSpecifiedExport: AllBooksUsesNameSpecifiedExport;
           };
         }
       }
