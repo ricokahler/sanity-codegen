@@ -14,17 +14,35 @@ describe('pluckGroqFromFile', () => {
           "query": "
             *[_type == 'book'][0].author
           ",
-          "queryKey": "BookAuthor",
+          "queryKey": "BookAuthorUsesDefaultAlias",
         },
         Object {
           "query": "
             *[_type == 'book'].title
           ",
-          "queryKey": "BookTitles",
+          "queryKey": "BookTitlesUsesDefaultExport",
         },
         Object {
-          "query": "*[_type == 'book']",
-          "queryKey": "AllBooks",
+          "query": "*[_type == 'book'].title",
+          "queryKey": "AllBooksUsesDefaultReexport",
+        },
+        Object {
+          "query": "*[_type == 'book'] 
+        {
+          title,
+          'authorName': author.name,
+        }
+      ",
+          "queryKey": "AllBooksUsesNamedDeclaredExport",
+        },
+        Object {
+          "query": "*[_type == 'book'] 
+        {
+          title,
+          'authorName': author.name,
+        }
+      ",
+          "queryKey": "AllBooksUsesNameSpecifiedExport",
         },
       ]
     `);

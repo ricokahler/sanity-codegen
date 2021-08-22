@@ -132,35 +132,36 @@ describe('transformGroqToStructure', () => {
 
     const query = `
       {
-        'books': *[_type == 'book'],
+        'books': *[_type == 'book'] { 'authorName': author->name, ... },
         'authors': *[_type == 'author']
       }
     `;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-      "type Query = {
-        authors: {
-          _id: string;
-          _type: \\"author\\";
-          name?: string;
-        }[];
-        books: {
-          _id: string;
-          _type: \\"book\\";
-          author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
-          title?: string;
-        }[];
-      };
+"type Query = {
+  authors: {
+    _id: string;
+    _type: \\"author\\";
+    name?: string;
+  }[];
+  books: {
+    _id: string;
+    _type: \\"book\\";
+    author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
+    authorName: string | null;
+    title?: string;
+  }[];
+};
 
-      type Ref_V6v9ba7CZlBTDAJv =
-        | {
-            _id: string;
-            _type: \\"author\\";
-            name?: string;
-          }
-        | undefined;
-      "
-    `);
+type Ref_V6v9ba7CZlBTDAJv =
+  | {
+      _id: string;
+      _type: \\"author\\";
+      name?: string;
+    }
+  | undefined;
+"
+`);
   });
 
   test('filter with ands', () => {
