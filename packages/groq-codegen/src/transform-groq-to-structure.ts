@@ -97,6 +97,7 @@ export function transformGroqToStructure({
     }
 
     case 'Parent': {
+      // TODO: support parent `n` operator
       const parentScope = scopes[scopes.length - 2];
       // TODO: could warn here
       return parentScope || createStructure({ type: 'Unknown' });
