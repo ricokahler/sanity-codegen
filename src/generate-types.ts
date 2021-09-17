@@ -29,6 +29,7 @@ type ReferenceType = {
   // blog example doesn't follow this.
   to: { type: string } | Array<{ type: string }>;
   weak?: boolean;
+  name?: string;
 };
 type SlugType = { name?: string; type: 'slug' };
 type StringType = {
@@ -295,9 +296,12 @@ async function generateTypes({
         )
         .join(' | ');
 
-      // Note: we want the union to be wrapped by one Reference<T> so when
-      // unwrapped the union can be further discriminated using the `_type`
-      // of each individual reference type
+      const name = (obj as ReferenceType)?.name;
+
+      if (!parents.length && name) {
+        return `{_type: 'name'; _ref: string}`;
+      }
+
       return `SanityReference<${union}>`;
     }
 
