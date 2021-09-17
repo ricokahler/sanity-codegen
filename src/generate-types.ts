@@ -302,7 +302,7 @@ async function generateTypes({
       // Sanity treats this like a normal reference, but sets `_type` like
       // an object. based on `name`.
       if (!parents.length && name) {
-        return `{_type: 'name'; _ref: string}`;
+        return `{_type: '${name}'; _ref: string}`;
       }
 
       // Note: we want the union to be wrapped by one Reference<T> so when
