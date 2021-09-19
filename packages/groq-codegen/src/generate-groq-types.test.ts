@@ -30,6 +30,10 @@ describe('generateGroqTypes', () => {
             name?: string;
           } | null;
           type BookTitlesUsesDefaultExport = (string | null)[];
+          type ImportStarExportStar = {
+            authorName: string | null;
+            title: string | null;
+          }[];
 
           /**
            * A keyed type of all the codegen'ed queries. This type is used for
@@ -41,6 +45,7 @@ describe('generateGroqTypes', () => {
             AllBooksUsesDefaultReexport: AllBooksUsesDefaultReexport;
             AllBooksUsesNamedDeclaredExport: AllBooksUsesNamedDeclaredExport;
             AllBooksUsesNameSpecifiedExport: AllBooksUsesNameSpecifiedExport;
+            ImportStarExportStar: ImportStarExportStar;
           };
         }
       }

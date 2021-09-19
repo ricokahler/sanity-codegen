@@ -1,13 +1,14 @@
 import fs from 'fs';
-import path from 'path';
 import * as t from '@babel/types';
 import { traverse } from '@babel/core';
 import { Scope } from '@babel/traverse';
 import { boundedFind } from './bounded-find';
+import { getNextFilename } from './get-next-filename';
 import { ResolveExpressionError } from '../resolve-expression-error';
 
 interface ResolveIdentifierOptions {
   identifierName: string;
+  file: t.File;
   scope: Scope;
   filename: string;
   resolvePluckedFile: (request: string) => string | Promise<string>;
@@ -16,32 +17,17 @@ interface ResolveIdentifierOptions {
 
 export async function resolveIdentifier({
   identifierName,
+  file,
   scope,
   filename,
   resolvePluckedFile,
   parseSourceFile,
 }: ResolveIdentifierOptions): Promise<{
   node: t.Node;
+  file: t.File;
   scope: Scope;
   filename: string;
 }> {
-  const getNextFilename = (source: string) => {
-    const resolvedSource = source.startsWith('.')
-      ? path.resolve(
-          // resolve relative to the incoming filename. `path.resolve` should
-          // properly handle whether or not to use the previous dirname or not
-          // based on whether or not the incoming source file is a relative
-          // path or not.
-          // see here: https://nodejs.org/api/path.html#path_path_resolve_paths
-          path.dirname(filename),
-          source,
-        )
-      : // if the source does not start with a `.` then leave as-is
-        source;
-
-    return resolvePluckedFile(resolvedSource);
-  };
-
   // use the current scope to try to get a [binding][0] for the current identifier
   // we're looking for.
   // [0]: https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#bindings
@@ -56,7 +42,7 @@ export async function resolveIdentifier({
       node.type !== 'ImportDefaultSpecifier' &&
       node.type !== 'ImportSpecifier'
     ) {
-      return { node, scope, filename };
+      return { node, file, scope, filename };
     }
 
     const importDeclaration = boundedFind<t.ImportDeclaration>((resolve) => {
@@ -76,12 +62,16 @@ export async function resolveIdentifier({
           : node.imported.name
         : 'default';
 
-    const nextFilename = await getNextFilename(importDeclaration.source.value);
+    const nextFilename = await getNextFilename({
+      currentFilename: filename,
+      targetFilename: importDeclaration.source.value,
+      resolvePluckedFile,
+    });
     const source = await fs.promises.readFile(nextFilename);
-    const file = parseSourceFile(source.toString(), nextFilename);
+    const nextFile = parseSourceFile(source.toString(), nextFilename);
 
     const nextScope = boundedFind<Scope>((resolve) => {
-      traverse(file, {
+      traverse(nextFile, {
         Program(n) {
           resolve(n.scope);
         },
@@ -90,6 +80,7 @@ export async function resolveIdentifier({
 
     return resolveIdentifier({
       identifierName: nextIdentifier,
+      file: nextFile,
       scope: nextScope,
       filename: nextFilename,
       resolvePluckedFile,
@@ -144,6 +135,7 @@ export async function resolveIdentifier({
 
     return {
       node: exportDefaultDeclarationResult.node.declaration,
+      file,
       scope: exportDefaultDeclarationResult.scope,
       filename,
     };
@@ -167,14 +159,16 @@ export async function resolveIdentifier({
     if (exportNamedDeclaration.source) {
       // if there is a source, then it's a re-export
       const nextIdentifier = node.local.name;
-      const nextFilename = await getNextFilename(
-        exportNamedDeclaration.source.value,
-      );
+      const nextFilename = await getNextFilename({
+        currentFilename: filename,
+        targetFilename: exportNamedDeclaration.source.value,
+        resolvePluckedFile,
+      });
       const source = await fs.promises.readFile(nextFilename);
-      const file = parseSourceFile(source.toString(), nextFilename);
+      const nextFile = parseSourceFile(source.toString(), nextFilename);
 
       const nextScope = boundedFind<Scope>((resolve) => {
-        traverse(file, {
+        traverse(nextFile, {
           Program(n) {
             resolve(n.scope);
           },
@@ -183,6 +177,7 @@ export async function resolveIdentifier({
 
       return resolveIdentifier({
         identifierName: nextIdentifier,
+        file: nextFile,
         scope: nextScope,
         filename: nextFilename,
         resolvePluckedFile,
@@ -192,6 +187,7 @@ export async function resolveIdentifier({
       // otherwise the ExportSpecifier is exporting from current file
       return resolveIdentifier({
         identifierName: node.local.name,
+        file,
         scope,
         filename,
         resolvePluckedFile,
@@ -210,12 +206,16 @@ export async function resolveIdentifier({
 
     if (exportAll) {
       // if found follow the `export *` `from` source value
-      const nextFilename = await getNextFilename(exportAll.source.value);
+      const nextFilename = await getNextFilename({
+        currentFilename: filename,
+        targetFilename: exportAll.source.value,
+        resolvePluckedFile,
+      });
       const source = await fs.promises.readFile(nextFilename);
-      const file = parseSourceFile(source.toString(), nextFilename);
+      const nextFile = parseSourceFile(source.toString(), nextFilename);
 
       const nextScope = boundedFind<Scope>((resolve) => {
-        traverse(file, {
+        traverse(nextFile, {
           Program(n) {
             resolve(n.scope);
           },
@@ -224,6 +224,7 @@ export async function resolveIdentifier({
 
       return resolveIdentifier({
         identifierName,
+        file: nextFile,
         scope: nextScope,
         filename: nextFilename,
         resolvePluckedFile,

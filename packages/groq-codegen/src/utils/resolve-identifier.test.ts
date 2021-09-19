@@ -41,6 +41,7 @@ describe('resolveIdentifier', () => {
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'someIdentifier',
       resolvePluckedFile: jest.fn(),
       parseSourceFile: jest.fn(),
@@ -54,16 +55,17 @@ describe('resolveIdentifier', () => {
   });
 
   it('works with: import default; export default', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import bookType from './via-default-export';",
     );
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'bookType',
       resolvePluckedFile: jest.fn(),
       parseSourceFile: () => parseSourceFile("export default 'book';"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(result.node.type).toMatchInlineSnapshot(`"StringLiteral"`);
@@ -71,16 +73,17 @@ describe('resolveIdentifier', () => {
   });
 
   it('works with: import named; export named', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import {myType as bookType} from './via-default-export';",
     );
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'bookType',
       resolvePluckedFile: jest.fn(),
       parseSourceFile: () => parseSourceFile("export const myType = 'book';"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(result.node.type).toMatchInlineSnapshot(`"VariableDeclarator"`);
@@ -90,7 +93,7 @@ describe('resolveIdentifier', () => {
   });
 
   it('works with a default re-export, 3 files', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import myType from './via-default-reexport';",
     );
 
@@ -112,10 +115,11 @@ describe('resolveIdentifier', () => {
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: path.basename,
       parseSourceFile: mockParseSourceFile,
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(result.node.type).toMatchInlineSnapshot(`"StringLiteral"`);
@@ -123,7 +127,7 @@ describe('resolveIdentifier', () => {
   });
 
   it('works with named default re-export, 3 files', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import myType from './via-default-reexport';",
     );
 
@@ -148,10 +152,11 @@ describe('resolveIdentifier', () => {
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: path.basename,
       parseSourceFile: mockParseSourceFile,
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(result.node.type).toMatchInlineSnapshot(`"VariableDeclarator"`);
@@ -159,9 +164,7 @@ describe('resolveIdentifier', () => {
   });
 
   it('works with export star', async () => {
-    const startFile = parseSourceFile(
-      "import { type } from './via-export-star';",
-    );
+    const file = parseSourceFile("import { type } from './via-export-star';");
 
     const mockParseSourceFile = (_: string, filename: string) => {
       switch (filename) {
@@ -184,10 +187,11 @@ describe('resolveIdentifier', () => {
 
     const result = await resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'type',
       resolvePluckedFile: path.basename,
       parseSourceFile: mockParseSourceFile,
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(result.node.type).toMatchInlineSnapshot(`"VariableDeclarator"`);
@@ -195,18 +199,19 @@ describe('resolveIdentifier', () => {
   });
 
   it('throws if the default export could not be found', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import myType from './via-default-reexport';",
     );
 
     const resultPromise = resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: path.basename,
       parseSourceFile: () =>
         // this shouldn't work because it's not the default export
         parseSourceFile("export const myType = 'hey'"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     await expect(resultPromise).rejects.toMatchInlineSnapshot(
@@ -215,18 +220,19 @@ describe('resolveIdentifier', () => {
   });
 
   it('throws if the default export could not be found', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import myType from './via-default-reexport';",
     );
 
     const resultPromise = resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: path.basename,
       parseSourceFile: () =>
         // this shouldn't work because it's not the default export
         parseSourceFile("export const myType = 'hey'"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     await expect(resultPromise).rejects.toMatchInlineSnapshot(
@@ -235,18 +241,17 @@ describe('resolveIdentifier', () => {
   });
 
   it('throws if the identifier could not be found in the file', async () => {
-    const startFile = parseSourceFile(
-      "import { myType } from './example-file';",
-    );
+    const file = parseSourceFile("import { myType } from './example-file';");
 
     const resultPromise = resolveIdentifier({
       filename: '',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: path.basename,
       parseSourceFile: () =>
         // this shouldn't work because it's not `myType`
         parseSourceFile("export const wrongType = 'hey'"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     await expect(resultPromise).rejects.toMatchInlineSnapshot(
@@ -255,17 +260,18 @@ describe('resolveIdentifier', () => {
   });
 
   it('resolves relative files using the last filename', async () => {
-    const startFile = parseSourceFile(
+    const file = parseSourceFile(
       "import bookType from './via-default-export';",
     );
     const mockResolvePluckedFile = jest.fn();
 
     await resolveIdentifier({
+      file,
       filename: '/usr/home/my-example-file.ts',
       identifierName: 'bookType',
       resolvePluckedFile: mockResolvePluckedFile,
       parseSourceFile: () => parseSourceFile("export default 'book';"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(mockResolvePluckedFile).toHaveBeenCalledTimes(1);
@@ -275,17 +281,16 @@ describe('resolveIdentifier', () => {
   });
 
   it("doesn't use the last filename for non-relative files", async () => {
-    const startFile = parseSourceFile(
-      "import { myType } from 'non-relative-from';",
-    );
+    const file = parseSourceFile("import { myType } from 'non-relative-from';");
     const mockResolvePluckedFile = jest.fn();
 
     await resolveIdentifier({
       filename: '/usr/home/my-example-file.ts',
+      file,
       identifierName: 'myType',
       resolvePluckedFile: mockResolvePluckedFile,
       parseSourceFile: () => parseSourceFile("export const myType = 'hey'"),
-      scope: getScopeFromFile(startFile),
+      scope: getScopeFromFile(file),
     });
 
     expect(mockResolvePluckedFile).toHaveBeenCalledTimes(1);

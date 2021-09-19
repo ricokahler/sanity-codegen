@@ -48,6 +48,7 @@ describe('resolveExpression', () => {
 
     const resolvedExpression = await resolveExpression({
       node,
+      file,
       scope,
       filename: '',
       parseSourceFile: jest.fn(),
@@ -77,6 +78,7 @@ describe('resolveExpression', () => {
 
     const resolvedExpression = await resolveExpression({
       node,
+      file,
       scope,
       filename: '',
       parseSourceFile: jest.fn(),
@@ -106,6 +108,7 @@ describe('resolveExpression', () => {
 
     const resolvedExpression = await resolveExpression({
       node,
+      file,
       scope,
       filename: '',
       parseSourceFile: jest.fn(),
@@ -119,6 +122,39 @@ describe('resolveExpression', () => {
               isCool == false
             ]"
       `);
+  });
+
+  it('resolves `import *` member expressions', async () => {
+    const file = parseSourceFile(`
+      import * as Everything from './module';
+      
+      const id = Everything.type
+    `);
+
+    const scope = boundedFind<Scope>((resolve) => {
+      traverse(file, {
+        Program(n) {
+          resolve(n.scope);
+        },
+      });
+    })!;
+
+    const binding = scope.getBinding('id')!;
+
+    const resolvedExpression = await resolveExpression({
+      node: binding.path.node,
+      file,
+      scope: binding.scope,
+      filename: '',
+      parseSourceFile: jest.fn(() =>
+        parseSourceFile(`
+          export const type = 'from-other-file'
+        `),
+      ),
+      resolvePluckedFile: jest.fn(),
+    });
+
+    expect(resolvedExpression).toMatchInlineSnapshot(`"from-other-file"`);
   });
 
   it("throws if the expression can't be serialized", async () => {
@@ -138,6 +174,7 @@ describe('resolveExpression', () => {
 
     const promise = resolveExpression({
       node,
+      file,
       scope,
       filename: '',
       parseSourceFile: jest.fn(),
@@ -147,7 +184,7 @@ describe('resolveExpression', () => {
     await expect(promise).rejects.toMatchInlineSnapshot(`
 [Error: Unable to resolve query expression \`new Date()\` in 
  Note: the current GROQ plucker can only extract static values from your source code with very limited support for resolving template expressions. See here for more info:
-https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expressionsupport]
+https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#expression-support]
 `);
   });
 
@@ -175,6 +212,7 @@ https://github.com/ricokahler/sanity-codegen/tree/alpha/packages/groq-codegen#ex
 
     const promise = resolveExpression({
       node,
+      file,
       scope,
       filename: '',
       parseSourceFile: jest.fn(),

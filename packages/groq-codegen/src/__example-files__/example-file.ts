@@ -8,6 +8,7 @@ import groq from 'groq';
 import bookType, { bookProjection, alias } from './example-queries';
 import bookTypeAgain from './export-default';
 import { defaultAlias } from './default-reexport';
+import * as FromStar from './export-star'
 
 export const getStaticProps = async () => {
   const author = await sanity.query(
@@ -38,6 +39,11 @@ export const getStaticProps = async () => {
     'AllBooksUsesNameSpecifiedExport',
     groq`*[_type == 'book'] ${alias}`,
   );
+
+  sanity.query(
+    'ImportStarExportStar',
+    groq`*[_type == 'book'] ${FromStar.alias}`
+  )
 
   return { props: { author } };
 };
