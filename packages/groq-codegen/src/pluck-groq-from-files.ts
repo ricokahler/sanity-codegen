@@ -151,6 +151,7 @@ export async function pluckGroqFromSource({
         queryKey,
         query: await resolveExpression({
           node: queryExpressionToResolve,
+          file: tree,
           scope: queryScope,
           filename,
           parseSourceFile,

@@ -44,6 +44,15 @@ describe('pluckGroqFromFile', () => {
       ",
           "queryKey": "AllBooksUsesNameSpecifiedExport",
         },
+        Object {
+          "query": "*[_type == 'book'] 
+        {
+          title,
+          'authorName': author.name,
+        }
+      ",
+          "queryKey": "ImportStarExportStar",
+        },
       ]
     `);
   });
