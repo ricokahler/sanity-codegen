@@ -158,6 +158,42 @@ describe('resolveIdentifier', () => {
     expect(generate(result.node).code).toMatchInlineSnapshot(`"type = 'book'"`);
   });
 
+  it('works with export star', async () => {
+    const startFile = parseSourceFile(
+      "import { type } from './via-export-star';",
+    );
+
+    const mockParseSourceFile = (_: string, filename: string) => {
+      switch (filename) {
+        case 'via-export-star': {
+          return parseSourceFile(`
+            export * from './via-named-export';
+          `);
+        }
+        case 'via-named-export': {
+          return parseSourceFile(`
+            export const type = 'book';
+            export { type as named };
+          `);
+        }
+        default: {
+          throw new Error();
+        }
+      }
+    };
+
+    const result = await resolveIdentifier({
+      filename: '',
+      identifierName: 'type',
+      resolvePluckedFile: path.basename,
+      parseSourceFile: mockParseSourceFile,
+      scope: getScopeFromFile(startFile),
+    });
+
+    expect(result.node.type).toMatchInlineSnapshot(`"VariableDeclarator"`);
+    expect(generate(result.node).code).toMatchInlineSnapshot(`"type = 'book'"`);
+  });
+
   it('throws if the default export could not be found', async () => {
     const startFile = parseSourceFile(
       "import myType from './via-default-reexport';",
