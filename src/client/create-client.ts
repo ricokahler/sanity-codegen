@@ -25,7 +25,17 @@ function createClient<Documents extends { _type: string; _id: string }>({
   fetch,
   useCdn,
 }: CreateClientOptions) {
+  const normalizedApiVersion = normalizeApiVersion(apiVersion);
   const previewModeRef = { current: _previewMode };
+
+  function normalizeApiVersion(version: string): string {
+    const [firstChar] = version;
+    if (firstChar === "v") {
+      return version.slice(1);
+    }
+
+    return version;
+  }
 
   async function jsonFetch<T>(url: RequestInfo, options?: RequestInit) {
     const response = await fetch(url, {
@@ -55,8 +65,8 @@ function createClient<Documents extends { _type: string; _id: string }>({
     const preview = previewModeRef.current && !!token;
     const previewClause = preview
       ? // sanity creates a new document with an _id prefix of `drafts.`
-        // for when a document is edited without being published
-        `|| _id=="drafts.${id}"`
+      // for when a document is edited without being published
+      `|| _id=="drafts.${id}"`
       : '';
 
     const [result] = await query<R>(`* [_id == "${id}" ${previewClause}]`);
@@ -107,7 +117,7 @@ function createClient<Documents extends { _type: string; _id: string }>({
     const response = await jsonFetch<SanityResult<T>>(
       `https://${projectId}.${
         useCdn ? 'apicdn' : 'api'
-      }.sanity.io/v${apiVersion}/data/query/${dataset}?${searchParams.toString()}`,
+      }.sanity.io/v${normalizedApiVersion}/data/query/${dataset}?${searchParams.toString()}`,
       {
         // conditionally add the authorization header if the token is present
         ...(token &&
