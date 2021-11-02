@@ -7,7 +7,7 @@ import pool from '@ricokahler/pool';
 import fs from 'fs';
 import path from 'path';
 import register, { revert } from '@babel/register';
-import { resolveExpression } from './utils';
+import { resolveExpression, simpleLogger } from './utils';
 import { ResolveExpressionError } from './resolve-expression-error';
 
 const defaultPluckBabelOptions = {
@@ -45,6 +45,10 @@ export interface PluckGroqFromSourceOptions {
    * will go through babel).
    */
   resolvePluckedFile?: (request: string) => string | Promise<string>;
+  /**
+   * optionally override the default logger (e.g. to silence it, etc)
+   */
+  logger?: Sanity.Codegen.Logger;
 }
 
 // TODO: update this link to main when published
@@ -80,6 +84,7 @@ export async function pluckGroqFromSource({
   babelOptions: inputBabelOptions,
   resolvePluckedFile = require.resolve,
   groqTagName = 'groq',
+  logger = simpleLogger,
 }: PluckGroqFromSourceOptions) {
   const babelOptions: Record<string, unknown> = babelMerge(
     defaultPluckBabelOptions,
@@ -127,8 +132,7 @@ export async function pluckGroqFromSource({
         if (groqTemplateExpression.tag.name !== groqTagName) return;
         const queryKey = queryKeyLiteral.value;
         if (!/[A-Z][\w$]*/.test(queryKey)) {
-          // TODO: think about a formal reporter
-          console.warn(
+          logger.warn(
             `Query Keys must be a valid TypeScript identifiers and must ` +
               `also start with a capital letter. Check query key ` +
               `\`${queryKey}\`.`,
@@ -189,6 +193,10 @@ export interface PluckGroqFromFilesOptions {
    */
   root?: string;
   babelOptions?: Record<string, unknown>;
+  /**
+   * optionally override the default logger (e.g. to silence it, etc)
+   */
+  logger?: Sanity.Codegen.Logger;
 }
 
 /**
@@ -200,7 +208,10 @@ export async function pluckGroqFromFiles({
   groqCodegenExclude,
   root = process.cwd(),
   babelOptions,
+  logger = simpleLogger,
 }: PluckGroqFromFilesOptions) {
+  logger.verbose('Finding files to extract queries from…');
+
   const inclusions =
     typeof groqCodegenInclude === 'function'
       ? []
@@ -222,12 +233,24 @@ export async function pluckGroqFromFiles({
           ),
     ),
   );
+  logger.info(
+    `Found ${filenames.length} candidate file${
+      filenames.length === 1 ? '' : 's'
+    } from \`groqCodegenInclude\` and \`groqCodegenExclude\``,
+  );
 
+  let progress = 0;
   const extractedQueries = (
     await pool({
       collection: filenames,
       maxConcurrency: 50,
       task: async (filename) => {
+        progress += 1;
+        logger.verbose(
+          `Extracting queries… ${Math.round(
+            (progress * 100) / filenames.length,
+          )}% (${progress}/${filenames.length})`,
+        );
         const resolvedFilename = path.resolve(root, filename);
         const buffer = await fs.promises.readFile(resolvedFilename);
         const source = buffer.toString();
@@ -236,10 +259,17 @@ export async function pluckGroqFromFiles({
           source,
           filename: resolvedFilename,
           babelOptions,
+          logger,
         });
       },
     })
   ).flat();
+
+  logger[extractedQueries.length === 0 ? 'warn' : 'info'](
+    `Found ${extractedQueries.length} ${
+      extractedQueries.length === 1 ? 'query' : 'queries'
+    } from ${filenames.length} files.`,
+  );
 
   const queryKeys = new Set<string>();
 

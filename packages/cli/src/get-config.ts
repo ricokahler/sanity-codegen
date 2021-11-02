@@ -5,7 +5,6 @@ import babelMerge from 'babel-merge';
 // @ts-expect-error no types for this
 import register, { revert } from '@babel/register';
 import { CLIError } from '@oclif/errors';
-import { Command } from '@oclif/command';
 import { defaultBabelOptions } from '@sanity-codegen/schema-codegen';
 import { fileWalker } from './file-walker';
 import { SanityCodegenConfig } from './types';
@@ -21,10 +20,10 @@ interface GetConfigOptions {
     babelOptions?: string;
     babelrcPath?: string;
   };
-  log: Command['log'];
+  logger: Sanity.Codegen.Logger;
 }
 
-export async function getConfig({ flags, log }: GetConfigOptions) {
+export async function getConfig({ flags, logger }: GetConfigOptions) {
   register(defaultBabelOptions);
 
   const configFilename = await fileWalker({
@@ -34,7 +33,7 @@ export async function getConfig({ flags, log }: GetConfigOptions) {
   const configDirname = configFilename && path.dirname(configFilename);
 
   if (configFilename) {
-    log(`Using sanity-codegen config found at: ${configFilename}`);
+    logger.info(`Using sanity-codegen config found at: ${configFilename}`);
   }
 
   const configFirstPass: SanityCodegenConfig | null =
@@ -87,7 +86,7 @@ export async function getConfig({ flags, log }: GetConfigOptions) {
   })();
 
   if (babelOptionsFromBabelrc) {
-    log(`Using babelrc config found at: ${babelrcPath}`);
+    logger.info(`Using babelrc config found at: ${babelrcPath}`);
   }
 
   const babelOptions: Record<string, unknown> = babelMerge(

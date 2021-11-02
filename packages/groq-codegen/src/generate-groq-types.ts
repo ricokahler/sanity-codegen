@@ -2,12 +2,14 @@ import * as t from '@babel/types';
 import generate from '@babel/generator';
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
 import { parse } from 'groq-js';
+
 import { transformGroqToStructure } from './transform-groq-to-structure';
 import { transformStructureToTs } from './transform-structure-to-ts';
 import {
   pluckGroqFromFiles,
   PluckGroqFromFilesOptions,
 } from './pluck-groq-from-files';
+import { simpleLogger } from './utils';
 
 export interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
   /**
@@ -42,10 +44,22 @@ export async function generateGroqTypes({
   normalizedSchema,
   ...pluckOptions
 }: GenerateGroqTypesOptions) {
+  const { logger = simpleLogger } = pluckOptions;
   const extractedQueries = await pluckGroqFromFiles(pluckOptions);
+
+  logger.verbose('Converting queries to typescript…');
+  let progress = 0;
 
   const { queries, references } = extractedQueries
     .map(({ queryKey, query }) => {
+      progress += 1;
+      logger.verbose(
+        `Converting queries to typescript… ${Math.round(
+          (progress * 100) / extractedQueries.length,
+        )}% (${progress}/${extractedQueries.length})`,
+      );
+
+      // TODO: should this be async?
       const structure = transformGroqToStructure({
         node: parse(query),
         scopes: [],
@@ -69,6 +83,13 @@ export async function generateGroqTypes({
       },
       { queries: {}, references: {} },
     );
+  const queryCount = Object.keys(queries).length;
+
+  logger[queryCount === 1 ? 'warn' : 'success'](
+    `Converted ${queryCount} ${
+      queryCount === 1 ? 'query' : 'queries'
+    } to TypeScript`,
+  );
 
   const finalCodegen = `
     /// <reference types="@sanity-codegen/types" />

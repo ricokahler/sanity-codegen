@@ -1,6 +1,5 @@
 import path from 'path';
 import { CLIError } from '@oclif/errors';
-import { Command } from '@oclif/command';
 import { fileWalker } from './file-walker';
 import { SanityCodegenConfig } from './types';
 
@@ -8,14 +7,14 @@ interface GetSchemaPathOptions {
   config: SanityCodegenConfig | null;
   args: { schemaPath?: string };
   root: string;
-  log: Command['log'];
+  logger: Sanity.Codegen.Logger;
 }
 
 export async function getSchemaPath({
   config,
   args,
   root,
-  log,
+  logger,
 }: GetSchemaPathOptions) {
   if (args.schemaPath) {
     try {
@@ -23,7 +22,7 @@ export async function getSchemaPath({
         path.resolve(process.cwd(), args.schemaPath),
       );
 
-      log(`Using schema at: ${resolvedSchemaPath}`);
+      logger.info(`Using schema at: ${resolvedSchemaPath}`);
 
       return resolvedSchemaPath;
     } catch {
@@ -39,7 +38,7 @@ export async function getSchemaPath({
         path.resolve(process.cwd(), config.schemaPath),
       );
 
-      log(`Using schema at: ${resolvedSchemaPath}`);
+      logger.info(`Using schema at: ${resolvedSchemaPath}`);
 
       return resolvedSchemaPath;
     } catch {
@@ -54,7 +53,7 @@ export async function getSchemaPath({
     startingPoint: root,
   });
 
-  log(`Found sanity.json at: ${sanityJsonPath}`);
+  logger.info(`Found sanity.json at: ${sanityJsonPath}`);
 
   if (!sanityJsonPath) {
     throw new CLIError(
@@ -102,7 +101,7 @@ export async function getSchemaPath({
       path.resolve(path.dirname(sanityJsonPath), schemaPart.path),
     );
 
-    log(`Using schema at ${resolvedSchemaPath} found in sanity.json`);
+    logger.info(`Using schema at ${resolvedSchemaPath} found in sanity.json`);
 
     return resolvedSchemaPath;
   } catch (e) {

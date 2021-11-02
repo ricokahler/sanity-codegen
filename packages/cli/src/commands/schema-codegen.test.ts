@@ -18,19 +18,29 @@ describe('schema-codegen command', () => {
       {} as any,
     );
 
-    schemaCodegenCommand.log = jest.fn();
+    const log = jest.fn();
+
+    schemaCodegenCommand.logger = {
+      debug: log,
+      error: log,
+      info: log,
+      log,
+      success: log,
+      verbose: log,
+      warn: log,
+    };
 
     await schemaCodegenCommand.run();
 
     expect(
-      (schemaCodegenCommand.log as jest.Mock).mock.calls
+      log.mock.calls
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
       Array [
         "Using sanity-codegen config found at <PATH>",
-        "[32m✓[0m Wrote schema types output to <PATH>",
-        "[32m✓[0m Wrote schema JSON output to <PATH>",
+        "Wrote schema types output to <PATH>",
+        "Wrote schema JSON output to <PATH>",
       ]
     `);
 

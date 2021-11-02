@@ -18,18 +18,37 @@ describe('groq-codegen command', () => {
       {} as any,
     );
 
-    schemaCodegenCommand.log = jest.fn();
+    const log = jest.fn();
+
+    schemaCodegenCommand.logger = {
+      debug: log,
+      error: log,
+      info: log,
+      log,
+      success: log,
+      verbose: log,
+      warn: log,
+    };
 
     await schemaCodegenCommand.run();
 
     expect(
-      (schemaCodegenCommand.log as jest.Mock).mock.calls
+      (log as jest.Mock).mock.calls
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
       Array [
         "Using sanity-codegen config found at <PATH>",
-        "[32m✓[0m  Wrote query types output to <PATH>",
+        "Finding files to extract queries from…",
+        "Found 2 candidate files from \`groqCodegenInclude\` and \`groqCodegenExclude\`",
+        "Extracting queries… 50% (1/2)",
+        "Extracting queries… 100% (2/2)",
+        "Found 1 query from 2 files.",
+        "Converting queries to typescript…",
+        "Converting queries to typescript… 100% (1/1)",
+        "Converted 1 query to TypeScript",
+        "Writing query types output…",
+        "Wrote query types output to <PATH>",
       ]
     `);
 

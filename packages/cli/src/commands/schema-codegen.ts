@@ -10,8 +10,15 @@ import {
 } from '@sanity-codegen/schema-codegen';
 import { getConfig } from '../get-config';
 import { getSchemaPath } from '../get-schema-path';
+import { simpleLogger } from '../simple-logger';
+import { createAnimatedLogger } from '../create-animated-logger';
 
 export default class SchemaCodegen extends Command {
+  logger =
+    process.env.CI === 'true' || process.env.NODE_ENV === 'test'
+      ? simpleLogger
+      : createAnimatedLogger();
+
   static description = stripIndents`
     loads a sanity schema and generates TypeScript types from it
   `;
@@ -82,10 +89,11 @@ export default class SchemaCodegen extends Command {
   ];
 
   async run() {
+    const { logger } = this;
     const { args, flags } = this.parse(SchemaCodegen);
     const { babelOptions, config, babelrcPath, root } = await getConfig({
       flags,
-      log: this.log.bind(this),
+      logger,
     });
 
     const normalizedSchema = config?.normalizedSchema
@@ -95,7 +103,7 @@ export default class SchemaCodegen extends Command {
             config,
             args,
             root,
-            log: this.log.bind(this),
+            logger,
           }),
           babelrcPath: babelrcPath || undefined,
           babelOptions,
@@ -116,9 +124,8 @@ export default class SchemaCodegen extends Command {
         'schema-types.d.ts',
     );
     await fs.promises.writeFile(schemaTypesOutputPath, result);
-    this.log(
-      `\x1b[32m✓\x1b[0m Wrote schema types output to: ${schemaTypesOutputPath}`,
-    );
+    // TODO: would be better with a relative path
+    logger.success(`Wrote schema types output to: ${schemaTypesOutputPath}`);
 
     const schemaJsonOutputPath = path.resolve(
       root,
@@ -130,8 +137,7 @@ export default class SchemaCodegen extends Command {
       schemaJsonOutputPath,
       JSON.stringify(normalizedSchema, null, 2),
     );
-    this.log(
-      `\x1b[32m✓\x1b[0m Wrote schema JSON output to: ${schemaJsonOutputPath}`,
-    );
+    // TODO: would be better with a relative path
+    logger.success(`Wrote schema JSON output to: ${schemaJsonOutputPath}`);
   }
 }
