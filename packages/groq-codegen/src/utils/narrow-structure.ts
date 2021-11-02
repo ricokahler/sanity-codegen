@@ -285,7 +285,6 @@ export const accept = withMemo(
             return 'no';
           }
           case 'Boolean':
-          case 'Intrinsic':
           case 'Number':
           case 'String':
           case 'Tuple':

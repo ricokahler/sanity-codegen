@@ -40,9 +40,6 @@ export function accessAttributeInStructure(
         },
       );
     }
-    case 'Intrinsic': {
-      throw new Error('Not implemented yet');
-    }
     case 'Lazy': {
       return createStructure({
         type: 'Lazy',
