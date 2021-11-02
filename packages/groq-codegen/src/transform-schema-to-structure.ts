@@ -1,3 +1,9 @@
+import {
+  imageAssetStructure,
+  imageCropStructure,
+  imageHotspotStructure,
+} from './default-structures';
+import { geopointStructure } from './default-structures/geopoint';
 import { removeOptional, createStructure, objectHash } from './utils';
 
 export interface TransformSchemaToStructureOptions {
@@ -231,39 +237,31 @@ function transform(
         });
       }
 
-      if (node.type === 'File' || node.type === 'Image') {
+      if (node.type === 'File') {
         properties.push({
           key: 'asset',
           value: createStructure({
-            type: 'Intrinsic',
-            intrinsicType: 'Asset',
-            // TODO: is this right?
+            type: 'Reference',
             canBeNull: false,
             canBeOptional: false,
+            to: createStructure({ type: 'Unknown' }),
           }),
         });
       }
 
       if (node.type === 'Image') {
         properties.push({
-          key: 'crop',
+          key: 'asset',
           value: createStructure({
-            type: 'Intrinsic',
-            intrinsicType: 'Crop',
+            type: 'Reference',
             canBeNull: false,
-            canBeOptional: true,
+            canBeOptional: false,
+            to: imageAssetStructure,
           }),
         });
 
-        properties.push({
-          key: 'hotspot',
-          value: createStructure({
-            type: 'Intrinsic',
-            intrinsicType: 'Hotspot',
-            canBeNull: false,
-            canBeOptional: true,
-          }),
-        });
+        properties.push({ key: 'crop', value: imageCropStructure });
+        properties.push({ key: 'hotspot', value: imageHotspotStructure });
       }
 
       const fieldProperties = node.fields?.map((field) => ({
@@ -287,9 +285,7 @@ function transform(
 
     case 'Geopoint': {
       return createStructure({
-        type: 'Intrinsic',
-        intrinsicType: 'Geopoint',
-        canBeNull: false,
+        ...(geopointStructure as Sanity.GroqCodegen.ObjectNode),
         canBeOptional: !node.codegen.required,
       });
     }

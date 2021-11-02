@@ -18,7 +18,6 @@ declare namespace Sanity {
       | StringNode
       | NumberNode
       | BooleanNode
-      | IntrinsicNode
       | ReferenceNode
       | UnknownNode;
 
@@ -65,6 +64,8 @@ declare namespace Sanity {
       hash: string;
     };
 
+    // TODO: should add meta information like `originalName` and `modified` so
+    // unmodified types can reference global types (e.g. for assets)
     type ObjectNode = {
       type: 'Object';
       properties: Array<{ key: string; value: StructureNode }>;
@@ -91,16 +92,6 @@ declare namespace Sanity {
 
     type BooleanNode = {
       type: 'Boolean';
-      canBeNull: boolean;
-      canBeOptional: boolean;
-      hash: string;
-    };
-
-    type IntrinsicType = 'Asset' | 'Crop' | 'Hotspot' | 'Geopoint';
-
-    type IntrinsicNode = {
-      type: 'Intrinsic';
-      intrinsicType: IntrinsicType;
       canBeNull: boolean;
       canBeOptional: boolean;
       hash: string;

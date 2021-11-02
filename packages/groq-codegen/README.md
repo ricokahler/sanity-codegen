@@ -337,7 +337,6 @@ declare namespace Sanity {
       | StringNode
       | NumberNode
       | BooleanNode
-      | IntrinsicNode
       | ReferenceNode
       | UnknownNode;
 
@@ -396,16 +395,6 @@ declare namespace Sanity {
 
     type BooleanNode = {
       type: 'Boolean';
-      canBeNull: boolean;
-      canBeOptional: boolean;
-      hash: string;
-    };
-
-    type IntrinsicType = 'Asset' | 'Crop' | 'Hotspot' | 'Geopoint';
-
-    type IntrinsicNode = {
-      type: 'Intrinsic';
-      intrinsicType: IntrinsicType;
       canBeNull: boolean;
       canBeOptional: boolean;
       hash: string;

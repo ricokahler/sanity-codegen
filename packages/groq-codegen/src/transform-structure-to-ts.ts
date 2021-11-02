@@ -87,11 +87,6 @@ function transform(
       tsType = t.tsBooleanKeyword();
       break;
     }
-    case 'Intrinsic': {
-      // TODO:
-      tsType = t.tsUnknownKeyword();
-      break;
-    }
     case 'Number': {
       tsType = t.tsNumberKeyword();
       break;
