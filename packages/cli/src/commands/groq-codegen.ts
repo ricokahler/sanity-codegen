@@ -6,8 +6,18 @@ import path from 'path';
 import fs from 'fs';
 import { generateGroqTypes } from '@sanity-codegen/groq-codegen';
 import { getConfig } from '../get-config';
+import { createAnimatedLogger } from '../create-animated-logger';
+import { simpleLogger } from '../simple-logger';
+
+const isRecord = (obj: unknown): obj is Record<string, unknown> =>
+  typeof obj === 'object' && !!obj;
 
 export default class GroqCodegen extends Command {
+  logger =
+    process.env.CI === 'true' || process.env.NODE_ENV === 'test'
+      ? simpleLogger
+      : createAnimatedLogger();
+
   static description = stripIndents`
     parses source code files for GROQ queries and outputs TypeScript types from them
   `;
@@ -66,11 +76,9 @@ export default class GroqCodegen extends Command {
   ];
 
   async run() {
+    const { logger } = this;
     const { args, flags } = this.parse(GroqCodegen);
-    const { config, root, babelOptions } = await getConfig({
-      flags,
-      log: this.log.bind(this),
-    });
+    const { config, root, babelOptions } = await getConfig({ flags, logger });
 
     const normalizedSchema = config?.normalizedSchema
       ? config.normalizedSchema
@@ -89,7 +97,7 @@ export default class GroqCodegen extends Command {
             );
           }
 
-          this.log(`Using schemaJson at "${schemaJsonInputPath}"`);
+          logger.info(`Using schemaJson at "${schemaJsonInputPath}"`);
 
           try {
             const buffer = await fs.promises.readFile(schemaJsonInputPath);
@@ -99,7 +107,9 @@ export default class GroqCodegen extends Command {
             return schema;
           } catch (e) {
             const errorMessage =
-              typeof e?.message === 'string' ? ` Error: ${e.message}` : '';
+              isRecord(e) && typeof e?.message === 'string'
+                ? ` Error: ${e.message}`
+                : '';
 
             throw new CLIError(
               `Failed to read schemaJson at ${schemaJsonInputPath} .${errorMessage}`,
@@ -126,6 +136,7 @@ export default class GroqCodegen extends Command {
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
       root,
       normalizedSchema,
+      logger,
     });
 
     const queryTypesOutputPath = path.resolve(
@@ -135,9 +146,8 @@ export default class GroqCodegen extends Command {
         'query-types.d.ts',
     );
 
+    logger.verbose('Writing query types output…');
     await fs.promises.writeFile(queryTypesOutputPath, result);
-    this.log(
-      `\x1b[32m✓\x1b[0m  Wrote query types output to: ${queryTypesOutputPath}`,
-    );
+    logger.success(`Wrote query types output to: ${queryTypesOutputPath}`);
   }
 }

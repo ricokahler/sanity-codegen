@@ -6,6 +6,15 @@ describe('pluckGroqFromFile', () => {
       root: __dirname,
       groqCodegenInclude: './__example-files__/**/*.ts',
       groqCodegenExclude: ['**/mock_node_modules', '**/*.fake-test.ts'],
+      logger: {
+        debug: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+        log: jest.fn(),
+        success: jest.fn(),
+        verbose: jest.fn(),
+        warn: jest.fn(),
+      },
     });
 
     expect(results).toMatchInlineSnapshot(`

@@ -24,3 +24,4 @@ export { reduceObjectStructures } from './reduce-object-structures';
 export { resolveExpression } from './resolve-expression';
 export { resolveIdentifier } from './resolve-identifier';
 export { wrapArray } from './wrap-array';
+export { simpleLogger } from './simple-logger';

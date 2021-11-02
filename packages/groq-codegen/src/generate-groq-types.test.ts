@@ -10,6 +10,15 @@ describe('generateGroqTypes', () => {
       groqCodegenInclude: './__example-files__/**/*.ts',
       groqCodegenExclude: ['**/*.fake-test.ts', '**/mock_node_modules'],
       normalizedSchema: schemaNormalizer(exampleSchema),
+      logger: {
+        debug: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+        log: jest.fn(),
+        success: jest.fn(),
+        verbose: jest.fn(),
+        warn: jest.fn(),
+      },
     });
 
     expect(result).toMatchInlineSnapshot(`

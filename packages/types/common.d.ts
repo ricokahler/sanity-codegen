@@ -1,4 +1,11 @@
 declare namespace Sanity {
+  namespace Codegen {
+    type LogLevel = 'success' | 'error' | 'warn' | 'info' | 'verbose' | 'debug';
+    type Logger = { [P in LogLevel | 'log']: (message: string) => void } & {
+      closeAndFlush?: () => Promise<void>;
+    };
+  }
+
   /**
    * Represents a reference in Sanity to another entity. Note that the
    * generic type is strictly for TypeScript meta programming.
@@ -76,6 +83,6 @@ declare namespace Sanity {
 
   type SafeIndexedAccess<
     T extends { [key: string]: any } | undefined,
-    K extends keyof NonNullable<T>
+    K extends keyof NonNullable<T>,
   > = T extends undefined ? NonNullable<T>[K] | undefined : NonNullable<T>[K];
 }

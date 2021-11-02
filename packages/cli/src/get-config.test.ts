@@ -3,14 +3,22 @@ import { getConfig } from './get-config';
 
 describe('getConfig', () => {
   it('takes in CLI flags and returns a resolve config, root, babelrcPath, and babelOptions', async () => {
-    const mockLog = jest.fn();
+    const log = jest.fn();
     const { babelOptions, babelrcPath, root, config } = await getConfig({
       flags: {
         configPath: require.resolve(
           './__example-folders__/example-config-folder/example-config',
         ),
       },
-      log: mockLog,
+      logger: {
+        debug: log,
+        error: log,
+        info: log,
+        log,
+        success: log,
+        verbose: log,
+        warn: log,
+      },
     });
 
     // the root returns as an absolute path based on the root value in the
@@ -32,7 +40,7 @@ describe('getConfig', () => {
     expect(config).toBeDefined();
 
     expect(
-      mockLog.mock.calls
+      log.mock.calls
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
