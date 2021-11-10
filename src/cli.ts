@@ -5,6 +5,12 @@ import generateTypes from './generate-types';
 
 import register, { revert } from '@babel/register';
 
+const jsdomDefaultHtml = `<!doctype html>
+<html>
+  <head><meta charset="utf-8"></head>
+  <body></body>
+</html>`;
+
 export const defaultBabelOptions = {
   extensions: ['.js', '.ts', '.tsx', '.mjs'],
   // these disable any babel config files in the project so we can run our
@@ -68,6 +74,21 @@ async function cli() {
     ...defaultBabelOptions,
     ...config.babelOptions,
   });
+  require('jsdom-global')(jsdomDefaultHtml, {
+    url: 'http://localhost:3333/',
+  });
+
+  if (!global.requestAnimationFrame) {
+    global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
+  }
+
+  if (!global.cancelAnimationFrame) {
+    global.cancelAnimationFrame = (timer) => clearTimeout(timer);
+  }
+
+  if (!global.InputEvent) {
+    global.InputEvent = window.InputEvent;
+  }
 
   if (!config.schemaPath) {
     throw new Error(
