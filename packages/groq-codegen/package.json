@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/groq-codegen",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.13",
   "keywords": [
     "sanity",
     "groq",
@@ -25,7 +25,7 @@
   "exports": {
     ".": "./index.js"
   },
-  "types": "./index.d.ts",
+  "types": "./dist",
   "scripts": {
     "build": "./scripts/build",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
@@ -48,10 +48,9 @@
   "engines": {
     "node": ">=10.0.0"
   },
-  "selfDependencies": [
-    "@sanity-codegen/types"
-  ],
   "devDependencies": {
+    "@sanity-codegen/schema-codegen": "1.0.0-alpha.13",
+    "@sanity-codegen/types": "1.0.0-alpha.13",
     "@types/object-hash": "^2.1.1",
     "groq": "^2.13.0"
   }

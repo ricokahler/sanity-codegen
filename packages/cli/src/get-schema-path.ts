@@ -3,6 +3,11 @@ import { CLIError } from '@oclif/errors';
 import { fileWalker } from './file-walker';
 import { SanityCodegenConfig } from './types';
 
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  var type = typeof value;
+  return value != null && (type == 'object' || type == 'function');
+};
+
 interface GetSchemaPathOptions {
   config: SanityCodegenConfig | null;
   args: { schemaPath?: string };
@@ -108,7 +113,7 @@ export async function getSchemaPath({
     throw new CLIError(
       'Failed to get schema path from `sanity.json`. ' +
         'Please fix your sanity.json or provide the schemaPath via CLI args or the config. Error: ' +
-        e.message,
+        ((isRecord(e) && e?.message) || 'unknown error'),
     );
   }
 }

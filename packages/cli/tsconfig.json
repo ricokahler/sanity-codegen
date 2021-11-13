@@ -1,13 +1,13 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "outDir": "./lib",
-    "rootDir": "./src",
-    "strict": true,
-    "target": "esnext"
+    "declarationDir": "./lib",
+    "rootDir": "./src"
   },
-  "include": ["./src", "./external.d.ts"]
+  "include": ["./src"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../schema-codegen" },
+    { "path": "../groq-codegen" }
+  ]
 }

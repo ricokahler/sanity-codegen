@@ -1,6 +1,6 @@
 {
   "name": "sanity-codegen",
-  "version": "0.0.0",
+  "version": "1.0.0-alpha.13",
   "private": true,
   "description": "Generate TypeScript types for your Sanity.io projects",
   "homepage": "https://github.com/ricokahler/sanity-codegen",
@@ -15,7 +15,6 @@
     "email": "ricokahler@me.com",
     "url": "https://github.com/ricokahler"
   },
-  "sideEffects": false,
   "workspaces": [
     "packages/*"
   ],

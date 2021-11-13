@@ -1,5 +1,3 @@
-/// <reference types="@sanity-codegen/schema-codegen" />
-
 export {
   GenerateGroqTypesOptions,
   generateGroqTypes,

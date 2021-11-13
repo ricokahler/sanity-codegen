@@ -5,3 +5,4 @@ coverage
 .DS_Store
 yarn-error.log
 oclif.manifest.json
+tsconfig.tsbuildinfo

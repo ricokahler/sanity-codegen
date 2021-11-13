@@ -1,11 +1,13 @@
 import globby from 'globby';
 import { parse, traverse } from '@babel/core';
 import { Scope } from '@babel/traverse';
+// @ts-expect-error
 import babelMerge from 'babel-merge';
 import * as t from '@babel/types';
 import pool from '@ricokahler/pool';
 import fs from 'fs';
 import path from 'path';
+// @ts-expect-error
 import register, { revert } from '@babel/register';
 import { resolveExpression, simpleLogger } from './utils';
 import { ResolveExpressionError } from './resolve-expression-error';
