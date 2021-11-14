@@ -11,15 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
 
       - name: Configure CI Git User
-        env:
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
