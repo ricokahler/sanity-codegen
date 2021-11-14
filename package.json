@@ -23,7 +23,6 @@
     "clean": "npm run clean --workspaces && rm -rf node_modules",
     "lint": "npm run lint --workspaces",
     "nuke": "npm run clean && rm -rf package-lock.json",
-    "release": "./scripts/release",
     "sort-package-json": "sort-package-json && npm run sort-package-json --workspaces",
     "test": "jest",
     "typecheck": "tsc -b"
