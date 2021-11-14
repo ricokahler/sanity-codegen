@@ -1,5 +1,3 @@
-/// <reference types="@sanity-codegen/types" />
-
 declare namespace Sanity {
   namespace SchemaDef {
     /**

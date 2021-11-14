@@ -1,10 +1,18 @@
 #!/bin/bash
 
+# use node_modules/.bin first
+PATH=./node_modules/.bin:$PATH
+
+# exit on any error
+set -e
+
+# clean
 rm -rf ./lib
+tsc -b --clean
 
-npx tsc
+tsc -b
 
-npx babel                           \
+babel                               \
   -x .js,.ts                        \
   --ignore /**/*.test.ts,/**/*.d.ts \
   --out-dir ./lib                   \

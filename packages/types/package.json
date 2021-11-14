@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/types",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.12",
   "keywords": [
     "sanity",
     "sanity-plugin",
@@ -24,10 +24,9 @@
   "types": "./index.d.ts",
   "scripts": {
     "build": ":",
-    "test": ":",
-    "typecheck": "tsc",
+    "clean": "rm -rf node_modules && tsc -b --clean",
     "lint": ":",
     "sort-package-json": "sort-package-json",
-    "clean": "rm -rf node_modules"
+    "test": ":"
   }
 }

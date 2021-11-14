@@ -21,6 +21,7 @@ export default [
           '@babel/preset-typescript',
         ],
         plugins: [
+          // TODO:
           // '@babel/plugin-transform-runtime',
           [
             '@babel/plugin-proposal-object-rest-spread',

@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/schema-codegen",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.12",
   "keywords": [
     "sanity",
     "sanity-plugin",
@@ -22,19 +22,29 @@
     "url": "https://github.com/ricokahler"
   },
   "exports": {
-    ".": "./index.js",
-    "./no-op": "./no-op.js",
-    "./schema-creator-shim": "./schema-creator-shim.js",
-    "./schema-type-shim": "./schema-type-shim.js"
+    ".": "./dist/index.js",
+    "./no-op": "./dist/no-op.js",
+    "./schema-creator-shim": "./dist/schema-creator-shim.js",
+    "./schema-type-shim": "./dist/schema-type-shim.js"
   },
-  "types": "./index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "./scripts/build",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "jest",
-    "sort-package-json": "sort-package-json",
+    "clean": "rm -rf node_modules && tsc -b --clean",
     "lint": "eslint --ext .ts,.js ./src",
-    "clean": "rm -rf node_modules"
+    "prepublish": "npm run build",
+    "sort-package-json": "sort-package-json",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "\\.[jt]sx?$": [
+        "babel-jest",
+        {
+          "rootMode": "upward"
+        }
+      ]
+    }
   },
   "dependencies": {
     "@babel/core": "^7.14.8",
@@ -46,15 +56,13 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
     "@babel/register": "^7.14.5",
+    "@sanity-codegen/types": "1.0.0-alpha.12",
     "babel-merge": "^3.0.0",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "babel-plugin-module-resolver": "^4.1.0",
     "prettier": "^2.2.1"
   },
   "engines": {
-    "node": ">=10.0.0"
-  },
-  "selfDependencies": [
-    "@sanity-codegen/types"
-  ]
+    "node": ">=12.22.0"
+  }
 }

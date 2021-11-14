@@ -1,0 +1,11 @@
+{
+  "packages": ["packages/*"],
+  "version": "1.0.0-alpha.12",
+  "command": {
+    "version": {
+      "conventionalCommits": true,
+      "conventionalPrerelease": true,
+      "createRelease": "github"
+    }
+  }
+}

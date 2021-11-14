@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# use node_modules/.bin first
+PATH=./node_modules/.bin:$PATH
+
+# exit on any error
+set -e
+
+# clean
 rm -rf ./dist
-npx tsc
-npx rollup -c
+tsc -b --clean
+
+tsc -b
+rollup -c

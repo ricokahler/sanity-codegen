@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/cli",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.12",
   "description": "CLI for sanity-codegen",
   "keywords": [
     "oclif",
@@ -23,8 +23,8 @@
     "email": "ricokahler@me.com",
     "url": "https://github.com/ricokahler"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "bin": {
     "sanity-codegen": "./bin/run"
   },
@@ -35,21 +35,33 @@
     "/oclif.manifest.json"
   ],
   "scripts": {
+    "build": "./scripts/build",
+    "clean": "rm -rf node_modules && tsc -b --clean",
+    "lint": "eslint --ext .ts,.js ./src",
     "prepack": "rm -rf lib && npm run build && oclif-dev manifest && oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
-    "build": "./scripts/build",
-    "test": "jest",
-    "version": "oclif-dev readme && git add README.md",
     "sort-package-json": "sort-package-json",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "lint": "eslint --ext .ts,.js ./src",
-    "clean": "rm -rf node_modules"
+    "test": "jest",
+    "version": "npx oclif-dev readme && git add README.md"
+  },
+  "jest": {
+    "transform": {
+      "\\.[jt]sx?$": [
+        "babel-jest",
+        {
+          "rootMode": "upward"
+        }
+      ]
+    }
   },
   "dependencies": {
     "@babel/core": "^7.14.8",
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-help": "^3.2.2",
+    "@sanity-codegen/groq-codegen": "1.0.0-alpha.12",
+    "@sanity-codegen/schema-codegen": "1.0.0-alpha.12",
+    "@sanity-codegen/types": "1.0.0-alpha.12",
     "babel-merge": "^3.0.0",
     "chalk": "^4.1.2",
     "common-tags": "^1.8.0",
@@ -63,7 +75,7 @@
     "globby": "^10.0.2"
   },
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.22.0"
   },
   "oclif": {
     "commands": "./lib/commands",
@@ -71,9 +83,5 @@
     "plugins": [
       "@oclif/plugin-help"
     ]
-  },
-  "selfDependencies": [
-    "@sanity-codegen/schema-codegen",
-    "@sanity-codegen/groq-codegen"
-  ]
+  }
 }

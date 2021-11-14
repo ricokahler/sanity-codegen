@@ -1,4 +1,8 @@
 node_modules
 scripts
 src
+/no-op.ts
+/schema-creator-shim.ts
+/schema-type-shim.ts
 tsconfig.json
+*.tsbuildinfo
