@@ -8,9 +8,10 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
 
       - uses: actions/setup-node@v2
         with:
