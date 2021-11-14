@@ -1,0 +1,20 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "esnext",
+    "composite": true
+  },
+  "references": [
+    { "path": "./packages/cli" },
+    { "path": "./packages/client" },
+    { "path": "./packages/groq-codegen" },
+    { "path": "./packages/schema-codegen" }
+  ]
+}

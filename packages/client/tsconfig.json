@@ -1,13 +1,9 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "esModuleInterop": true,
-    "noImplicitAny": false,
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "strict": true,
-    "target": "esnext"
+    "declarationDir": "./dist",
+    "rootDir": "./src",
+    "outDir": "./lib"
   },
   "include": ["./src"]
 }

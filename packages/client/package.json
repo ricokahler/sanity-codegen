@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/client",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.12",
   "keywords": [
     "sanity",
     "groq",
@@ -33,11 +33,21 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "./scripts/build",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "test": "jest",
-    "sort-package-json": "sort-package-json",
+    "clean": "rm -rf node_modules && tsc -b --clean",
     "lint": "eslint --ext .ts,.js ./src",
-    "clean": "rm -rf node_modules"
+    "prepublish": "npm run build",
+    "sort-package-json": "sort-package-json",
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "\\.[jt]sx?$": [
+        "babel-jest",
+        {
+          "rootMode": "upward"
+        }
+      ]
+    }
   },
   "dependencies": {},
   "devDependencies": {
