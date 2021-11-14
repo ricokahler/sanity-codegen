@@ -20,9 +20,9 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
         run: |
-          git config --global user.name '@ricokahler'
-          git config --global user.email 'ricokahler@users.noreply.github.com'
-          git remote set-url origin https://$GITHUB_ACTOR:$GITHUB_PAT@github.com/ricokahler/sanity-codegen
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY
 
       - name: npm install
         run: npm i
