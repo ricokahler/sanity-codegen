@@ -23,7 +23,6 @@
     "clean": "npm run clean --workspaces && rm -rf node_modules",
     "lint": "npm run lint --workspaces",
     "nuke": "npm run clean && rm -rf package-lock.json",
-    "release": "./scripts/release",
     "sort-package-json": "sort-package-json && npm run sort-package-json --workspaces",
     "test": "jest",
     "typecheck": "tsc -b"
@@ -49,6 +48,7 @@
     "eslint-plugin-jsx-a11y": "6.4.1",
     "eslint-plugin-react": "7.22.0",
     "eslint-plugin-react-hooks": "4.2.0",
+    "fast-glob": "^3.2.7",
     "jest": "^27.0.6",
     "lerna": "^4.0.0",
     "node-fetch": "^2.6.1",
