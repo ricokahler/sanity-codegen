@@ -6,3 +6,4 @@ coverage
 yarn-error.log
 oclif.manifest.json
 *.tsbuildinfo
+.npmrc

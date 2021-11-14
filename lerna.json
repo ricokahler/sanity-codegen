@@ -1,6 +1,8 @@
 {
-  "packages": ["packages/*"],
-  "version": "1.0.0-alpha.12",
+  "packages": [
+    "packages/*"
+  ],
+  "version": "1.0.0-alpha.24",
   "command": {
     "version": {
       "conventionalCommits": true,

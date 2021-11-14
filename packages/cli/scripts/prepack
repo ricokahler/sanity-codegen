@@ -3,20 +3,12 @@
 # exit on any error
 set -e
 
+npm run build
+
 # use node_modules/.bin first
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIR=$(dirname "($(dirname "$(dirname "$SCRIPT_DIR")"))")
 PATH=${SCRIPT_DIR}/node_modules/.bin:${ROOT_DIR}/node_modules/.bin:$PATH
 
-# clean
-rm -rf ./lib
-tsc -b --clean
-
-tsc -b
-
-babel                               \
-  -x .js,.ts                        \
-  --ignore /**/*.test.ts,/**/*.d.ts \
-  --out-dir ./lib                   \
-  --root-mode upward                \
-  ./src
+npx oclif-dev manifest
+npx oclif-dev readme
