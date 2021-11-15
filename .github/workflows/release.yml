@@ -34,4 +34,6 @@ jobs:
       - name: lerna publish
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: lerna publish from-git --dist-tag alpha --yes
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+          lerna publish from-git --dist-tag alpha --yes
