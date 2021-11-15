@@ -38,7 +38,7 @@
     "build": "./scripts/build",
     "clean": "rm -rf node_modules && tsc -b --clean",
     "lint": "eslint --ext .ts,.js ./src",
-    "prepack": "rm -rf lib && npm run build && oclif-dev manifest && oclif-dev readme",
+    "prepack": "rm -rf lib && npm run build && npx oclif-dev manifest && npx oclif-dev readme",
     "postpack": "rm -f oclif.manifest.json",
     "sort-package-json": "sort-package-json",
     "test": "jest",
