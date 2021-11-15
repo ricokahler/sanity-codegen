@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.14](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.13...v1.0.0-alpha.14) (2021-11-15)
+
+
+### Bug Fixes
+
+* **ci:** fix npm publish script ([a9b65a0](https://github.com/ricokahler/sanity-codegen/commit/a9b65a0ba68d9b6fe9c68473fc8c2ce998e4318f))
+* **ci:** ignore .npmrc to fix publish ([edf6117](https://github.com/ricokahler/sanity-codegen/commit/edf6117306d5a10650c5a3135f5f9ce485220efb))
+* touch a file to test out automated releases ([ea7e3f2](https://github.com/ricokahler/sanity-codegen/commit/ea7e3f21654dcd1c582e43df4ee3878e764181bb))
+* use `publish from-package` in release CI ([800c52e](https://github.com/ricokahler/sanity-codegen/commit/800c52e9b664245527a51267e94386bd2b1ca676))
+
+
+
+
+
 # [1.0.0-alpha.13](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.12...v1.0.0-alpha.13) (2021-11-15)
 
 
