@@ -36,7 +36,9 @@ jobs:
       - name: lerna version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: lerna version --yes
+        run: |
+          git reset --hard
+          lerna version --yes
 
       - name: lerna publish
         run: lerna publish from-package --dist-tag alpha --no-verify-access --no-git-reset --yes
