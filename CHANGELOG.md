@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.23](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.22...v1.0.0-alpha.23) (2021-11-15)
+
+
+### Bug Fixes
+
+* **ci:** run build before changing path ([3b72376](https://github.com/ricokahler/sanity-codegen/commit/3b723767dcf18e849e6e1bcc037f13ef5b9edc81))
+
+
+
+
+
 # [1.0.0-alpha.22](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.21...v1.0.0-alpha.22) (2021-11-15)
 
 
