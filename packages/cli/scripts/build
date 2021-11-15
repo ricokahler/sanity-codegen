@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# use node_modules/.bin first
-PATH=./node_modules/.bin:$PATH
-
 # exit on any error
 set -e
+
+# use node_modules/.bin first
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PATH=${SCRIPT_DIR}/node_modules/.bin:$PATH
 
 # clean
 rm -rf ./lib
