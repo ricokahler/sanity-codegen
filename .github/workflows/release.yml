@@ -17,14 +17,21 @@ jobs:
         with:
           node-version: '16.x'
 
+      - name: npm install
+        run: npm i
+
       - name: Git Identity
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN_ACTION }}@github.com/${{ github.repository }}
 
-      - name: npm install
-        run: npm i
+      - name: ensure NPM credentials
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          node ./create-npmrc
+          npm whoami
 
       - name: lerna version
         env:
@@ -32,8 +39,6 @@ jobs:
         run: lerna version --yes
 
       - name: lerna publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           node ./create-npmrc
           lerna publish from-package --dist-tag alpha --yes
