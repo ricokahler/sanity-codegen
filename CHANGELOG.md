@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.16](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2021-11-15)
+
+
+### Bug Fixes
+
+* **ci:** add npm whoami safe guard ([e39b192](https://github.com/ricokahler/sanity-codegen/commit/e39b192421b10f3726e96184fbf5278b437a8d99))
+* **ci:** fix lerna publish step ([d34c0bc](https://github.com/ricokahler/sanity-codegen/commit/d34c0bc75245e590834f1618266218489eb7b5e9))
+* **ci:** update package-lock ([bb64cdf](https://github.com/ricokahler/sanity-codegen/commit/bb64cdf2db60581d7be56333fc0074f72157f637))
+* touch file to test automated releases ([63ba911](https://github.com/ricokahler/sanity-codegen/commit/63ba911af52b2f68bb6042269872595d33b94ffc))
+
+
+
+
+
 # [1.0.0-alpha.15](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.14...v1.0.0-alpha.15) (2021-11-15)
 
 

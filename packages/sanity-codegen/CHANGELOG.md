@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.16](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2021-11-15)
+
+
+### Bug Fixes
+
+* touch file to test automated releases ([63ba911](https://github.com/ricokahler/sanity-codegen/commit/63ba911af52b2f68bb6042269872595d33b94ffc))
+
+
+
+
+
 # [1.0.0-alpha.15](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.14...v1.0.0-alpha.15) (2021-11-15)
 
 
