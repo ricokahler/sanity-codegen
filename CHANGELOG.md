@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.20](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.19...v1.0.0-alpha.20) (2021-11-15)
+
+
+### Bug Fixes
+
+* **ci:** prefix prepack commands with `npx` ([6936648](https://github.com/ricokahler/sanity-codegen/commit/6936648bc946381c7067a823b9be2dab787e750e))
+
+
+
+
+
 # [1.0.0-alpha.19](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.12...v1.0.0-alpha.19) (2021-11-15)
 
 
