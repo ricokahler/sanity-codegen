@@ -39,6 +39,4 @@ jobs:
         run: lerna version --yes
 
       - name: lerna publish
-        run: |
-          node ./create-npmrc
-          lerna publish from-package --dist-tag alpha --yes
+        run: lerna publish from-package --dist-tag alpha --yes
