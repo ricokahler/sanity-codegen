@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/cli",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0-alpha.19",
   "description": "CLI for sanity-codegen",
   "keywords": [
     "oclif",
@@ -59,9 +59,9 @@
     "@oclif/command": "^1.8.0",
     "@oclif/config": "^1.17.0",
     "@oclif/plugin-help": "^3.2.2",
-    "@sanity-codegen/groq-codegen": "^1.0.0-alpha.13",
-    "@sanity-codegen/schema-codegen": "^1.0.0-alpha.13",
-    "@sanity-codegen/types": "^1.0.0-alpha.13",
+    "@sanity-codegen/groq-codegen": "^1.0.0-alpha.19",
+    "@sanity-codegen/schema-codegen": "^1.0.0-alpha.19",
+    "@sanity-codegen/types": "^1.0.0-alpha.19",
     "babel-merge": "^3.0.0",
     "chalk": "^4.1.2",
     "common-tags": "^1.8.0",

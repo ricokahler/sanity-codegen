@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.19](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.12...v1.0.0-alpha.19) (2021-11-15)
+
+
+### Features
+
+* update repo setup; release with lerna ([#217](https://github.com/ricokahler/sanity-codegen/issues/217)) ([9585b88](https://github.com/ricokahler/sanity-codegen/commit/9585b88cc9812de93e9bb053157e3bf8ad849ad2))
+
+
+
+
+
 # [1.0.0-alpha.18](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.17...v1.0.0-alpha.18) (2021-11-15)
 
 
