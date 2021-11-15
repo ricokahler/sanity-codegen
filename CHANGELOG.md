@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.17](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.16...v1.0.0-alpha.17) (2021-11-15)
+
+
+### Bug Fixes
+
+* **ci:** add `--no-verify-access` because https://github.com/lerna/lerna/issues/2788 ([dfd94e3](https://github.com/ricokahler/sanity-codegen/commit/dfd94e355d5afd5fa720d0e73a09a1f3bc0f9bdb))
+* touch file to kick release ([35966bd](https://github.com/ricokahler/sanity-codegen/commit/35966bd1605fb0a55a68a426ec83d35949a9216a))
+
+
+
+
+
 # [1.0.0-alpha.16](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.15...v1.0.0-alpha.16) (2021-11-15)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "sanity-codegen",
-  "version": "1.0.0-alpha.16",
+  "version": "1.0.0-alpha.17",
   "description": "Generate TypeScript types for your Sanity.io projects",
   "keywords": [
     "sanity",
