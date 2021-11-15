@@ -39,4 +39,4 @@ jobs:
         run: lerna version --yes
 
       - name: lerna publish
-        run: lerna publish from-package --dist-tag alpha --no-verify-access --yes
+        run: lerna publish from-package --dist-tag alpha --no-verify-access --no-git-reset --yes
