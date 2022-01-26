@@ -1,4 +1,5 @@
 import { ResolveConfigOptions, format, resolveConfig } from 'prettier';
+import typescriptParser from 'prettier/parser-typescript';
 import { defaultGenerateTypeName } from './default-generate-type-name';
 
 export interface GenerateSchemaTypesOptions {
@@ -250,5 +251,6 @@ export async function generateSchemaTypes({
   return format(result, {
     ...resolvedConfig,
     parser: 'typescript',
+    plugins: [typescriptParser],
   });
 }

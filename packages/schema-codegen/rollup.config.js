@@ -1,19 +1,44 @@
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
+import pkg from './package.json';
+import { escapeRegExp } from 'lodash';
 
 const extensions = ['.js', '.ts'];
 
+const external = [
+  ...Object.keys(pkg.dependencies).map(
+    (dep) => new RegExp(`^${escapeRegExp(dep)}`),
+  ),
+  // for the prettier parser import
+  ...Object.keys(pkg.dependencies).map(
+    (dep) => new RegExp(`^${escapeRegExp(dep)}\\/.*`),
+  ),
+];
+
 const nodeResolve = resolve({
   extensions,
-  modulesOnly: true,
-  preferBuiltins: false,
+  modulesOnly: false,
+  // // TODO: this should be set to false for the standalone bundle but i'm
+  // // unsure what the proper way to do standalone bundles are
+  // preferBuiltins: false,
 });
+
+// TODO: make this throw if a node dep is found
+// const incompatibleDeps = [
+//   'globby',
+//   '@babel/register',
+//   '@babel/generator',
+//   '@babel/core',
+//   'babel-merge',
+//   'prettier',
+//   'chalk',
+// ];
 
 export default [
   {
-    input: './src/index.ts',
+    input: './src/index.standalone.ts',
     output: {
-      file: './dist/index.esm.js',
+      file: './dist/index.standalone.esm.js',
       format: 'esm',
       sourcemap: true,
     },
@@ -39,12 +64,12 @@ export default [
         extensions,
       }),
     ],
-    external: [/^@babel\/runtime/],
+    external,
   },
   {
-    input: './src/index.ts',
+    input: './src/index.standalone.ts',
     output: {
-      file: './dist/index.cjs.js',
+      file: './dist/index.standalone.cjs.js',
       format: 'cjs',
       sourcemap: true,
     },
@@ -53,10 +78,14 @@ export default [
       babel({
         babelrc: false,
         configFile: false,
-        presets: ['@babel/preset-env', '@babel/preset-typescript'],
+        presets: [
+          ['@babel/preset-env', { targets: 'node 10 and not IE 11' }],
+          '@babel/preset-typescript',
+        ],
         babelHelpers: 'bundled',
         extensions,
       }),
     ],
+    external,
   },
 ];
