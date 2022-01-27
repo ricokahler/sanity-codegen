@@ -34,6 +34,8 @@ interface Props {
   className?: string;
   style?: React.CSSProperties;
 
+  defaultOption?: string;
+
   disableMoveLeft: boolean;
   disableMoveRight: boolean;
 
@@ -58,6 +60,7 @@ export function Panel({
   dataString,
   disableMoveLeft,
   disableMoveRight,
+  defaultOption = 'typescriptQueryResult',
   onMovePanelLeft,
   onMovePanelRight,
   onAddPanel,
@@ -66,7 +69,7 @@ export function Panel({
   onDataStringChange,
   onClosePanel,
 }: Props) {
-  const [value, setValue] = useState('data');
+  const [value, setValue] = useState(defaultOption);
 
   return (
     <Flex className={className} style={style} direction="column">

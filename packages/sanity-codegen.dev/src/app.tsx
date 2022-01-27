@@ -12,14 +12,35 @@ interface PanelState {
   panelId: string;
   width: number;
   position: number;
+  defaultOption?: string;
 }
+
+const initialMap = new Map<string, PanelState>();
+initialMap.set('schema', {
+  panelId: 'schema',
+  position: 0,
+  width: initialWidth,
+  defaultOption: 'schema',
+});
+initialMap.set('groq', {
+  panelId: 'groq',
+  position: 1,
+  width: initialWidth,
+  defaultOption: 'groq',
+});
+initialMap.set('typescriptQueryResult', {
+  panelId: 'typescriptQueryResult',
+  position: 2,
+  width: initialWidth,
+  defaultOption: 'typescriptQueryResult',
+});
 
 export function App() {
   const [queryString, setQueryString] = useState(defaultQuery);
   const [schemaString, setSchemaString] = useState(defaultSchema);
   const [dataString, setDataString] = useState(defaultData);
 
-  const [panels, setPanels] = useState<Map<string, PanelState>>(new Map());
+  const [panels, setPanels] = useState<Map<string, PanelState>>(initialMap);
   const sortedPanels = useMemo(() => {
     return Array.from(panels.values()).sort((a, b) => a.position - b.position);
   }, [panels]);
@@ -141,6 +162,7 @@ export function App() {
             <Panel
               className={classNames(styles.panel, currentPanel.panelId)}
               style={{ width: currentPanel.width }}
+              defaultOption={currentPanel.defaultOption}
               queryString={queryString}
               onQueryStringChange={setQueryString}
               dataString={dataString}
