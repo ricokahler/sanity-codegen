@@ -21,3 +21,5 @@ babel                               \
   ./no-op.ts                        \
   ./schema-creator-shim.ts          \
   ./schema-type-shim.ts             \
+
+rollup -c

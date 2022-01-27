@@ -18,3 +18,5 @@ babel                                                         \
   --out-dir ./dist                                            \
   --root-mode upward                                          \
   ./src
+
+rollup -c
