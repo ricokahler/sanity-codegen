@@ -25,8 +25,7 @@
     "nuke": "npm run clean && rm -rf package-lock.json",
     "sort-package-json": "sort-package-json && npm run sort-package-json --workspaces",
     "test": "jest",
-    "typecheck": "tsc -b",
-    "postinstall": "npm run build"
+    "typecheck": "tsc -b"
   },
   "devDependencies": {
     "@babel/cli": "^7.14.5",
