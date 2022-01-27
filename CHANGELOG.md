@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.26](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.25...v1.0.0-alpha.26) (2022-01-27)
+
+
+### Features
+
+* **groq-codegen,schema-codegen:** add standalone builds for browsers ([#251](https://github.com/ricokahler/sanity-codegen/issues/251)) ([bfb53d6](https://github.com/ricokahler/sanity-codegen/commit/bfb53d658f9a52a49bb3cd4d83b37ad617f26d8c))
+
+
+
+
+
 # [1.0.0-alpha.25](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.12...v1.0.0-alpha.25) (2021-11-15)
 
 

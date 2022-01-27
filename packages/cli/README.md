@@ -126,7 +126,7 @@ $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
 running command...
 $ sanity-codegen (-v|--version|version)
-@sanity-codegen/cli/1.0.0-alpha.25 linux-x64 node-v16.13.0
+@sanity-codegen/cli/1.0.0-alpha.26 linux-x64 node-v16.13.2
 $ sanity-codegen --help [COMMAND]
 USAGE
   $ sanity-codegen COMMAND
@@ -154,5 +154,5 @@ OPTIONS
   --all  see all commands in CLI
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.4/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.3.1/src/commands/help.ts)_
 <!-- commandsstop -->
