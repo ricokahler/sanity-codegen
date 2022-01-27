@@ -1,0 +1,8 @@
+.layout {
+  display: flex;
+}
+
+.divider {
+  border: 1px solid lightgray;
+  flex: 0;
+}

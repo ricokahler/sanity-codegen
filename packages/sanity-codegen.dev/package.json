@@ -1,0 +1,79 @@
+{
+  "name": "@sanity-codegen/sanity-codegen.dev",
+  "version": "1.0.0-alpha.25",
+  "keywords": [
+    "sanity",
+    "groq",
+    "sanity-plugin",
+    "sanity-tool",
+    "typescript",
+    "codegen"
+  ],
+  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/sanity-codegen.dev",
+  "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ricokahler/sanity-codegen",
+    "directory": "packages/sanity-codegen.dev"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Rico Kahler",
+    "email": "ricokahler@me.com",
+    "url": "https://github.com/ricokahler"
+  },
+  "scripts": {
+    "clean": "rm -rf node_modules && tsc -b --clean",
+    "lint": "eslint --ext .ts,.js ./src",
+    "prepublish": "npm run build",
+    "sort-package-json": "sort-package-json",
+    "start": "react-scripts start",
+    "build": ":",
+    "build:cra": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "@babel/standalone": "^7.16.12",
+    "@monaco-editor/react": "^4.3.1",
+    "@ricokahler/promise-suspender": "^1.0.1",
+    "@sanity-codegen/groq-codegen": "1.0.0-alpha.25",
+    "@sanity-codegen/schema-codegen": "1.0.0-alpha.25",
+    "@sanity/ui": "^0.37.2",
+    "@types/babel__standalone": "^7.1.4",
+    "@types/jest": "27.4.0",
+    "@types/lodash": "^4.14.178",
+    "@types/object-hash": "2.1.1",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-inspector": "^4.0.2",
+    "classnames": "^2.3.1",
+    "common-tags": "^1.8.2",
+    "groq-js": "^0.3.0-beta.2",
+    "modern-css-reset": "^1.4.0",
+    "react": "18.0.0-rc.0",
+    "react-dom": "18.0.0-rc.0",
+    "react-error-boundary": "^3.1.4",
+    "react-inspector": "^5.1.1",
+    "react-scripts": "5.0.0",
+    "styled-components": "^5.3.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
