@@ -24,7 +24,6 @@ export default function TypescriptQueryResultInspector({
     useMemo(() => {
       const { query, references } = transformStructureToTs({
         structure: transformGroqToStructure({
-          // @ts-expect-error TODO update these types
           node: parse(queryString),
           normalizedSchema: schemaNormalizer(extractSchemaString(schemaString)),
           scopes: [],

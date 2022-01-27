@@ -17,7 +17,6 @@ export default function OutputStructureInspector({
   const outputStructure = useDeferredValue(
     useMemo(() => {
       return transformGroqToStructure({
-        // @ts-expect-error TODO update these types
         node: parse(queryString),
         normalizedSchema: schemaNormalizer(extractSchemaString(schemaString)),
         scopes: [],
