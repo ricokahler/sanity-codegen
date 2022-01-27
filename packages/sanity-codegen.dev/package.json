@@ -9,7 +9,7 @@
     "typescript",
     "codegen"
   ],
-  "homepage": "https://github.com/ricokahler/sanity-codegen/packages/sanity-codegen.dev",
+  "homepage": "https://sanity-codegen.dev",
   "bugs": "https://github.com/ricokahler/sanity-codegen/issues",
   "repository": {
     "type": "git",
@@ -23,15 +23,33 @@
     "url": "https://github.com/ricokahler"
   },
   "scripts": {
+    "build": ":",
+    "build:cra": "react-scripts build",
     "clean": "rm -rf node_modules && tsc -b --clean",
+    "eject": "react-scripts eject",
     "lint": "eslint --ext .ts,.js ./src",
     "prepublish": "npm run build",
     "sort-package-json": "sort-package-json",
     "start": "react-scripts start",
-    "build": ":",
-    "build:cra": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "devDependencies": {
     "@babel/standalone": "^7.16.12",
@@ -58,23 +76,5 @@
     "react-scripts": "5.0.0",
     "styled-components": "^5.3.3",
     "typescript": "^4.5.5"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   }
 }
