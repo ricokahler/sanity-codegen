@@ -51,7 +51,7 @@ The normalized types can then be fed into `generateTypes`. This function takes i
 ```js
 const {
   schemaExtractor,
-  generateTypes,
+  generateSchemaTypes,
 } = require('@sanity-codegen/schema-codegen');
 const fs = require('fs');
 
@@ -59,7 +59,7 @@ async function main() {
   const normalizedSchema = await schemaExtractor({
     schemaPath: './studio/schemas/schema.js',
   });
-  const typescriptSource = await generateTypes({ normalizedSchema });
+  const typescriptSource = await generateSchemaTypes({ normalizedSchema });
 
   await fs.promises.writeFile('./schema.d.ts', typescriptSource);
 }
