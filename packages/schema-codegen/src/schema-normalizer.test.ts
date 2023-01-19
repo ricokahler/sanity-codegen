@@ -1,44 +1,43 @@
 import { schemaNormalizer } from './schema-normalizer';
+import { defineType, defineField } from 'sanity';
 
 describe('normalizer', () => {
-  it('takes in a sanity schema and returns a normalized, json-serializable representation', () => {
+  it('takes in a sanity schema and returns a normalized representation', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'document',
         name: 'movie',
         title: 'Movie',
         fields: [
-          {
+          defineField({
             name: 'title',
             type: 'string',
-          },
-          {
+          }),
+          defineField({
             name: 'yearReleased',
             type: 'number',
-          },
-          {
+          }),
+          defineField({
             name: 'actors',
             type: 'array',
             of: [{ type: 'actor' }],
-          },
+          }),
         ],
-      },
-      {
+      }),
+      defineType({
         type: 'object',
         name: 'actor',
         title: 'Actor',
         fields: [
-          {
+          defineField({
             name: 'name',
             type: 'string',
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     const normalized = schemaNormalizer(rawSchema);
-    // JSON serializable test
-    expect(rawSchema).toEqual(JSON.parse(JSON.stringify(rawSchema)));
 
     // TODO: probably a better idea to remove the snapshots and replace with
     // `.toMatchObject`
@@ -46,12 +45,8 @@ describe('normalizer', () => {
   });
 
   it('throws if there are missing fields in an object/document definition', () => {
-    const rawSchema = [
-      {
-        type: 'object',
-        name: 'myObject',
-      },
-    ];
+    // @ts-expect-error
+    const rawSchema = [defineType({ type: 'object', name: 'myObject' })];
 
     expect(() =>
       schemaNormalizer(rawSchema),
@@ -62,7 +57,7 @@ describe('normalizer', () => {
 
   it('throws if there are missing fields in a nested object/document definition', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'myObject',
         fields: [
@@ -71,7 +66,7 @@ describe('normalizer', () => {
             name: 'nestedObject',
           },
         ],
-      },
+      }),
     ];
 
     expect(() =>
@@ -83,20 +78,18 @@ describe('normalizer', () => {
 
   it('throws if there is a field with a missing name', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
+        // @ts-expect-error
         fields: [
-          {
+          defineField({
             type: 'file',
             name: 'stuff',
-            fields: [
-              {
-                type: 'string',
-              },
-            ],
-          },
+            // @ts-expect-error
+            fields: [defineField({ type: 'string' })],
+          }),
         ],
-      },
+      }),
     ];
 
     expect(() =>
@@ -108,16 +101,12 @@ describe('normalizer', () => {
 
   it('throws if there is an invalid type in a field', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'movie',
-        fields: [
-          {
-            name: 'actor',
-            type: null,
-          },
-        ],
-      },
+        // @ts-expect-error
+        fields: [defineField({ name: 'actor', type: null })],
+      }),
     ];
 
     expect(() =>
@@ -129,22 +118,17 @@ describe('normalizer', () => {
 
   it('accepts and normalizes a field with a nested object', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'movie',
         fields: [
-          {
+          defineField({
             name: 'actor',
             type: 'object',
-            fields: [
-              {
-                name: 'name',
-                type: 'string',
-              },
-            ],
-          },
+            fields: [defineField({ name: 'name', type: 'string' })],
+          }),
         ],
-      },
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -153,16 +137,16 @@ describe('normalizer', () => {
 
   it('accepts and normalizes a field with a top-level reference', () => {
     const rawSchema = [
-      {
+      defineType({
         name: 'actor',
         type: 'object',
-        fields: [{ name: 'name', type: 'string' }],
-      },
-      {
+        fields: [defineField({ name: 'name', type: 'string' })],
+      }),
+      defineType({
         type: 'object',
         name: 'movie',
-        fields: [{ name: 'actor', type: 'actor' }],
-      },
+        fields: [defineField({ name: 'actor', type: 'actor' })],
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -171,12 +155,12 @@ describe('normalizer', () => {
 
   it('accepts and normalizes array types', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'array',
         name: 'myArray',
         of: [{ type: 'string' }],
-      },
-      {
+      }),
+      defineType({
         type: 'array',
         name: 'inlineObjects',
         of: [
@@ -185,19 +169,20 @@ describe('normalizer', () => {
             fields: [{ name: 'foo', type: 'string' }],
           },
         ],
-      },
-      {
+      }),
+      defineType({
         type: 'array',
         name: 'topLevelType',
+        // @ts-expect-error
         // this accepts an of that isn't an array (this is undocumented in the
         // sanity.io docs)
         of: { type: 'actor' },
-      },
-      {
+      }),
+      defineType({
         type: 'object',
         name: 'actor',
-        fields: [{ name: 'name', type: 'string' }],
-      },
+        fields: [defineField({ name: 'name', type: 'string' })],
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -206,11 +191,12 @@ describe('normalizer', () => {
 
   it('throws if `of` is missing for array types', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'myObject',
-        fields: [{ type: 'array', name: 'myArrayMissingOf' }],
-      },
+        // @ts-expect-error
+        fields: [defineField({ type: 'array', name: 'myArrayMissingOf' })],
+      }),
     ];
 
     expect(() =>
@@ -222,7 +208,7 @@ describe('normalizer', () => {
 
   it('accepts a block type with nested of types', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'array',
         name: 'arrayTesting',
         of: [
@@ -231,7 +217,7 @@ describe('normalizer', () => {
             of: [{ type: 'string' }],
           },
         ],
-      },
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -239,11 +225,8 @@ describe('normalizer', () => {
   });
 
   it('throws if a top-level type is unnamed', () => {
-    const rawSchema = [
-      {
-        type: 'boolean',
-      },
-    ];
+    // @ts-expect-error
+    const rawSchema = [defineType({ type: 'boolean' })];
 
     expect(() =>
       schemaNormalizer(rawSchema),
@@ -254,22 +237,22 @@ describe('normalizer', () => {
 
   it('accepts basic primitives types', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'boolean',
         name: 'boolean',
-      },
-      {
+      }),
+      defineType({
         type: 'object',
         name: 'myObject',
         fields: [
-          { type: 'date', name: 'date' },
-          { type: 'datetime', name: 'datetime' },
-          { type: 'geopoint', name: 'geopoint' },
-          { type: 'slug', name: 'slug' },
-          { type: 'text', name: 'text' },
-          { type: 'url', name: 'url' },
+          defineField({ type: 'date', name: 'date' }),
+          defineField({ type: 'datetime', name: 'datetime' }),
+          defineField({ type: 'geopoint', name: 'geopoint' }),
+          defineField({ type: 'slug', name: 'slug' }),
+          defineField({ type: 'text', name: 'text' }),
+          defineField({ type: 'url', name: 'url' }),
         ],
-      },
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -278,15 +261,15 @@ describe('normalizer', () => {
 
   it('accepts an image and file type with or without fields', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'image',
         name: 'myImage',
-      },
-      {
+      }),
+      defineType({
         type: 'file',
         name: 'myFile',
-        fields: [{ name: 'description', type: 'string' }],
-      },
+        fields: [defineField({ name: 'description', type: 'string' })],
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -295,7 +278,7 @@ describe('normalizer', () => {
 
   it('accepts a number or string with or without list options', () => {
     const rawSchema = [
-      {
+      defineType({
         name: 'dropdown',
         type: 'string',
         options: {
@@ -305,43 +288,43 @@ describe('normalizer', () => {
             { title: 'C', value: 'c' },
           ],
         },
-      },
-      {
+      }),
+      defineType({
         name: 'dropdownNoTitle',
         type: 'string',
         options: {
           list: ['e', 'f', 'g'],
         },
-      },
-      {
+      }),
+      defineType({
         name: 'numberDropdown',
         type: 'number',
         options: {
           list: [1, 2, 3],
         },
-      },
-      {
+      }),
+      defineType({
         name: 'someObject',
         type: 'object',
         fields: [
-          {
+          defineField({
             name: 'dropdownField',
             type: 'dropdown',
-          },
-          {
+          }),
+          defineField({
             name: 'numberDropdownField',
             type: 'numberDropdown',
-          },
-          {
+          }),
+          defineField({
             name: 'foo',
             type: 'string',
-          },
-          {
+          }),
+          defineField({
             name: 'bar',
             type: 'number',
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -350,20 +333,21 @@ describe('normalizer', () => {
 
   it('throws if typeof options.list is not an array', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'myObject',
         fields: [
-          {
+          defineField({
             name: 'testField',
             type: 'array',
             of: [{ type: 'string' }],
             options: {
+              // @ts-expect-error
               list: 5,
             },
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     expect(() =>
@@ -375,45 +359,45 @@ describe('normalizer', () => {
 
   it('throws if a list option is an unsupported type', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'myObject',
         fields: [
-          {
+          defineField({
             name: 'testField',
             type: 'array',
             of: [{ type: 'string' }],
             options: {
               list: [() => {}],
             },
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     expect(() =>
       schemaNormalizer(rawSchema),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected a string, number, or object but found \\"function\\""`,
+      `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected a string, number, or object but found "function""`,
     );
   });
 
   it("throws if a list option object doesn't have `title` and `value`", () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'object',
         name: 'myObject',
         fields: [
-          {
+          defineField({
             name: 'testField',
             type: 'array',
             of: [{ type: 'string' }],
             options: {
               list: [{}],
             },
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     expect(() =>
@@ -425,23 +409,23 @@ describe('normalizer', () => {
 
   it('accepts a reference type', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'document',
         name: 'movie',
         fields: [
-          { name: 'title', type: 'string' },
-          {
+          defineField({ name: 'title', type: 'string' }),
+          defineField({
             name: 'actor',
             type: 'reference',
             to: [{ type: 'actor' }],
-          },
+          }),
         ],
-      },
-      {
+      }),
+      defineType({
         type: 'document',
         name: 'actor',
-        fields: [{ name: 'name', type: 'string' }],
-      },
+        fields: [defineField({ name: 'name', type: 'string' })],
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);
@@ -450,18 +434,19 @@ describe('normalizer', () => {
 
   it('throws if there is no `to` property on a reference', () => {
     const rawSchema = [
-      {
+      defineType({
         type: 'document',
         name: 'movie',
         fields: [
-          { name: 'title', type: 'string' },
-          {
+          defineField({ name: 'title', type: 'string' }),
+          // @ts-expect-error
+          defineField({
             name: 'actor',
             type: 'reference',
             // to: [{ type: 'actor' }],
-          },
+          }),
         ],
-      },
+      }),
     ];
 
     expect(() =>
@@ -473,7 +458,23 @@ describe('normalizer', () => {
 
   it('accepts a `block` type within inline objects', () => {
     const rawSchema = [
-      {
+      defineType({
+        type: 'array',
+        name: 'wysiwyg',
+        of: [
+          {
+            type: 'block',
+            of: [
+              {
+                type: 'object',
+                name: 'inlineObject',
+                fields: [defineField({ name: 'name', type: 'string' })],
+              },
+            ],
+          },
+        ],
+      }),
+      defineType({
         type: 'array',
         name: 'wysiwyg',
         of: [
@@ -488,26 +489,12 @@ describe('normalizer', () => {
             ],
           },
         ],
-      },
-      {
-        type: 'array',
-        name: 'wysiwyg',
-        of: [
-          {
-            type: 'block',
-            of: {
-              type: 'object',
-              name: 'inlineObject',
-              fields: [{ name: 'name', type: 'string' }],
-            },
-          },
-        ],
-      },
-      {
+      }),
+      defineType({
         type: 'array',
         name: 'wysiwyg',
         of: [{ type: 'block' }],
-      },
+      }),
     ];
 
     const result = schemaNormalizer(rawSchema);

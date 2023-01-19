@@ -133,6 +133,7 @@ describe('transformSchemaToStructure', () => {
                               { key: 'num', value: { type: 'Number' } },
                             ],
                           },
+                          { type: 'Lazy' },
                           {
                             type: 'Object',
                             properties: [
@@ -151,7 +152,6 @@ describe('transformSchemaToStructure', () => {
                               { key: 'text', value: { type: 'String' } },
                             ],
                           },
-                          { type: 'Lazy' },
                         ],
                       },
                     },

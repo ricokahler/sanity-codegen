@@ -1,4 +1,4 @@
-import * as Groq from 'groq-js/dist/nodeTypes';
+import type { parse } from 'groq-js';
 import {
   addNull,
   removeOptional,
@@ -20,11 +20,13 @@ import {
 } from './utils';
 import { transformSchemaToStructure } from './transform-schema-to-structure';
 
+type ExprNode = ReturnType<typeof parse>;
+
 export interface TransformGroqToStructureOptions {
   /**
    * A GROQ AST node from `groq-js`'s `parse` method
    */
-  node: Groq.ExprNode;
+  node: ExprNode;
   /**
    * An extracted and normalized schema result from the
    * `@sanity-codegen/schema-codegen` package.
@@ -845,6 +847,12 @@ export function transformGroqToStructure({
           return createStructure({ type: 'Unknown' });
         }
       }
+    }
+
+    case 'Context':
+    case 'Selector':
+    case 'Tuple': {
+      throw new Error(`Node type ${node.type} is not supported.`);
     }
 
     default: {

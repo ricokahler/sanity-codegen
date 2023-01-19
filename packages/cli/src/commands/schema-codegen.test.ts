@@ -37,7 +37,7 @@ describe('schema-codegen command', () => {
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
-      Array [
+      [
         "Using sanity-codegen config found at <PATH>",
         "Wrote schema types output to <PATH>",
         "Wrote schema JSON output to <PATH>",
@@ -49,8 +49,8 @@ describe('schema-codegen command', () => {
         (call: [string, string]) => call[1],
       ),
     ).toMatchInlineSnapshot(`
-      Array [
-        "/// <reference types=\\"@sanity-codegen/types\\" />
+      [
+        "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -58,7 +58,7 @@ describe('schema-codegen command', () => {
            * Book
            */
           interface Book extends Sanity.Document {
-            _type: \\"book\\";
+            _type: "book";
 
             /**
              * Title - \`String\`
@@ -76,72 +76,94 @@ describe('schema-codegen command', () => {
       }
       ",
         "{
-        \\"type\\": \\"SchemaRoot\\",
-        \\"documents\\": [
+        "type": "SchemaRoot",
+        "documents": [
           {
-            \\"codegen\\": {
-              \\"required\\": false
+            "codegen": {
+              "required": false
             },
-            \\"description\\": null,
-            \\"hidden\\": false,
-            \\"readOnly\\": false,
-            \\"hasValidation\\": false,
-            \\"name\\": \\"book\\",
-            \\"title\\": \\"Book\\",
-            \\"type\\": \\"Document\\",
-            \\"fields\\": [
-              {
-                \\"name\\": \\"title\\",
-                \\"title\\": \\"Title\\",
-                \\"description\\": \\"\\",
-                \\"hidden\\": false,
-                \\"readOnly\\": false,
-                \\"codegen\\": {
-                  \\"required\\": false
+            "description": null,
+            "hidden": false,
+            "readOnly": false,
+            "hasValidation": false,
+            "originalNode": {
+              "name": "book",
+              "type": "document",
+              "fields": [
+                {
+                  "name": "title",
+                  "type": "string"
                 },
-                \\"hasValidation\\": false,
-                \\"definition\\": {
-                  \\"codegen\\": {
-                    \\"required\\": false
+                {
+                  "name": "author",
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "book",
+            "title": "Book",
+            "type": "Document",
+            "fields": [
+              {
+                "name": "title",
+                "title": "Title",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
                   },
-                  \\"description\\": null,
-                  \\"hidden\\": false,
-                  \\"name\\": \\"title\\",
-                  \\"readOnly\\": false,
-                  \\"title\\": \\"Title\\",
-                  \\"hasValidation\\": false,
-                  \\"type\\": \\"String\\",
-                  \\"list\\": null
+                  "description": null,
+                  "hidden": false,
+                  "name": "title",
+                  "readOnly": false,
+                  "title": "Title",
+                  "hasValidation": false,
+                  "originalNode": {
+                    "name": "title",
+                    "type": "string"
+                  },
+                  "type": "String",
+                  "list": null
                 }
               },
               {
-                \\"name\\": \\"author\\",
-                \\"title\\": \\"Author\\",
-                \\"description\\": \\"\\",
-                \\"hidden\\": false,
-                \\"readOnly\\": false,
-                \\"codegen\\": {
-                  \\"required\\": false
+                "name": "author",
+                "title": "Author",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
                 },
-                \\"hasValidation\\": false,
-                \\"definition\\": {
-                  \\"codegen\\": {
-                    \\"required\\": false
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
                   },
-                  \\"description\\": null,
-                  \\"hidden\\": false,
-                  \\"name\\": \\"author\\",
-                  \\"readOnly\\": false,
-                  \\"title\\": \\"Author\\",
-                  \\"hasValidation\\": false,
-                  \\"type\\": \\"String\\",
-                  \\"list\\": null
+                  "description": null,
+                  "hidden": false,
+                  "name": "author",
+                  "readOnly": false,
+                  "title": "Author",
+                  "hasValidation": false,
+                  "originalNode": {
+                    "name": "author",
+                    "type": "string"
+                  },
+                  "type": "String",
+                  "list": null
                 }
               }
             ]
           }
         ],
-        \\"registeredTypes\\": []
+        "registeredTypes": []
       }",
       ]
     `);

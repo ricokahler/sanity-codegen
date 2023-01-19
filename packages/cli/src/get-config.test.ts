@@ -44,7 +44,7 @@ describe('getConfig', () => {
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
-      Array [
+      [
         "Using sanity-codegen config found at <PATH>",
         "Using babelrc config found at <PATH>",
       ]

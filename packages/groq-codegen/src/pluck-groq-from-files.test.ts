@@ -18,24 +18,24 @@ describe('pluckGroqFromFile', () => {
     });
 
     expect(results).toMatchInlineSnapshot(`
-      Array [
-        Object {
+      [
+        {
           "query": "
             *[_type == 'book'][0].author
           ",
           "queryKey": "BookAuthorUsesDefaultAlias",
         },
-        Object {
+        {
           "query": "
             *[_type == 'book'].title
           ",
           "queryKey": "BookTitlesUsesDefaultExport",
         },
-        Object {
+        {
           "query": "*[_type == 'book'].title",
           "queryKey": "AllBooksUsesDefaultReexport",
         },
-        Object {
+        {
           "query": "*[_type == 'book'] 
         {
           title,
@@ -44,7 +44,7 @@ describe('pluckGroqFromFile', () => {
       ",
           "queryKey": "AllBooksUsesNamedDeclaredExport",
         },
-        Object {
+        {
           "query": "*[_type == 'book'] 
         {
           title,
@@ -53,7 +53,7 @@ describe('pluckGroqFromFile', () => {
       ",
           "queryKey": "AllBooksUsesNameSpecifiedExport",
         },
-        Object {
+        {
           "query": "*[_type == 'book'] 
         {
           title,

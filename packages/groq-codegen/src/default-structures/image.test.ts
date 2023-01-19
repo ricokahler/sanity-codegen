@@ -19,13 +19,13 @@ describe('imageAssetStructure', () => {
 
     expect(result).toMatchInlineSnapshot(`
       "type Query = {
-        _type: \\"sanity.imageAsset\\";
+        _type: "sanity.imageAsset";
         assetId: string;
         extension: string;
         metadata: {
-          _type: \\"sanity.imageMetadata\\";
+          _type: "sanity.imageMetadata";
           dimensions: {
-            _type: \\"sanity.imageDimensions\\";
+            _type: "sanity.imageDimensions";
             aspectRatio: number;
             height: number;
             width: number;
@@ -34,51 +34,51 @@ describe('imageAssetStructure', () => {
           isOpaque: boolean;
           lqip: string;
           palette: {
-            _type: \\"sanity.imagePalette\\";
+            _type: "sanity.imagePalette";
             darkMuted: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             darkVibrant: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             dominant: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             lightMuted: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             lightVibrant: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             muted: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
               title: string;
             };
             vibrant: {
-              _type: \\"sanity.imagePaletteSwatch\\";
+              _type: "sanity.imagePaletteSwatch";
               background: string;
               foreground: string;
               population: number;
@@ -97,7 +97,7 @@ describe('imageAssetStructure', () => {
       "
     `);
 
-    expect(references).toMatchInlineSnapshot(`Object {}`);
+    expect(references).toMatchInlineSnapshot(`{}`);
   });
 });
 
@@ -114,7 +114,7 @@ describe('imageCropStructure', () => {
     expect(result).toMatchInlineSnapshot(`
       "type Query =
         | {
-            _type: \\"sanity.imageCrop\\";
+            _type: "sanity.imageCrop";
             bottom: number;
             left: number;
             right: number;
@@ -124,7 +124,7 @@ describe('imageCropStructure', () => {
       "
     `);
 
-    expect(references).toMatchInlineSnapshot(`Object {}`);
+    expect(references).toMatchInlineSnapshot(`{}`);
   });
 });
 
@@ -141,7 +141,7 @@ describe('imageHotspotStructure', () => {
     expect(result).toMatchInlineSnapshot(`
       "type Query =
         | {
-            _type: \\"sanity.imageHotspot\\";
+            _type: "sanity.imageHotspot";
             height: number;
             width: number;
             x: number;
@@ -151,6 +151,6 @@ describe('imageHotspotStructure', () => {
       "
     `);
 
-    expect(references).toMatchInlineSnapshot(`Object {}`);
+    expect(references).toMatchInlineSnapshot(`{}`);
   });
 });

@@ -22,7 +22,7 @@ describe('generateGroqTypes', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Queries {

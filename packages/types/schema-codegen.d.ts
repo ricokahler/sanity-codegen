@@ -11,6 +11,7 @@ declare namespace Sanity {
       description: string | null;
       codegen: { required: boolean };
       hasValidation: boolean;
+      originalNode: unknown;
     };
 
     /**

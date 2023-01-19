@@ -25,6 +25,7 @@ function getCommonProps(i: any): Sanity.SchemaDef.CommonNodeProps {
     readOnly: !!i.readOnly,
     title: i.title || (i.name ? transformCamelCase(i.name) : null),
     hasValidation: !!i.validation,
+    originalNode: i,
   };
 }
 

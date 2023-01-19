@@ -16,7 +16,7 @@ describe('imageHotspotStructure', () => {
     expect(result).toMatchInlineSnapshot(`
       "type Query =
         | {
-            _type: \\"geopoint\\";
+            _type: "geopoint";
             alt: number;
             lat: number;
             lng: number;
@@ -25,6 +25,6 @@ describe('imageHotspotStructure', () => {
       "
     `);
 
-    expect(references).toMatchInlineSnapshot(`Object {}`);
+    expect(references).toMatchInlineSnapshot(`{}`);
   });
 });

@@ -1,6 +1,8 @@
-import * as Groq from 'groq-js/dist/nodeTypes';
+import type { parse } from 'groq-js';
 import { createStructure } from './create-structure';
 import { objectHash, unorderedHash } from './hash';
+
+type ExprNode = ReturnType<typeof parse>;
 
 // TODO: could include things like defined checks or narrow based on types
 // TODO: also think about functions and how they could affect narrowing
@@ -23,7 +25,7 @@ type LogicExprNode =
     }
   | {
       type: 'UnknownExpression';
-      originalExprNode: Groq.ExprNode;
+      originalExprNode: ExprNode;
       hash: 'unknown';
     };
 
@@ -35,7 +37,7 @@ type LogicExprNode =
  * @see `accept`
  */
 export function transformExprNodeToLogicExpr(
-  groqNode: Groq.ExprNode,
+  groqNode: ExprNode,
 ): LogicExprNode {
   switch (groqNode.type) {
     case 'And':
@@ -79,7 +81,8 @@ export function transformExprNodeToLogicExpr(
         }
         case '==': {
           const variableIdentifierNode = [groqNode.left, groqNode.right].find(
-            (n): n is Groq.AccessAttributeNode => n.type === 'AccessAttribute',
+            (n): n is Extract<ExprNode, { type: 'AccessAttribute' }> =>
+              n.type === 'AccessAttribute',
           );
 
           // TODO consider this case
@@ -94,7 +97,7 @@ export function transformExprNodeToLogicExpr(
 
           // e.g. the `'foo''` of `_type == 'foo'`
           const valueNode = [groqNode.left, groqNode.right].find(
-            (n): n is Extract<Groq.ExprNode, { type: 'Value' }> =>
+            (n): n is Extract<ExprNode, { type: 'Value' }> =>
               n.type === 'Value',
           );
 
@@ -413,7 +416,7 @@ function narrow(
 
 export function narrowStructure(
   node: Sanity.GroqCodegen.StructureNode,
-  condition: Groq.ExprNode,
+  condition: ExprNode,
 ) {
   return narrow(node, transformExprNodeToLogicExpr(condition));
 }

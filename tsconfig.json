@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "strict": true,
     "target": "esnext",
-    "composite": true
+    "composite": true,
+    "skipLibCheck": true
   },
   "references": [
     { "path": "./packages/cli" },

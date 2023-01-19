@@ -1,7 +1,13 @@
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
-import pkg from './package.json';
-import { escapeRegExp } from 'lodash';
+import lodash from 'lodash';
+import fs from 'fs';
+
+const { escapeRegExp } = lodash;
+
+const pkg = JSON.parse(
+  (await fs.promises.readFile('./package.json')).toString(),
+);
 
 const extensions = ['.js', '.ts'];
 

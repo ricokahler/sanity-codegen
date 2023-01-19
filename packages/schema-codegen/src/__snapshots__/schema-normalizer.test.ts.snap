@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`normalizer accepts a \`block\` type within inline objects 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -13,29 +13,29 @@ Object {
       "hidden": false,
       "list": null,
       "name": "wysiwyg",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
           "hasValidation": false,
           "hidden": false,
-          "markDefs": Array [],
+          "markDefs": [],
           "name": null,
-          "of": Array [
-            Object {
-              "codegen": Object {
+          "of": [
+            {
+              "codegen": {
                 "required": false,
               },
               "description": null,
-              "fields": Array [
-                Object {
-                  "codegen": Object {
+              "fields": [
+                {
+                  "codegen": {
                     "required": false,
                   },
-                  "definition": Object {
-                    "codegen": Object {
+                  "definition": {
+                    "codegen": {
                       "required": false,
                     },
                     "description": null,
@@ -43,6 +43,10 @@ Object {
                     "hidden": false,
                     "list": null,
                     "name": "name",
+                    "originalNode": {
+                      "name": "name",
+                      "type": "string",
+                    },
                     "readOnly": false,
                     "title": "Name",
                     "type": "String",
@@ -58,22 +62,68 @@ Object {
               "hasValidation": false,
               "hidden": false,
               "name": "inlineObject",
+              "originalNode": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
               "readOnly": false,
               "title": "Inline Object",
               "type": "Object",
             },
           ],
+          "originalNode": {
+            "of": [
+              {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
+            ],
+            "type": "block",
+          },
           "readOnly": false,
           "title": null,
           "type": "Block",
         },
       ],
+      "originalNode": {
+        "name": "wysiwyg",
+        "of": [
+          {
+            "of": [
+              {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
+            ],
+            "type": "block",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Wysiwyg",
       "type": "Array",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -81,29 +131,29 @@ Object {
       "hidden": false,
       "list": null,
       "name": "wysiwyg",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
           "hasValidation": false,
           "hidden": false,
-          "markDefs": Array [],
+          "markDefs": [],
           "name": null,
-          "of": Array [
-            Object {
-              "codegen": Object {
+          "of": [
+            {
+              "codegen": {
                 "required": false,
               },
               "description": null,
-              "fields": Array [
-                Object {
-                  "codegen": Object {
+              "fields": [
+                {
+                  "codegen": {
                     "required": false,
                   },
-                  "definition": Object {
-                    "codegen": Object {
+                  "definition": {
+                    "codegen": {
                       "required": false,
                     },
                     "description": null,
@@ -111,6 +161,10 @@ Object {
                     "hidden": false,
                     "list": null,
                     "name": "name",
+                    "originalNode": {
+                      "name": "name",
+                      "type": "string",
+                    },
                     "readOnly": false,
                     "title": "Name",
                     "type": "String",
@@ -126,22 +180,68 @@ Object {
               "hasValidation": false,
               "hidden": false,
               "name": "inlineObject",
+              "originalNode": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
               "readOnly": false,
               "title": "Inline Object",
               "type": "Object",
             },
           ],
+          "originalNode": {
+            "of": [
+              {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
+            ],
+            "type": "block",
+          },
           "readOnly": false,
           "title": null,
           "type": "Block",
         },
       ],
+      "originalNode": {
+        "name": "wysiwyg",
+        "of": [
+          {
+            "of": [
+              {
+                "fields": [
+                  {
+                    "name": "name",
+                    "type": "string",
+                  },
+                ],
+                "name": "inlineObject",
+                "type": "object",
+              },
+            ],
+            "type": "block",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Wysiwyg",
       "type": "Array",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -149,22 +249,34 @@ Object {
       "hidden": false,
       "list": null,
       "name": "wysiwyg",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
           "hasValidation": false,
           "hidden": false,
-          "markDefs": Array [],
+          "markDefs": [],
           "name": null,
           "of": null,
+          "originalNode": {
+            "type": "block",
+          },
           "readOnly": false,
           "title": null,
           "type": "Block",
         },
       ],
+      "originalNode": {
+        "name": "wysiwyg",
+        "of": [
+          {
+            "type": "block",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Wysiwyg",
       "type": "Array",
@@ -175,11 +287,11 @@ Object {
 `;
 
 exports[`normalizer accepts a block type with nested of types 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -187,19 +299,19 @@ Object {
       "hidden": false,
       "list": null,
       "name": "arrayTesting",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
           "hasValidation": false,
           "hidden": false,
-          "markDefs": Array [],
+          "markDefs": [],
           "name": null,
-          "of": Array [
-            Object {
-              "codegen": Object {
+          "of": [
+            {
+              "codegen": {
                 "required": false,
               },
               "description": null,
@@ -207,16 +319,41 @@ Object {
               "hidden": false,
               "list": null,
               "name": null,
+              "originalNode": {
+                "type": "string",
+              },
               "readOnly": false,
               "title": null,
               "type": "String",
             },
           ],
+          "originalNode": {
+            "of": [
+              {
+                "type": "string",
+              },
+            ],
+            "type": "block",
+          },
           "readOnly": false,
           "title": null,
           "type": "Block",
         },
       ],
+      "originalNode": {
+        "name": "arrayTesting",
+        "of": [
+          {
+            "of": [
+              {
+                "type": "string",
+              },
+            ],
+            "type": "block",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Array Testing",
       "type": "Array",
@@ -227,105 +364,151 @@ Object {
 `;
 
 exports[`normalizer accepts a number or string with or without list options 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
       "hasValidation": false,
       "hidden": false,
-      "list": Array [
-        Object {
+      "list": [
+        {
           "title": "A",
           "value": "a",
         },
-        Object {
+        {
           "title": "B",
           "value": "b",
         },
-        Object {
+        {
           "title": "C",
           "value": "c",
         },
       ],
       "name": "dropdown",
+      "originalNode": {
+        "name": "dropdown",
+        "options": {
+          "list": [
+            {
+              "title": "A",
+              "value": "a",
+            },
+            {
+              "title": "B",
+              "value": "b",
+            },
+            {
+              "title": "C",
+              "value": "c",
+            },
+          ],
+        },
+        "type": "string",
+      },
       "readOnly": false,
       "title": "Dropdown",
       "type": "String",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
       "hasValidation": false,
       "hidden": false,
-      "list": Array [
-        Object {
+      "list": [
+        {
           "title": "E",
           "value": "e",
         },
-        Object {
+        {
           "title": "F",
           "value": "f",
         },
-        Object {
+        {
           "title": "G",
           "value": "g",
         },
       ],
       "name": "dropdownNoTitle",
+      "originalNode": {
+        "name": "dropdownNoTitle",
+        "options": {
+          "list": [
+            "e",
+            "f",
+            "g",
+          ],
+        },
+        "type": "string",
+      },
       "readOnly": false,
       "title": "Dropdown No Title",
       "type": "String",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
       "hasValidation": false,
       "hidden": false,
-      "list": Array [
-        Object {
+      "list": [
+        {
           "title": "1",
           "value": 1,
         },
-        Object {
+        {
           "title": "2",
           "value": 2,
         },
-        Object {
+        {
           "title": "3",
           "value": 3,
         },
       ],
       "name": "numberDropdown",
+      "originalNode": {
+        "name": "numberDropdown",
+        "options": {
+          "list": [
+            1,
+            2,
+            3,
+          ],
+        },
+        "type": "number",
+      },
       "readOnly": false,
       "title": "Number Dropdown",
       "type": "Number",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "dropdownField",
+            "originalNode": {
+              "name": "dropdownField",
+              "type": "dropdown",
+            },
             "readOnly": false,
             "title": "Dropdown Field",
             "to": "dropdown",
@@ -338,18 +521,22 @@ Object {
           "readOnly": false,
           "title": "Dropdown Field",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "numberDropdownField",
+            "originalNode": {
+              "name": "numberDropdownField",
+              "type": "numberDropdown",
+            },
             "readOnly": false,
             "title": "Number Dropdown Field",
             "to": "numberDropdown",
@@ -362,12 +549,12 @@ Object {
           "readOnly": false,
           "title": "Number Dropdown Field",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -375,6 +562,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "foo",
+            "originalNode": {
+              "name": "foo",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Foo",
             "type": "String",
@@ -386,12 +577,12 @@ Object {
           "readOnly": false,
           "title": "Foo",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -399,6 +590,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "bar",
+            "originalNode": {
+              "name": "bar",
+              "type": "number",
+            },
             "readOnly": false,
             "title": "Bar",
             "type": "Number",
@@ -414,6 +609,28 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "someObject",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "dropdownField",
+            "type": "dropdown",
+          },
+          {
+            "name": "numberDropdownField",
+            "type": "numberDropdown",
+          },
+          {
+            "name": "foo",
+            "type": "string",
+          },
+          {
+            "name": "bar",
+            "type": "number",
+          },
+        ],
+        "name": "someObject",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Some Object",
       "type": "Object",
@@ -424,20 +641,20 @@ Object {
 `;
 
 exports[`normalizer accepts a reference type 1`] = `
-Object {
-  "documents": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -445,6 +662,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "title",
+            "originalNode": {
+              "name": "title",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Title",
             "type": "String",
@@ -456,29 +677,41 @@ Object {
           "readOnly": false,
           "title": "Title",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "actor",
+            "originalNode": {
+              "name": "actor",
+              "to": [
+                {
+                  "type": "actor",
+                },
+              ],
+              "type": "reference",
+            },
             "readOnly": false,
             "title": "Actor",
-            "to": Array [
-              Object {
-                "codegen": Object {
+            "to": [
+              {
+                "codegen": {
                   "required": false,
                 },
                 "description": null,
                 "hasValidation": false,
                 "hidden": false,
                 "name": null,
+                "originalNode": {
+                  "type": "actor",
+                },
                 "readOnly": false,
                 "title": null,
                 "to": "actor",
@@ -499,22 +732,41 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "movie",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "title",
+            "type": "string",
+          },
+          {
+            "name": "actor",
+            "to": [
+              {
+                "type": "actor",
+              },
+            ],
+            "type": "reference",
+          },
+        ],
+        "name": "movie",
+        "type": "document",
+      },
       "readOnly": false,
       "title": "Movie",
       "type": "Document",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -522,6 +774,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "name",
+            "originalNode": {
+              "name": "name",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Name",
             "type": "String",
@@ -537,22 +793,32 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "actor",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+          },
+        ],
+        "name": "actor",
+        "type": "document",
+      },
       "readOnly": false,
       "title": "Actor",
       "type": "Document",
     },
   ],
-  "registeredTypes": Array [],
+  "registeredTypes": [],
   "type": "SchemaRoot",
 }
 `;
 
 exports[`normalizer accepts an image and file type with or without fields 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -560,22 +826,26 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "myImage",
+      "originalNode": {
+        "name": "myImage",
+        "type": "image",
+      },
       "readOnly": false,
       "title": "My Image",
       "type": "Image",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -583,6 +853,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "description",
+            "originalNode": {
+              "name": "description",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Description",
             "type": "String",
@@ -598,6 +872,16 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "myFile",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "description",
+            "type": "string",
+          },
+        ],
+        "name": "myFile",
+        "type": "file",
+      },
       "readOnly": false,
       "title": "My File",
       "type": "File",
@@ -608,31 +892,31 @@ Object {
 `;
 
 exports[`normalizer accepts and normalizes a field with a nested object 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
-            "fields": Array [
-              Object {
-                "codegen": Object {
+            "fields": [
+              {
+                "codegen": {
                   "required": false,
                 },
-                "definition": Object {
-                  "codegen": Object {
+                "definition": {
+                  "codegen": {
                     "required": false,
                   },
                   "description": null,
@@ -640,6 +924,10 @@ Object {
                   "hidden": false,
                   "list": null,
                   "name": "name",
+                  "originalNode": {
+                    "name": "name",
+                    "type": "string",
+                  },
                   "readOnly": false,
                   "title": "Name",
                   "type": "String",
@@ -655,6 +943,16 @@ Object {
             "hasValidation": false,
             "hidden": false,
             "name": "actor",
+            "originalNode": {
+              "fields": [
+                {
+                  "name": "name",
+                  "type": "string",
+                },
+              ],
+              "name": "actor",
+              "type": "object",
+            },
             "readOnly": false,
             "title": "Actor",
             "type": "Object",
@@ -670,6 +968,22 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "movie",
+      "originalNode": {
+        "fields": [
+          {
+            "fields": [
+              {
+                "name": "name",
+                "type": "string",
+              },
+            ],
+            "name": "actor",
+            "type": "object",
+          },
+        ],
+        "name": "movie",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Movie",
       "type": "Object",
@@ -680,21 +994,21 @@ Object {
 `;
 
 exports[`normalizer accepts and normalizes a field with a top-level reference 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -702,6 +1016,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "name",
+            "originalNode": {
+              "name": "name",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Name",
             "type": "String",
@@ -717,28 +1035,42 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "actor",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+          },
+        ],
+        "name": "actor",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Actor",
       "type": "Object",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "actor",
+            "originalNode": {
+              "name": "actor",
+              "type": "actor",
+            },
             "readOnly": false,
             "title": "Actor",
             "to": "actor",
@@ -755,6 +1087,16 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "movie",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "actor",
+            "type": "actor",
+          },
+        ],
+        "name": "movie",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Movie",
       "type": "Object",
@@ -765,11 +1107,11 @@ Object {
 `;
 
 exports[`normalizer accepts and normalizes array types 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -777,9 +1119,9 @@ Object {
       "hidden": false,
       "list": null,
       "name": "myArray",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
@@ -787,17 +1129,29 @@ Object {
           "hidden": false,
           "list": null,
           "name": null,
+          "originalNode": {
+            "type": "string",
+          },
           "readOnly": false,
           "title": null,
           "type": "String",
         },
       ],
+      "originalNode": {
+        "name": "myArray",
+        "of": [
+          {
+            "type": "string",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "My Array",
       "type": "Array",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -805,19 +1159,19 @@ Object {
       "hidden": false,
       "list": null,
       "name": "inlineObjects",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
-          "fields": Array [
-            Object {
-              "codegen": Object {
+          "fields": [
+            {
+              "codegen": {
                 "required": false,
               },
-              "definition": Object {
-                "codegen": Object {
+              "definition": {
+                "codegen": {
                   "required": false,
                 },
                 "description": null,
@@ -825,6 +1179,10 @@ Object {
                 "hidden": false,
                 "list": null,
                 "name": "foo",
+                "originalNode": {
+                  "name": "foo",
+                  "type": "string",
+                },
                 "readOnly": false,
                 "title": "Foo",
                 "type": "String",
@@ -840,17 +1198,41 @@ Object {
           "hasValidation": false,
           "hidden": false,
           "name": null,
+          "originalNode": {
+            "fields": [
+              {
+                "name": "foo",
+                "type": "string",
+              },
+            ],
+            "type": "object",
+          },
           "readOnly": false,
           "title": null,
           "type": "Object",
         },
       ],
+      "originalNode": {
+        "name": "inlineObjects",
+        "of": [
+          {
+            "fields": [
+              {
+                "name": "foo",
+                "type": "string",
+              },
+            ],
+            "type": "object",
+          },
+        ],
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Inline Objects",
       "type": "Array",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
@@ -858,37 +1240,47 @@ Object {
       "hidden": false,
       "list": null,
       "name": "topLevelType",
-      "of": Array [
-        Object {
-          "codegen": Object {
+      "of": [
+        {
+          "codegen": {
             "required": false,
           },
           "description": null,
           "hasValidation": false,
           "hidden": false,
           "name": null,
+          "originalNode": {
+            "type": "actor",
+          },
           "readOnly": false,
           "title": null,
           "to": "actor",
           "type": "RegistryReference",
         },
       ],
+      "originalNode": {
+        "name": "topLevelType",
+        "of": {
+          "type": "actor",
+        },
+        "type": "array",
+      },
       "readOnly": false,
       "title": "Top Level Type",
       "type": "Array",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -896,6 +1288,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "name",
+            "originalNode": {
+              "name": "name",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Name",
             "type": "String",
@@ -911,6 +1307,16 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "actor",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+          },
+        ],
+        "name": "actor",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Actor",
       "type": "Object",
@@ -921,39 +1327,47 @@ Object {
 `;
 
 exports[`normalizer accepts basic primitives types 1`] = `
-Object {
-  "documents": Array [],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+{
+  "documents": [],
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
       "hasValidation": false,
       "hidden": false,
       "name": "boolean",
+      "originalNode": {
+        "name": "boolean",
+        "type": "boolean",
+      },
       "readOnly": false,
       "title": "Boolean",
       "type": "Boolean",
     },
-    Object {
-      "codegen": Object {
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "date",
+            "originalNode": {
+              "name": "date",
+              "type": "date",
+            },
             "readOnly": false,
             "title": "Date",
             "type": "Date",
@@ -965,18 +1379,22 @@ Object {
           "readOnly": false,
           "title": "Date",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "datetime",
+            "originalNode": {
+              "name": "datetime",
+              "type": "datetime",
+            },
             "readOnly": false,
             "title": "Datetime",
             "type": "Datetime",
@@ -988,18 +1406,22 @@ Object {
           "readOnly": false,
           "title": "Datetime",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "geopoint",
+            "originalNode": {
+              "name": "geopoint",
+              "type": "geopoint",
+            },
             "readOnly": false,
             "title": "Geopoint",
             "type": "Geopoint",
@@ -1011,18 +1433,22 @@ Object {
           "readOnly": false,
           "title": "Geopoint",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "slug",
+            "originalNode": {
+              "name": "slug",
+              "type": "slug",
+            },
             "readOnly": false,
             "title": "Slug",
             "type": "Slug",
@@ -1034,18 +1460,22 @@ Object {
           "readOnly": false,
           "title": "Slug",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "text",
+            "originalNode": {
+              "name": "text",
+              "type": "text",
+            },
             "readOnly": false,
             "title": "Text",
             "type": "Text",
@@ -1057,18 +1487,22 @@ Object {
           "readOnly": false,
           "title": "Text",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
             "hasValidation": false,
             "hidden": false,
             "name": "url",
+            "originalNode": {
+              "name": "url",
+              "type": "url",
+            },
             "readOnly": false,
             "title": "Url",
             "type": "Url",
@@ -1084,6 +1518,36 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "myObject",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "date",
+            "type": "date",
+          },
+          {
+            "name": "datetime",
+            "type": "datetime",
+          },
+          {
+            "name": "geopoint",
+            "type": "geopoint",
+          },
+          {
+            "name": "slug",
+            "type": "slug",
+          },
+          {
+            "name": "text",
+            "type": "text",
+          },
+          {
+            "name": "url",
+            "type": "url",
+          },
+        ],
+        "name": "myObject",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "My Object",
       "type": "Object",
@@ -1093,21 +1557,21 @@ Object {
 }
 `;
 
-exports[`normalizer takes in a sanity schema and returns a normalized, json-serializable representation 1`] = `
-Object {
-  "documents": Array [
-    Object {
-      "codegen": Object {
+exports[`normalizer takes in a sanity schema and returns a normalized representation 1`] = `
+{
+  "documents": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -1115,6 +1579,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "title",
+            "originalNode": {
+              "name": "title",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Title",
             "type": "String",
@@ -1126,12 +1594,12 @@ Object {
           "readOnly": false,
           "title": "Title",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -1139,6 +1607,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "yearReleased",
+            "originalNode": {
+              "name": "yearReleased",
+              "type": "number",
+            },
             "readOnly": false,
             "title": "Year Released",
             "type": "Number",
@@ -1150,12 +1622,12 @@ Object {
           "readOnly": false,
           "title": "Year Released",
         },
-        Object {
-          "codegen": Object {
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -1163,21 +1635,33 @@ Object {
             "hidden": false,
             "list": null,
             "name": "actors",
-            "of": Array [
-              Object {
-                "codegen": Object {
+            "of": [
+              {
+                "codegen": {
                   "required": false,
                 },
                 "description": null,
                 "hasValidation": false,
                 "hidden": false,
                 "name": null,
+                "originalNode": {
+                  "type": "actor",
+                },
                 "readOnly": false,
                 "title": null,
                 "to": "actor",
                 "type": "RegistryReference",
               },
             ],
+            "originalNode": {
+              "name": "actors",
+              "of": [
+                {
+                  "type": "actor",
+                },
+              ],
+              "type": "array",
+            },
             "readOnly": false,
             "title": "Actors",
             "type": "Array",
@@ -1193,24 +1677,48 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "movie",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "title",
+            "type": "string",
+          },
+          {
+            "name": "yearReleased",
+            "type": "number",
+          },
+          {
+            "name": "actors",
+            "of": [
+              {
+                "type": "actor",
+              },
+            ],
+            "type": "array",
+          },
+        ],
+        "name": "movie",
+        "title": "Movie",
+        "type": "document",
+      },
       "readOnly": false,
       "title": "Movie",
       "type": "Document",
     },
   ],
-  "registeredTypes": Array [
-    Object {
-      "codegen": Object {
+  "registeredTypes": [
+    {
+      "codegen": {
         "required": false,
       },
       "description": null,
-      "fields": Array [
-        Object {
-          "codegen": Object {
+      "fields": [
+        {
+          "codegen": {
             "required": false,
           },
-          "definition": Object {
-            "codegen": Object {
+          "definition": {
+            "codegen": {
               "required": false,
             },
             "description": null,
@@ -1218,6 +1726,10 @@ Object {
             "hidden": false,
             "list": null,
             "name": "name",
+            "originalNode": {
+              "name": "name",
+              "type": "string",
+            },
             "readOnly": false,
             "title": "Name",
             "type": "String",
@@ -1233,6 +1745,17 @@ Object {
       "hasValidation": false,
       "hidden": false,
       "name": "actor",
+      "originalNode": {
+        "fields": [
+          {
+            "name": "name",
+            "type": "string",
+          },
+        ],
+        "name": "actor",
+        "title": "Actor",
+        "type": "object",
+      },
       "readOnly": false,
       "title": "Actor",
       "type": "Object",

@@ -1,6 +1,3 @@
 {
-  "extends": "react-app",
-  "rules": {
-    "import/no-anonymous-default-export": "off"
-  }
+  "extends": "@sanity/eslint-config-studio"
 }

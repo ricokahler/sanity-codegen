@@ -1,6 +1,6 @@
 node_modules
 scripts
 src
-rollup.config.js
+rollup.config.mjs
 tsconfig.json
 *.tsbuildinfo

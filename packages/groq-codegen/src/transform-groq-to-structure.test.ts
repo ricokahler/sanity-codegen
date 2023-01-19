@@ -42,7 +42,7 @@ describe('transformGroqToStructure', () => {
     expect(result).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"book\\";
+        _type: "book";
         name?: string;
       }[];
       "
@@ -138,30 +138,30 @@ describe('transformGroqToStructure', () => {
     `;
 
     expect(print(query, schema)).toMatchInlineSnapshot(`
-"type Query = {
-  authors: {
-    _id: string;
-    _type: \\"author\\";
-    name?: string;
-  }[];
-  books: {
-    _id: string;
-    _type: \\"book\\";
-    author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
-    authorName: string | null;
-    title?: string;
-  }[];
-};
+      "type Query = {
+        authors: {
+          _id: string;
+          _type: "author";
+          name?: string;
+        }[];
+        books: {
+          _id: string;
+          _type: "book";
+          author?: Sanity.Reference<Ref_HdGcFofEAyT3OHPP>;
+          authorName: string | null;
+          title?: string;
+        }[];
+      };
 
-type Ref_V6v9ba7CZlBTDAJv =
-  | {
-      _id: string;
-      _type: \\"author\\";
-      name?: string;
-    }
-  | undefined;
-"
-`);
+      type Ref_HdGcFofEAyT3OHPP =
+        | {
+            _id: string;
+            _type: "author";
+            name?: string;
+          }
+        | undefined;
+      "
+    `);
   });
 
   test('filter with ands', () => {
@@ -184,7 +184,7 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"movie\\";
+        _type: "movie";
         popularity?: number;
         releaseDate?: string;
         title?: string;
@@ -244,7 +244,7 @@ type Ref_V6v9ba7CZlBTDAJv =
       "type Query = {
         author: {
           _id: string;
-          _type: \\"author\\";
+          _type: "author";
           name?: {
             givenName?: string;
             surname?: string;
@@ -309,16 +309,16 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"movie\\";
+        _type: "movie";
         awards?: {
           _id: string;
-          _type: \\"award\\";
+          _type: "award";
           awardTitle: string;
         }[];
-        kind?: \\"new\\" | \\"popular\\";
+        kind?: "new" | "popular";
         news?: {
           _id: string;
-          _type: \\"news\\";
+          _type: "news";
           newsTitle: string;
         }[];
         popularity: number;
@@ -326,7 +326,7 @@ type Ref_V6v9ba7CZlBTDAJv =
         releaseDate: string;
         screenings?: {
           _id: string;
-          _type: \\"screening\\";
+          _type: "screening";
           screeningTitle: string;
         }[];
       }[];
@@ -360,8 +360,8 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"movie\\";
-        popularity: \\"medium\\" | \\"high\\" | \\"low\\";
+        _type: "movie";
+        popularity: "medium" | "high" | "low";
         title?: string;
       }[];
       "
@@ -407,7 +407,7 @@ type Ref_V6v9ba7CZlBTDAJv =
       "type Query = {
         firstThreeBooks: {
           _id: string;
-          _type: \\"book\\";
+          _type: "book";
           title?: string;
         }[];
         firstThreeTitles: (string | null)[];
@@ -478,7 +478,7 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"book\\";
+        _type: "book";
         author: string | null;
         publishDate?: string;
         title?: string;
@@ -552,7 +552,7 @@ type Ref_V6v9ba7CZlBTDAJv =
           bar: number;
           beep: boolean;
         };
-        hello: \\"world\\";
+        hello: "world";
       };
       "
     `);
@@ -652,7 +652,7 @@ type Ref_V6v9ba7CZlBTDAJv =
 
   test('+ concatenation with strings', () => {
     expect(print("'hello' + 'world'", [])).toMatchInlineSnapshot(`
-      "type Query = \\"helloworld\\";
+      "type Query = "helloworld";
       "
     `);
     expect(print("4 + 'nonsense'", [])).toMatchInlineSnapshot(`
@@ -693,13 +693,13 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         child: {
-          name: Ref_SK2KgD2fYguV6rRI;
+          name: Ref_KEV5aXwQE8jV7ZPn;
           parentName: string | null;
         };
         name: string | null;
       }[];
 
-      type Ref_SK2KgD2fYguV6rRI = string | null;
+      type Ref_KEV5aXwQE8jV7ZPn = string | null;
       "
     `);
   });
@@ -718,7 +718,7 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"movie\\";
+        _type: "movie";
         title?: string;
       }[];
       "
@@ -833,11 +833,11 @@ type Ref_V6v9ba7CZlBTDAJv =
 
   test('upper/lower', () => {
     expect(print(`upper('test')`, [])).toMatchInlineSnapshot(`
-      "type Query = \\"TEST\\";
+      "type Query = "TEST";
       "
     `);
     expect(print(`lower('TEST')`, [])).toMatchInlineSnapshot(`
-      "type Query = \\"test\\";
+      "type Query = "test";
       "
     `);
   });
@@ -889,10 +889,10 @@ type Ref_V6v9ba7CZlBTDAJv =
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         _id: string;
-        _type: \\"movie\\";
+        _type: "movie";
         inputSlug: unknown;
         slug?: {
-          _type: \\"slug\\";
+          _type: "slug";
           current?: string;
           source?: string;
         };

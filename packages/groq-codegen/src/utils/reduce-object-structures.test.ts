@@ -290,7 +290,7 @@ describe('reduceObjectStructures', () => {
     expect(() =>
       reduceObjectStructures(stringStructure, objectStructure, 'replace'),
     ).toThrowErrorMatchingInlineSnapshot(
-      `"Found unsupported source node type \\"String\\" in reduceObjectStructures call. Please open an issue."`,
+      `"Found unsupported source node type "String" in reduceObjectStructures call. Please open an issue."`,
     );
   });
 
@@ -314,9 +314,9 @@ describe('reduceObjectStructures', () => {
     ).toMatchObject({ type: 'Unknown' });
 
     expect((console.warn as jest.Mock).mock.calls).toMatchInlineSnapshot(`
-      Array [
-        Array [
-          "Attempted to use ObjectSplat for unsupported type \\"String\\"",
+      [
+        [
+          "Attempted to use ObjectSplat for unsupported type "String"",
         ],
       ]
     `);

@@ -1,6 +1,10 @@
 import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
-import pkg from './package.json';
+import fs from 'fs';
+
+const pkg = JSON.parse(
+  (await fs.promises.readFile('./package.json')).toString(),
+);
 
 const extensions = ['.js', '.ts'];
 

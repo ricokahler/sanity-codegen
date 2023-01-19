@@ -1,7 +1,6 @@
 import { Box } from '@sanity/ui';
 import {
   ObjectInspector as ReactObjectInspector,
-  ObjectInspectorProps,
   ObjectLabel,
   ObjectRootLabel,
 } from 'react-inspector';
@@ -12,12 +11,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value != null && (type == 'object' || type == 'function');
 }
 
-export function ObjectInspector(props: ObjectInspectorProps) {
+export function ObjectInspector(props: any) {
   return (
     <Box paddingX={4}>
       <ReactObjectInspector
         expandLevel={10}
-        nodeRenderer={(props) => {
+        nodeRenderer={(props: any) => {
           if (isRecord(props.data) && 'type' in props?.data) {
             return <>{props.data.type}</>;
           }
