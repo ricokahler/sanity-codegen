@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/sanity-codegen.dev",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.29",
   "keywords": [
     "sanity",
     "groq",
@@ -55,8 +55,8 @@
     "@babel/standalone": "^7.20.12",
     "@monaco-editor/react": "^4.4.6",
     "@ricokahler/promise-suspender": "^1.0.1",
-    "@sanity-codegen/groq-codegen": "^1.0.0-alpha.28",
-    "@sanity-codegen/schema-codegen": "^1.0.0-alpha.28",
+    "@sanity-codegen/groq-codegen": "^1.0.0-alpha.29",
+    "@sanity-codegen/schema-codegen": "^1.0.0-alpha.29",
     "@sanity/ui": "^1.0.14",
     "@types/babel__standalone": "^7.1.4",
     "@types/jest": "29.2.6",
