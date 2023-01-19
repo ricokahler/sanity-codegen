@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.32](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.31...v1.0.0-alpha.32) (2023-01-19)
+
+### Bug Fixes
+
+- **schema-codegen:** fix default schema type name generator ([6c95cf5](https://github.com/ricokahler/sanity-codegen/commit/6c95cf5284f606614002712d1c149fe0a0939f25))
+
 # [1.0.0-alpha.31](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.30...v1.0.0-alpha.31) (2023-01-19)
 
 ### Bug Fixes

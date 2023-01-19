@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.32](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.31...v1.0.0-alpha.32) (2023-01-19)
+
+**Note:** Version bump only for package @sanity-codegen/groq-codegen
+
 # [1.0.0-alpha.31](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.30...v1.0.0-alpha.31) (2023-01-19)
 
 **Note:** Version bump only for package @sanity-codegen/groq-codegen
