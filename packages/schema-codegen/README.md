@@ -24,9 +24,9 @@ yarn add --dev @sanity-codegen/schema-codegen
 
 The Sanity schemas are written for use inside of [Sanity Studio](https://www.sanity.io/docs/sanity-studio). Sanity Studio is the primary client that writes data to Sanity's backend so all knowledge of the schema lives there.
 
-This poses a challenge because the way we write schemas can become highly dependent on that environment (e.g. importing React components, resolving the [parts system](https://www.sanity.io/docs/parts), CSS imports etc).
+This poses a challenge because the way we write schemas can become highly dependent on that environment (e.g. importing React components, CSS imports etc).
 
-In order to pull out the schema types for codegen, Sanity Codegen provides a pre-configured babel setup that makes your schema executable in a Node context by shimming out the Studio environment (e.g. using `css-modules-transform` to ignore CSS imports, aliasing the parts system). This execution occurs in a forked process to prevent and babel conflicts on the main thread.
+In order to pull out the schema types for codegen, Sanity Codegen provides a pre-configured babel setup that makes your schema executable in a Node context by shimming out the Studio environment (e.g. using `css-modules-transform` to ignore CSS imports). This execution occurs in a forked process to prevent and babel conflicts on the main thread.
 
 After the schema has been loaded, it's then run through a validate/normalize step. This will validate that the schema makes sense and then normalize it. The normalized version is statically typed and JSON serializable and is sent over to the main thread.
 
@@ -37,7 +37,7 @@ async function main() {
   // calling the `schemaExtractor` spins up another process and loads the schema
   // there. the resulting normalized types are returned
   const normalizedSchema = await schemaExtractor({
-    schemaPath: './studio/schemas/schema.js',
+    sanityConfigPath: './studio/sanity.config.ts',
   });
 
   console.log(normalizedSchema); // { documents: [/* ... */], registeredTypes: [/* ... */] }
@@ -57,7 +57,7 @@ const fs = require('fs');
 
 async function main() {
   const normalizedSchema = await schemaExtractor({
-    schemaPath: './studio/schemas/schema.js',
+    sanityConfigPath: './studio/sanity.config.ts',
   });
   const typescriptSource = await generateSchemaTypes({ normalizedSchema });
 
@@ -72,9 +72,9 @@ async function main() {
 ```ts
 interface ExecutorOptions {
   /**
-   * Path of the schema entry point
+   * Path of the sanity config entry point
    */
-  schemaPath: string;
+  sanityConfigPath: string;
   /**
    * Optionally provide a path to a .babelrc file. This will be sent to the
    * babel options while loading the schema.

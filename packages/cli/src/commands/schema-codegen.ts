@@ -9,7 +9,7 @@ import {
   generateSchemaTypes,
 } from '@sanity-codegen/schema-codegen';
 import { getConfig } from '../get-config';
-import { getSchemaPath } from '../get-schema-path';
+import { getSanityConfigPath } from '../get-sanity-config-path';
 import { simpleLogger } from '../simple-logger';
 import { createAnimatedLogger } from '../create-animated-logger';
 
@@ -80,7 +80,7 @@ export default class SchemaCodegen extends Command {
 
   static args: Parser.args.IArg[] = [
     {
-      name: 'schemaPath',
+      name: 'sanityConfigPath',
       description: stripIndents`
         Optionally provide the path to your sanity schema entry point. If not
         provided, the CLI will try to get this value from your sanity.json file.
@@ -99,7 +99,7 @@ export default class SchemaCodegen extends Command {
     const normalizedSchema = config?.normalizedSchema
       ? config.normalizedSchema
       : await schemaExtractor({
-          schemaPath: await getSchemaPath({
+          sanityConfigPath: await getSanityConfigPath({
             config,
             args,
             root,

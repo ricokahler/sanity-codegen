@@ -15,7 +15,7 @@ export async function schemaExtractor(params: ExecutorOptions) {
   const root = params.cwd || process.cwd();
 
   const normalizedOptions: ExecutorOptions = {
-    schemaPath: path.resolve(root, params.schemaPath),
+    sanityConfigPath: path.resolve(root, params.sanityConfigPath),
     babelrcPath: params.babelrcPath
       ? path.resolve(root, params.babelrcPath)
       : undefined,

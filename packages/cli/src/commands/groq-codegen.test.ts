@@ -37,7 +37,7 @@ describe('groq-codegen command', () => {
         .map((call) => call[0])
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
-      Array [
+      [
         "Using sanity-codegen config found at <PATH>",
         "Finding files to extract queries from…",
         "Found 2 candidate files from \`groqCodegenInclude\` and \`groqCodegenExclude\`",
@@ -57,8 +57,8 @@ describe('groq-codegen command', () => {
         (call: [string, string]) => call[1],
       ),
     ).toMatchInlineSnapshot(`
-      Array [
-        "/// <reference types=\\"@sanity-codegen/types\\" />
+      [
+        "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Queries {

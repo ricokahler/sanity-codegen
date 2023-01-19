@@ -54,7 +54,7 @@ async function main() {
   // first get the normalized schema via the schema-extractor.
   // see the schema-codegen package for more usage info
   const schema = await schemaExtractor({
-    schemaPath: './studio/schemas/schema.js',
+    sanityConfigPath: './studio/sanity.config.ts',
   });
 
   // `generateGroqTypes` starts with a blob of filenames.

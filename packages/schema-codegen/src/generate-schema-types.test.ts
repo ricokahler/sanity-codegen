@@ -64,7 +64,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -72,7 +72,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Image - \`Image\`
@@ -107,7 +107,7 @@ describe('generate-types', () => {
              * Slug - \`Slug\`
              */
             slug?: {
-              _type: \\"slug\\";
+              _type: "slug";
               current: string;
             };
 
@@ -190,7 +190,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -198,12 +198,12 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Choices Strings - \`String\`
              */
-            choicesStrings: \\"a\\" | \\"b\\" | \\"c\\";
+            choicesStrings: "a" | "b" | "c";
 
             /**
              * Choices Numbers - \`Number\`
@@ -238,7 +238,7 @@ describe('generate-types', () => {
 
     expect(result.includes('name?: string')).toBe(true);
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -246,7 +246,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Name - \`String\`
@@ -311,7 +311,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -319,7 +319,7 @@ describe('generate-types', () => {
            * Test Document
            */
           interface TestDocument extends Sanity.Document {
-            _type: \\"testDocument\\";
+            _type: "testDocument";
 
             /**
              * Foo - \`Object\`
@@ -409,12 +409,12 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
           type Foo = {
-            _type: \\"foo\\";
+            _type: "foo";
             asset: Sanity.Asset;
             crop?: Sanity.ImageCrop;
             hotspot?: Sanity.ImageHotspot;
@@ -426,7 +426,7 @@ describe('generate-types', () => {
           };
 
           type Bar = {
-            _type: \\"bar\\";
+            _type: "bar";
 
             /**
              * Nested Image Type - \`Image\`
@@ -522,7 +522,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -530,7 +530,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Array - \`Array\`
@@ -552,7 +552,7 @@ describe('generate-types', () => {
            * Bar
            */
           interface Bar extends Sanity.Document {
-            _type: \\"bar\\";
+            _type: "bar";
 
             /**
              * Bar - \`String\`
@@ -564,7 +564,7 @@ describe('generate-types', () => {
            * Baz
            */
           interface Baz extends Sanity.Document {
-            _type: \\"baz\\";
+            _type: "baz";
 
             /**
              * Baz - \`String\`
@@ -590,12 +590,12 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
           type FooSlug = {
-            _type: \\"fooSlug\\";
+            _type: "fooSlug";
             current: string;
           };
         }
@@ -646,7 +646,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -654,7 +654,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Array - \`Array\`
@@ -703,7 +703,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -711,7 +711,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Description - \`Array\`
@@ -769,7 +769,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -777,7 +777,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface Foo extends Sanity.Document {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Name - \`String\`
@@ -799,7 +799,7 @@ describe('generate-types', () => {
            * Bar
            */
           interface Bar extends Sanity.Document {
-            _type: \\"bar\\";
+            _type: "bar";
 
             /**
              * Name - \`String\`
@@ -811,7 +811,7 @@ describe('generate-types', () => {
            * Baz
            */
           interface Baz extends Sanity.Document {
-            _type: \\"baz\\";
+            _type: "baz";
 
             /**
              * Name - \`String\`
@@ -851,7 +851,7 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
@@ -859,7 +859,7 @@ describe('generate-types', () => {
            * Foo
            */
           interface FooWithHyphen extends Sanity.Document {
-            _type: \\"foo-with-hyphen\\";
+            _type: "foo-with-hyphen";
 
             /**
              * Bar - \`RegistryReference\`
@@ -868,7 +868,7 @@ describe('generate-types', () => {
           }
 
           type FooBar = {
-            _type: \\"foo_bar\\";
+            _type: "foo_bar";
 
             /**
              * Name - \`String\`
@@ -900,12 +900,12 @@ describe('generate-types', () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      "/// <reference types=\\"@sanity-codegen/types\\" />
+      "/// <reference types="@sanity-codegen/types" />
 
       declare namespace Sanity {
         namespace Schema {
           type Foo = {
-            _type: \\"foo\\";
+            _type: "foo";
 
             /**
              * Code - \`RegistryReference\`

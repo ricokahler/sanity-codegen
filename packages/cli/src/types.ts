@@ -5,10 +5,10 @@ export interface SanityCodegenConfig
   extends Partial<GenerateSchemaTypesOptions>,
     Partial<GenerateGroqTypesOptions> {
   /**
-   * Optionally provide the path to your sanity schema entry point. If not
-   * provided, the CLI will try to get this value from your `sanity.json` file.
+   * Optionally provide the path to your sanity config (sanity.config.ts). If
+   * not provided, the CLI will look in the usual places.
    */
-  schemaPath?: string;
+  sanityConfigPath?: string;
   /**
    * Optionally provide a destination path to the resulting sanity schema types.
    * The default value is `schema-types.d.ts`

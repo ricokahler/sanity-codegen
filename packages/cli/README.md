@@ -19,7 +19,7 @@ const config: SanityCodegenConfig = {
    * Optionally provide the path to your sanity schema entry point. If not
    * provided, the CLI will try to get this value from your `sanity.json` file.
    */
-  schemaPath: './schema',
+  // sanityConfigPath: './sanity.config.ts',
   /**
    * Specify a glob (powered by
    * [`globby`](https://github.com/sindresorhus/globby)), a list of globs, or a
@@ -113,14 +113,16 @@ export default config;
 ```
 
 <!-- toc -->
-* [@sanity-codegen/cli](#sanity-codegencli)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [@sanity-codegen/cli](#sanity-codegencli)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
@@ -132,12 +134,14 @@ USAGE
   $ sanity-codegen COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+
+- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
 
 ## `sanity-codegen help [COMMAND]`
 
@@ -155,4 +159,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.3.1/src/commands/help.ts)_
+
 <!-- commandsstop -->

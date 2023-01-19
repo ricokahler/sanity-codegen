@@ -60,7 +60,7 @@ describe('transformStructureToTs', () => {
       "type Everything = (
         | {
             _id: string;
-            _type: \\"movie\\";
+            _type: "movie";
             leadActor?: {
               name?: string;
             };
@@ -68,7 +68,7 @@ describe('transformStructureToTs', () => {
           }
         | {
             _id: string;
-            _type: \\"book\\";
+            _type: "book";
             author?: {
               name?: string;
             };
@@ -124,21 +124,21 @@ describe('transformStructureToTs', () => {
     expect(print(result)).toMatchInlineSnapshot(`
       "type Everything = {
         _id: string;
-        _type: \\"jsonDoc\\";
-        jsonLike?: Ref_pxNMb9L8LUZKppbq;
+        _type: "jsonDoc";
+        jsonLike?: Ref_uyG7JkRVccU1HuUn;
       }[];
 
-      type Ref_pxNMb9L8LUZKppbq = (
+      type Ref_uyG7JkRVccU1HuUn = (
+        | boolean
+        | string
         | {
             properties?: {
               key?: string;
-              value?: Ref_pxNMb9L8LUZKppbq;
+              value?: Ref_uyG7JkRVccU1HuUn;
             }[];
           }
-        | boolean
-        | string
         | number
-        | Ref_pxNMb9L8LUZKppbq[]
+        | Ref_uyG7JkRVccU1HuUn[]
       )[];
       "
     `);
@@ -168,21 +168,21 @@ describe('transformStructureToTs', () => {
       "type Everything = (
         | {
             _id: string;
-            _type: \\"author\\";
+            _type: "author";
             name?: string;
           }
         | {
             _id: string;
-            _type: \\"book\\";
-            author?: Sanity.Reference<Ref_V6v9ba7CZlBTDAJv>;
+            _type: "book";
+            author?: Sanity.Reference<Ref_HdGcFofEAyT3OHPP>;
             title?: string;
           }
       )[];
 
-      type Ref_V6v9ba7CZlBTDAJv =
+      type Ref_HdGcFofEAyT3OHPP =
         | {
             _id: string;
-            _type: \\"author\\";
+            _type: "author";
             name?: string;
           }
         | undefined;
@@ -246,7 +246,7 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         a: {
           _id: string;
-          _type: \\"requiredDoc\\";
+          _type: "requiredDoc";
           optionalString?: string;
           requiredString: string;
         }[];

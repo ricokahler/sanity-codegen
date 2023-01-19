@@ -3,6 +3,7 @@ import path from 'path';
 import register from '@babel/register';
 // @ts-expect-error no types or 3rd party types
 import babelMerge from 'babel-merge';
+import { resolveConfig, Config, Workspace } from 'sanity';
 import { schemaNormalizer } from './schema-normalizer';
 import { defaultBabelOptions } from './default-babel-options';
 
@@ -18,9 +19,9 @@ export type ExecutorResult =
 
 export interface ExecutorOptions {
   /**
-   * Path of the schema entry point
+   * Path of the sanity config entry point
    */
-  schemaPath: string;
+  sanityConfigPath: string;
   /**
    * Optionally provide a path to a .babelrc file. This will be sent to the
    * babel options while loading the schema.
@@ -44,7 +45,7 @@ export interface ExecutorOptions {
 
 async function loadAndExecute() {
   const {
-    schemaPath,
+    sanityConfigPath,
     babelOptions: babelOptionsFromArgs,
     babelrcPath,
     cwd,
@@ -69,13 +70,36 @@ async function loadAndExecute() {
     cwd,
   });
 
-  const types: any[] =
+  const sanityConfig: Config =
     // this executes the schema using the previously configured babel to shim
-    // out the parts
-    require(path.resolve(schemaPath)).default ||
-    require(path.resolve(schemaPath));
+    // out browser requirements
+    require(path.resolve(sanityConfigPath)).default ||
+    require(path.resolve(sanityConfigPath));
 
-  const result = schemaNormalizer(types);
+  const workspaces = await new Promise<Workspace[]>((resolve, reject) => {
+    const subscription = resolveConfig(sanityConfig).subscribe({
+      next: (workspaces) => {
+        subscription.unsubscribe();
+        resolve(workspaces);
+      },
+      error: reject,
+    });
+  });
+
+  if (!workspaces.length) {
+    throw new Error('Expected at one workspace.');
+  }
+
+  if (workspaces.length > 1) {
+    throw new Error(
+      'Found more than one workspace. ' +
+        'Multiple workspaces are not supported at this time.',
+    );
+  }
+
+  const [workspace] = workspaces;
+
+  const result = schemaNormalizer(workspace.schema._original?.types || []);
 
   const executorResult: ExecutorResult = {
     status: 'success',
