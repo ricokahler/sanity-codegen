@@ -1,6 +1,7 @@
 {
   "name": "@sanity-codegen/sanity-codegen.dev",
   "version": "1.0.0-alpha.29",
+  "private": true,
   "keywords": [
     "sanity",
     "groq",
