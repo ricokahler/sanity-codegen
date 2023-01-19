@@ -7,6 +7,12 @@ import { resolveConfig, Config, Workspace } from 'sanity';
 import { schemaNormalizer } from './schema-normalizer';
 import { defaultBabelOptions } from './default-babel-options';
 
+const jsdomDefaultHtml = `<!doctype html>
+<html>
+  <head><meta charset="utf-8"></head>
+  <body></body>
+</html>`;
+
 export type ExecutorResult =
   | {
       status: 'success';
@@ -68,6 +74,10 @@ async function loadAndExecute() {
       babelMerge(babelOptionsFromArgs || {}, babelConfigFromBabelrcPath),
     ),
     cwd,
+  });
+
+  require('jsdom-global')(jsdomDefaultHtml, {
+    url: 'http://localhost:3333/',
   });
 
   const sanityConfig: Config =
