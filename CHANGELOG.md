@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.31](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.30...v1.0.0-alpha.31) (2023-01-19)
+
+### Bug Fixes
+
+- add jsdom-global to mock browser environment ([250bc1f](https://github.com/ricokahler/sanity-codegen/commit/250bc1fe3b17f5cfc401dbf01e991ca1a83735d8))
+
 # [1.0.0-alpha.30](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.29...v1.0.0-alpha.30) (2023-01-19)
 
 **Note:** Version bump only for package sanity-codegen-monorepo
