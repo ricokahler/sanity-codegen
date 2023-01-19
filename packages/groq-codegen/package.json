@@ -36,16 +36,6 @@
     "sort-package-json": "sort-package-json",
     "test": "jest"
   },
-  "jest": {
-    "transform": {
-      "\\.[jt]sx?$": [
-        "babel-jest",
-        {
-          "rootMode": "upward"
-        }
-      ]
-    }
-  },
   "dependencies": {
     "@babel/core": "^7.20.12",
     "@babel/generator": "^7.20.7",
@@ -73,5 +63,8 @@
   },
   "engines": {
     "node": ">=12.22.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

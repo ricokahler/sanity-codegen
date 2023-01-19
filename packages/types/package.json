@@ -28,5 +28,8 @@
     "lint": ":",
     "sort-package-json": "sort-package-json",
     "test": ":"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -44,16 +44,6 @@
     "test": "jest",
     "version": "npx oclif-dev readme && git add README.md"
   },
-  "jest": {
-    "transform": {
-      "\\.[jt]sx?$": [
-        "babel-jest",
-        {
-          "rootMode": "upward"
-        }
-      ]
-    }
-  },
   "dependencies": {
     "@babel/core": "^7.20.12",
     "@oclif/command": "^1.8.21",
@@ -76,6 +66,9 @@
   },
   "engines": {
     "node": ">=12.22.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "oclif": {
     "commands": "./lib/commands",
