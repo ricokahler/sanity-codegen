@@ -1,8 +1,7 @@
 import { useDeferredValue, useMemo } from 'react';
-import { schemaNormalizer } from '@sanity-codegen/schema-codegen/standalone';
-import { transformSchemaToStructure } from '@sanity-codegen/groq-codegen/standalone';
+import { transformSchemaToStructure } from '@sanity-codegen/core/standalone';
 import { ObjectInspector } from './object-inspector';
-import { extractSchemaString } from './helpers';
+import { getNormalizedSchema } from './helpers';
 
 interface Props {
   schemaString: string;
@@ -13,7 +12,7 @@ export default function InputStructureInspector({ schemaString }: Props) {
     useMemo(
       () =>
         transformSchemaToStructure({
-          normalizedSchema: schemaNormalizer(extractSchemaString(schemaString)),
+          normalizedSchema: getNormalizedSchema(schemaString),
         }),
       [schemaString],
     ),

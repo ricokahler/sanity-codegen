@@ -15,7 +15,7 @@
   "references": [
     { "path": "./packages/cli" },
     { "path": "./packages/client" },
-    { "path": "./packages/groq-codegen" },
-    { "path": "./packages/schema-codegen" }
+    { "path": "./packages/core" },
+    { "path": "./packages/extractor" }
   ]
 }

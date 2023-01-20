@@ -1,6 +1,5 @@
 node_modules
 dist
-build
 lib
 coverage
 .DS_Store

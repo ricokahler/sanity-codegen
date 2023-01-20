@@ -1,4 +1,22 @@
 import { transform } from '@babel/standalone';
+import {
+  schemaNormalizer,
+  // defaultStructures,
+} from '@sanity-codegen/core/standalone';
+
+export function getNormalizedSchema(
+  schemaString: string,
+): Sanity.SchemaDef.Schema {
+  const schema = schemaNormalizer(extractSchemaString(schemaString));
+
+  return {
+    ...schema,
+    registeredTypes: [
+      ...schema.registeredTypes,
+      // ...(defaultStructures as unknown as Sanity.SchemaDef.RegisteredSchemaNode[]),
+    ],
+  };
+}
 
 export function extractSchemaString(schemaString: string) {
   const { code } = transform(schemaString, {
@@ -16,14 +34,8 @@ export function extractSchemaString(schemaString: string) {
   return eval(`(() => {
     let exports = {}
 
-    const mockCreateSchema = ({types}) => types
-    
-    const require = name => {
-      if (name === 'part:@sanity/base/schema-creator') return mockCreateSchema
-      if (name === 'all:part:@sanity/base/schema-type') return []
-      throw new Error('Nothing else can be imported in this demo')
-    }
     ;${code};
+    
     return exports.default
   })()`);
 }

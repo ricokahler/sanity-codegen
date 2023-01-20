@@ -1,34 +1,16 @@
-import type { GenerateSchemaTypesOptions } from '@sanity-codegen/schema-codegen';
-import type { GenerateGroqTypesOptions } from '@sanity-codegen/groq-codegen';
+import type { GenerateTypesOptions } from '@sanity-codegen/core';
 
-export interface SanityCodegenConfig
-  extends Partial<GenerateSchemaTypesOptions>,
-    Partial<GenerateGroqTypesOptions> {
+export interface SanityCodegenConfig extends Partial<GenerateTypesOptions> {
   /**
    * Optionally provide the path to your sanity config (sanity.config.ts). If
    * not provided, the CLI will look in the usual places.
    */
   sanityConfigPath?: string;
   /**
-   * Optionally provide a destination path to the resulting sanity schema types.
-   * The default value is `schema-types.d.ts`
-   */
-  schemaTypesOutputPath?: string;
-  /**
-   * Optionally provide a destination path to the resulting sanity schema JSON.
-   * The default value is `schema-def.json`
-   */
-  schemaJsonOutputPath?: string;
-  /**
    * Optionally provide a destination path to the resulting sanity groq types.
-   * The default value is `query-types.d.ts`.
+   * The default value is `sanity-codegen-types.d.ts`.
    */
-  queryTypesOutputPath?: string;
-  /**
-   * Optionally provide an input `schema-def.json` file to be used for GROQ
-   * codegen. This is the `schemaJsonOutputPath` by default.
-   */
-  schemaJsonInputPath?: string;
+  typesOutputPath?: string;
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.

@@ -12,8 +12,8 @@ type ConditionalIndexAccess<T, U> = U extends keyof T ? T[U] : unknown;
  * wrapped client with a new method `query` will be returned.
  *
  * The purpose of this function is to decorate an existing sanity client with
- * an API that's compatible with the `@sanity-codegen/groq-codegen`'s query
- * extraction. @see `@sanity-codegen/groq-codegen` for more info.
+ * an API that's compatible with the `@sanity-codegen/core`'s query
+ * extraction. @see `@sanity-codegen/core` for more info.
  *
  * > NOTE: the two separate functions exist as a work around for TypeScript's
  * lack of partial type parameter inference.

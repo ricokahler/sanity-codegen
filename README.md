@@ -23,7 +23,7 @@ yarn add --dev sanity-codegen@alpha
 At the root of your sanity project, run:
 
 ```
-npx sanity-codegen schema-codegen
+npx sanity-codegen extractor
 ```
 
 This command will locate your schema, generate TypeScript types, and write them to `schema.d.ts`.
@@ -129,4 +129,4 @@ main().catch((e) => {
 
 ## API/Programatic Usage
 
-[See the `@sanity-codegen/schema-codegen` package.](./packages/schema-codegen)
+[See the `@sanity-codegen/extractor` package.](./packages/extractor)
