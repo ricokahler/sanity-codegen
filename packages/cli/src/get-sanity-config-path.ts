@@ -22,7 +22,12 @@ export async function getSanityConfigPath({
         path.resolve(process.cwd(), args.sanityConfigPath),
       );
 
-      logger.info(`Using sanity config at: ${resolvedSanityConfigPath}`);
+      logger.info(
+        `Using sanity config at: ${path.relative(
+          root,
+          resolvedSanityConfigPath,
+        )}`,
+      );
 
       return resolvedSanityConfigPath;
     } catch {
@@ -38,7 +43,12 @@ export async function getSanityConfigPath({
         path.resolve(process.cwd(), config.sanityConfigPath),
       );
 
-      logger.info(`Using sanity config at: ${resolvedSanityConfigPath}`);
+      logger.info(
+        `Using sanity config at: ${path.relative(
+          root,
+          resolvedSanityConfigPath,
+        )}`,
+      );
 
       return resolvedSanityConfigPath;
     } catch {
@@ -53,7 +63,11 @@ export async function getSanityConfigPath({
     startingPoint: root,
   });
 
-  logger.info(`Found sanity config at: ${sanityConfigPath}`);
+  if (sanityConfigPath) {
+    logger.info(
+      `Using sanity config at: ${path.relative(root, sanityConfigPath)}`,
+    );
+  }
 
   if (!sanityConfigPath) {
     throw new CLIError(

@@ -13,7 +13,7 @@ const config: SanityCodegenConfig = {
       ],
     },
   ]),
-  groqCodegenInclude: '**/*.{js,ts,tsx}',
+  include: '**/*.{js,ts,tsx}',
 };
 
 export default config;

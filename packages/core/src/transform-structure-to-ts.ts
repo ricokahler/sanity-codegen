@@ -25,7 +25,7 @@ const tsTypeForCircularRefs = (node: Sanity.GroqCodegen.StructureNode) =>
  *
  * The resulting `TSType`s can be printed to source code via `@babel/generator`.
  *
- * @see `generateGroqTypes` for a reference implementation
+ * @see `generateTypes` for a reference implementation
  */
 export function transformStructureToTs({
   structure,

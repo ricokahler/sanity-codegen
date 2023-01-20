@@ -179,16 +179,15 @@ export interface PluckGroqFromFilesOptions {
    * function that returns a list of paths to specify the source files you want
    * to generate types from.
    *
-   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
-   * will not be used.
+   * If `include` is provided as a function then `exclude` will not be used.
    */
-  groqCodegenInclude: string | string[] | (() => Promise<string[]>);
+  include: string | string[] | (() => Promise<string[]>);
   /**
    * Specify a glob (powered by
    * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
    * specify which source files you want to exclude from type generation.
    */
-  groqCodegenExclude?: string | string[];
+  exclude: string | string[];
   /**
    * Specify the root used to resolve relative filenames.
    * By default this is `process.env.cwd()`
@@ -206,8 +205,8 @@ export interface PluckGroqFromFilesOptions {
  * corresponding query keys. @see `pluckGroqFromSource` for more info.
  */
 export async function pluckGroqFromFiles({
-  groqCodegenInclude,
-  groqCodegenExclude,
+  include,
+  exclude,
   root = process.cwd(),
   babelOptions,
   logger = simpleLogger,
@@ -215,20 +214,18 @@ export async function pluckGroqFromFiles({
   logger.verbose('Finding files to extract queries from…');
 
   const inclusions =
-    typeof groqCodegenInclude === 'function'
+    typeof include === 'function'
       ? []
-      : Array.isArray(groqCodegenInclude)
-      ? groqCodegenInclude
-      : [groqCodegenInclude];
+      : Array.isArray(include)
+      ? include
+      : [include];
 
-  const exclusions = Array.isArray(groqCodegenExclude)
-    ? groqCodegenExclude
-    : [groqCodegenExclude];
+  const exclusions = Array.isArray(exclude) ? exclude : [exclude];
 
   const filenames = Array.from(
     new Set(
-      typeof groqCodegenInclude === 'function'
-        ? await groqCodegenInclude()
+      typeof include === 'function'
+        ? await include()
         : await globby(
             [...inclusions, ...exclusions.map((pattern) => `!${pattern}`)],
             { cwd: root },
@@ -238,7 +235,7 @@ export async function pluckGroqFromFiles({
   logger.info(
     `Found ${filenames.length} candidate file${
       filenames.length === 1 ? '' : 's'
-    } from \`groqCodegenInclude\` and \`groqCodegenExclude\``,
+    }`,
   );
 
   let progress = 0;

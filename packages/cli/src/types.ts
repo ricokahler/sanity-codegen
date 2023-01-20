@@ -8,9 +8,9 @@ export interface SanityCodegenConfig extends Partial<GenerateTypesOptions> {
   sanityConfigPath?: string;
   /**
    * Optionally provide a destination path to the resulting sanity groq types.
-   * The default value is `sanity-codegen-types.d.ts`.
+   * The default value is `sanity-codegen.d.ts`.
    */
-  typesOutputPath?: string;
+  output?: string;
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.

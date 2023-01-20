@@ -116,13 +116,13 @@ export function generateQueryTypes({
   return {
     declarations: {
       ...declarations,
-      QueryKeys: t.tsModuleDeclaration(
+      QueryMap: t.tsModuleDeclaration(
         t.identifier('Sanity'),
         t.tsModuleDeclaration(
           t.identifier('Query'),
           t.tsModuleBlock([
             t.tsTypeAliasDeclaration(
-              t.identifier('QueryKeys'),
+              t.identifier('Map'),
               undefined,
               t.tsTypeLiteral(
                 Object.entries(queryKeys).map(([queryKey, hash]) => {

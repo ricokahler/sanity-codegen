@@ -4,8 +4,8 @@ describe('pluckGroqFromFile', () => {
   it('accepts and include and exclude and returns the plucked results', async () => {
     const results = await pluckGroqFromFiles({
       root: __dirname,
-      groqCodegenInclude: './__example-files__/**/*.ts',
-      groqCodegenExclude: ['**/mock_node_modules', '**/*.fake-test.ts'],
+      include: './__example-files__/**/*.ts',
+      exclude: ['**/mock_node_modules', '**/*.fake-test.ts'],
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
