@@ -33,7 +33,12 @@ export async function getConfig({ flags, logger }: GetConfigOptions) {
   const configDirname = configFilename && path.dirname(configFilename);
 
   if (configFilename) {
-    logger.info(`Using sanity-codegen config found at: ${configFilename}`);
+    logger.info(
+      `Using sanity-codegen config found at: ${path.relative(
+        process.cwd(),
+        configFilename,
+      )}`,
+    );
   }
 
   const configFirstPass: SanityCodegenConfig | null =
@@ -85,8 +90,10 @@ export async function getConfig({ flags, logger }: GetConfigOptions) {
     }
   })();
 
-  if (babelOptionsFromBabelrc) {
-    logger.info(`Using babelrc config found at: ${babelrcPath}`);
+  if (babelOptionsFromBabelrc && babelrcPath) {
+    logger.info(
+      `Using babelrc config found at: ${path.relative(root, babelrcPath)}`,
+    );
   }
 
   const babelOptions: Record<string, unknown> = babelMerge(

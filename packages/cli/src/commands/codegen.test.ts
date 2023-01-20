@@ -38,15 +38,17 @@ describe('codegen command', () => {
         .map((message: string) => message.replace(/:\s[\w/\\.-]+/g, ' <PATH>')),
     ).toMatchInlineSnapshot(`
       [
+        "Starting codegen…",
         "Using sanity-codegen config found at <PATH>",
         "Generating types from your schema…",
         "Converted 1 schema definition to TypeScript",
-        "Converting queries to typescript…",
+        "Plucking queries from files…",
         "Finding files to extract queries from…",
-        "Found 2 candidate files from \`groqCodegenInclude\` and \`groqCodegenExclude\`",
+        "Found 2 candidate files",
         "Extracting queries… 50% (1/2)",
         "Extracting queries… 100% (2/2)",
         "Found 1 query from 2 files.",
+        "Converting queries to typescript…",
         "Converted 2 queries to TypeScript",
         "Writing query types output…",
         "Wrote query types output to <PATH>",
@@ -73,12 +75,12 @@ describe('codegen command', () => {
       }
 
       namespace Sanity.Query {
-        type QueryKey = (string | null)[];
-      }
-      namespace Sanity.Query {
-        type QueryKeys = {
+        type Map = {
           QueryKey: Sanity.Query.QueryKey;
         };
+      }
+      namespace Sanity.Query {
+        type QueryKey = (string | null)[];
       }
       ",
       ]

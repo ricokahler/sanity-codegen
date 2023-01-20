@@ -849,10 +849,13 @@ export function transformGroqToStructure({
       }
     }
 
+    // TODO: implement these operators
     case 'Context':
     case 'Selector':
     case 'Tuple': {
-      throw new Error(`Node type ${node.type} is not supported.`);
+      console.warn(`"${node.type}" not implemented yet.`);
+
+      return createStructure({ type: 'Unknown' });
     }
 
     default: {

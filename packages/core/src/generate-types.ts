@@ -55,11 +55,14 @@ export async function generateTypes({
     } to TypeScript`,
   );
 
+  logger.verbose('Plucking queries from files…');
+  const extractedQueries = await pluckGroqFromFiles(pluckOptions);
+
   logger.verbose('Converting queries to typescript…');
   const queryTypes = generateQueryTypes({
     normalizedSchema,
     substitutions: schemaTypes.substitutions,
-    extractedQueries: await pluckGroqFromFiles(pluckOptions),
+    extractedQueries,
   });
   const queryCount = Object.keys(queryTypes.declarations).length;
 

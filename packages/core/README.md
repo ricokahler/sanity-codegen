@@ -41,13 +41,13 @@ If any source file contains a groq query in the form described above, Sanity Cod
 
 ---
 
-The most simple way to use this package is via `generateGroqTypes`.
+The most simple way to use this package is via `generateTypes`.
 
 Note: you may also need to extract the schema using the [`@sanity-codegen/extractor`](../extractor) package.
 
 ```ts
 import fs from 'fs';
-import { generateGroqTypes } from '@sanity-codegen/core';
+import { generateTypes } from '@sanity-codegen/core';
 import { schemaExtractor } from '@sanity-codegen/extractor';
 
 async function main() {
@@ -57,15 +57,15 @@ async function main() {
     sanityConfigPath: './studio/sanity.config.ts',
   });
 
-  // `generateGroqTypes` starts with a blob of filenames.
+  // `generateTypes` starts with a blob of filenames.
   //
   // 1. every file matched is parsed for GROQ queries
   // 2. every query found is ran through a GROQ-to-TS transform
   // 3. the resulting types are printed as strings and joined together in one
   //    big typescript source file
-  const codegenResult = await generateGroqTypes({
-    groqCodegenInclude: ['./src/**/*.{js,ts,tsx}'],
-    groqCodegenExclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
+  const codegenResult = await generateTypes({
+    include: ['./src/**/*.{js,ts,tsx}'],
+    exclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
     schema,
   });
 
@@ -147,16 +147,15 @@ export interface PluckGroqFromFilesOptions {
    * function that returns a list of paths to specify the source files you want
    * to generate types from.
    *
-   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
-   * will not be used.
+   * If `include` is provided as a function then `exclude` will not be used.
    */
-  groqCodegenInclude: string | string[] | (() => Promise<string[]>);
+  include: string | string[] | (() => Promise<string[]>);
   /**
    * Specify a glob (powered by
    * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
    * specify which source files you want to exclude from type generation.
    */
-  groqCodegenExclude?: string | string[];
+  exclude?: string | string[];
   /**
    * Specify the root used to resolve relative filenames.
    * By default this is `process.env.cwd()`
@@ -278,10 +277,10 @@ If you do need to use dynamic variables, use [GROQ parameters](https://www.sanit
 
 <!-- TODO: add bad example that won't work -->
 
-### `generateGroqTypes()`
+### `generateTypes()`
 
 ```ts
-interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
+interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
   /**
    * This option is fed directly to prettier `resolveConfig`
    *
@@ -308,8 +307,8 @@ interface GenerateGroqTypesOptions extends PluckGroqFromFilesOptions {
  *
  * The result of each plucked query is put together into one source string.
  */
-export declare function generateGroqTypes(
-  options: GenerateGroqTypesOptions,
+export declare function generateTypes(
+  options: GenerateTypesOptions,
 ): Promise<string>;
 ```
 
@@ -479,7 +478,7 @@ export interface TransformStructureToTsOptions {
  *
  * The resulting `TSType`s can be printed to source code via `@babel/generator`.
  *
- * @see `generateGroqTypes` for a reference implementation
+ * @see `generateTypes` for a reference implementation
  */
 export declare function transformStructureToTs(
   options: TransformStructureToTsOptions,

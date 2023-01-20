@@ -23,110 +23,96 @@ yarn add --dev sanity-codegen@alpha
 At the root of your sanity project, run:
 
 ```
-npx sanity-codegen extractor
+npx sanity-codegen codegen
 ```
 
-This command will locate your schema, generate TypeScript types, and write them to `schema.d.ts`.
+This command will locate your schema, generate TypeScript types, and write them to `sanity-codegen.d.ts`.
 
 [You can also create a configuration file and see other options here.](./packages/cli)
 
-### Using the types
+## Type usage
 
-In the project that will use the types, install the package `@sanity-codegen/types@alpha`
+### Schema types
 
-```
-npm i --save-dev @sanity-codegen/types@alpha
-```
+The `sanity-codegen.d.ts` file that was generated will add ambient types to your project. Access them via `Sanity.Schema.YourType`
 
-or
-
-```
-yarn add --dev @sanity-codegen/types@alpha
-```
-
-From there, include the types file generated from the CLI at the root of your repo. This will create ambient types that you can use in any file without importing them.
-
-### Schema Codegen Options
-
-If you want your type to be marked as required instead of optional, add `codegen: { required: true }` to your schema fields:
-
-```ts
-export default {
-  name: 'myDocument',
-  type: 'document',
-  fields: [
-    {
-      name: 'aRequiredField',
-      type: 'string',
-      // 👇👇👇
-      codegen: { required: true },
-      validation: (Rule) => Rule.required(),
-      // 👆👆👆
-    },
-  ],
-};
-```
-
-This will tell the codegen to remove the optional `?` modifier on the field.
-
-> **NOTE:** Drafts that are run through the document may have incorrect types. Be aware of this when using preview mode.
-
-## Usage with first-party client (`@sanity/codegen`)
-
-For more stable usage, you can use the generated types with the first party javascript client [`@sanity/client`](https://www.sanity.io/docs/js-client) (or the tiny alternative [`picosanity`](https://github.com/rexxars/picosanity)).
-
-Query for documents like normal but use the generated types to create the correct type for your query.
-
-```ts
-import sanityClient from '@sanity/client';
-import groq from 'groq';
-
-const client = sanityClient({
-  projectId: 'your-project-id',
-  dataset: 'bikeshop',
-  token: 'sanity-auth-token', // or leave blank to be anonymous user
-  useCdn: true, // `false` if you want to ensure fresh data
-});
-
-// Step 1: write a query
-const query = groq`
-  *[_type == 'blogPost'] {
-    // pick the title
-    title,
-    // then a full expansion of the author
-    author -> { ... },
-  }
-`;
-
-// Step 2: create a type for your query's result composed from the codegen types.
-//
-// Refer to Typescript's utility types for useful type helpers:
-// https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
-//
-// And also intersections:
-// https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#intersection-types
-type QueryResult = Array<
-  Omit<Pick<Sanity.Schema.BlogPost, 'title'>, 'author'> & {
-    author: Sanity.Schema.Author;
-  }
->;
-
-async function main() {
-  // Step 3: add the `QueryResult` as the type parameter as well as the query
-  const results = await client.fetch<QueryResult>(query);
-
-  const first = results[0];
-
-  console.log(first.title); // "Title"
-  console.log(first.author); // { name: 'Example', bio: '...' }
+```js
+interface Props {
+  book: Sanity.Schema.Book; // no import needed. just use it
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+function yourFunction({ book }: Props) {
+  //
+}
 ```
 
-## API/Programatic Usage
+### Query types
 
-[See the `@sanity-codegen/extractor` package.](./packages/extractor)
+First install the typed client:
+
+```
+npm i @sanity-codegen/client
+```
+
+#### Configure the client
+
+After that's done, you can create your configured client file.
+
+In a file called, `client.ts`, import your favorite Sanity client (both [`@sanity/client`](https://www.sanity.io/docs/js-client) and [`picosanity`](https://github.com/rexxars/picosanity) will work).
+
+```ts
+// client.ts
+
+import SanityClient from '@sanity/client';
+// or use the smaller `picosanity` client
+// import SanityClient from 'picosanity';
+
+import { wrapClient, groq } from '@sanity-codegen/client';
+
+// 1. configure your favorite sanity client
+const sanityClient = new SanityClient({
+  // ...
+});
+
+// 2. wrap that client with `wrapClient`. this will return a configure function
+const configureClient = wrapClient(picoSanity);
+
+// 3. call this configure function passing in the type argument
+//    `Sanity.Query.Map` from the GROQ codegen output.
+const sanity = configureClient<Sanity.Query.Map>();
+
+export { sanity, groq };
+```
+
+#### Using the typed client
+
+```ts
+// some-example.ts
+
+// 1. import the client configured from the previous step
+import { sanity, groq } from '../client';
+
+export async function someFunction() {
+  // 1. use the added `query` method.
+  //    pass in a _query key_ followed by a template
+  //    literal with the `groq` tag
+  const bookAuthors = await sanity.query(
+    'BookAuthors',
+    groq`
+      *[_type == 'books'].author
+    `,
+  );
+
+  // 2. ensure the codegen re-runs.
+  //    this is easiest via the CLI
+
+  // 3. that's it. `bookAuthors` is now typed
+  return bookAuthors;
+}
+
+// Extra note: if ever need to reference the type of a query again,
+// you can do so via `Sanity.Query.{QueryKey}`
+type ExampleType = Sanity.Query.BookAuthors;
+```
+
+Note: you'll have to re-run the codegen every time you update your schema or your queries.

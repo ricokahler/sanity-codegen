@@ -34,13 +34,14 @@ In a file called, `client.ts`, import your favorite Sanity client (both [`@sanit
 ```ts
 // client.ts
 
-import PicoSanity from 'picosanity'; // can be replaced with `@sanity/client`
+import SanityClient from '@sanity/client';
+// or use the smaller `picosanity` client
+// import SanityClient from 'picosanity';
+
 import { wrapClient, groq } from '@sanity-codegen/client';
 
 // 1. configure your favorite sanity client
-const picoSanity = new PicoSanity({
-  // ...
-  // see here: https://github.com/rexxars/picosanity#usage
+const sanityClient = new SanityClient({
   // ...
 });
 
@@ -48,8 +49,8 @@ const picoSanity = new PicoSanity({
 const configureClient = wrapClient(picoSanity);
 
 // 3. call this configure function passing in the type argument
-//    `Sanity.Queries.QueryMap` from the GROQ codegen output.
-const sanity = configureClient<Sanity.Queries.QueryMap>();
+//    `Sanity.Query.Map` from the GROQ codegen output.
+const sanity = configureClient<Sanity.Query.Map>();
 
 export { sanity, groq };
 ```
@@ -81,6 +82,6 @@ export async function someFunction() {
 }
 
 // Extra note: if ever need to reference the type of a query again,
-// you can do so via `Sanity.Queries.{QueryKey}`
-type ExampleType = Sanity.Queries.BookAuthors;
+// you can do so via `Sanity.Query.{QueryKey}`
+type ExampleType = Sanity.Query.BookAuthors;
 ```

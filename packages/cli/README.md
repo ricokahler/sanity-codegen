@@ -26,21 +26,21 @@ const config: SanityCodegenConfig = {
    * function that returns a list of paths to specify the source files you want
    * to generate types from.
    *
-   * If `groqCodegenInclude` is provided as a function then `groqCodegenExclude`
+   * If `include` is provided as a function then `exclude`
    * will not be used.
    */
-  groqCodegenInclude: ['./src/**/*.{js,jsx,ts,tsx}'],
+  // include: ['./src/**/*.{js,jsx,ts,tsx}'],
   /**
    * Specify a glob (powered by
    * [`globby`](https://github.com/sindresorhus/globby)) or a list of globs to
    * specify which source files you want to exclude from type generation.
    */
-  groqCodegenExclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
+  // exclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
   /**
    * Optionally provide a destination path to the resulting sanity groq types.
    * The default value is `query-types.d.ts`.
    */
-  // typesOutputPath: './query-types.d.ts',
+  // output: './query-types.d.ts',
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
@@ -98,14 +98,16 @@ export default config;
 ```
 
 <!-- toc -->
-* [@sanity-codegen/cli](#sanity-codegencli)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [@sanity-codegen/cli](#sanity-codegencli)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
@@ -117,12 +119,14 @@ USAGE
   $ sanity-codegen COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+
+- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
 
 ## `sanity-codegen help [COMMAND]`
 
@@ -140,4 +144,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.18/src/commands/help.ts)_
+
 <!-- commandsstop -->

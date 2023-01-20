@@ -51,25 +51,32 @@ export default class GroqCodegen extends Command {
         Any CLI flags passed with override the config options.
       `,
     }),
-    typesOutputPath: flags.string({
-      name: 'typesOutputPath',
+    output: flags.string({
+      name: 'output',
       description: stripIndents`
         Optionally provide a destination path to the resulting sanity groq
-        types. The default value is \`sanity-codegen-types.d.ts\`.
+        types. The default value is \`sanity-codegen.d.ts\`.
       `,
     }),
-    groqCodegenExclude: flags.string({
-      name: 'groqCodegenExclude',
+    include: flags.string({
+      name: 'include',
       description: stripIndents`
         Specify a glob or a list of globs to specify which source files you want
-        to exclude from type generation.
+        to include from type generation. Powered by globby.
+      `,
+    }),
+    exclude: flags.string({
+      name: 'exclude',
+      description: stripIndents`
+        Specify a glob or a list of globs to specify which source files you want
+        to exclude from type generation. Powered by globby.
       `,
     }),
   };
 
   static args: Parser.args.IArg[] = [
     {
-      name: 'groqCodegenInclude',
+      name: 'include',
       description: stripIndents`
         Provide a glob to match source files you wish to parse for GROQ queries.
       `,
@@ -78,6 +85,8 @@ export default class GroqCodegen extends Command {
 
   async run() {
     const { logger } = this;
+    logger.verbose('Starting codegen…');
+
     const { args, flags } = this.parse(GroqCodegen);
     const { config, root, babelOptions } = await getConfig({ flags, logger });
 
@@ -89,40 +98,43 @@ export default class GroqCodegen extends Command {
             logger,
           });
 
-          const normalizedSchema = config?.normalizedSchema
-            ? config.normalizedSchema
-            : await schemaExtractor({
-                sanityConfigPath: await getSanityConfigPath({
-                  config,
-                  args,
-                  root,
-                  logger,
-                }),
-                babelrcPath: babelrcPath || undefined,
-                babelOptions,
-                cwd: root,
-              });
+          const sanityConfigPath = await getSanityConfigPath({
+            config,
+            args,
+            root,
+            logger,
+          });
 
-          // TODO: add better logging messages
-          // logger.info(`Using schemaJson at "${schemaJsonInputPath}"`);
+          let normalizedSchema;
+
+          if (config?.normalizedSchema) {
+            normalizedSchema = config.normalizedSchema;
+          } else {
+            logger.verbose(
+              `Extracting schema from sanity config (this may take some time)…`,
+            );
+
+            normalizedSchema = await schemaExtractor({
+              sanityConfigPath,
+              babelrcPath: babelrcPath || undefined,
+              babelOptions,
+              cwd: root,
+            });
+
+            logger.success(`Extracted schema.`);
+          }
 
           return normalizedSchema;
         })();
 
-    const groqCodegenInclude =
-      (args.groqCodegenInclude as string | undefined) ||
-      config?.groqCodegenInclude;
+    const include = flags.include ||
+      config?.include || ['./src/**/*.{js,ts,tsx}'];
 
-    if (!groqCodegenInclude) {
-      throw new Error(
-        `No \`groqCodegenInclude\` pattern was provided. Please add this to your config or provide via the CLI.`,
-      );
-    }
+    const exclude = flags.exclude || config?.exclude || ['**/node_modules'];
 
     const result = await generateTypes({
-      groqCodegenInclude,
-      groqCodegenExclude:
-        flags.groqCodegenExclude || config?.groqCodegenExclude,
+      include,
+      exclude,
       babelOptions,
       prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
@@ -131,15 +143,13 @@ export default class GroqCodegen extends Command {
       logger,
     });
 
-    const typesOutputPath = path.resolve(
+    const output = path.resolve(
       root,
-      flags.typesOutputPath ||
-        config?.typesOutputPath ||
-        'sanity-codegen-types.d.ts',
+      flags.output || config?.output || 'sanity-codegen.d.ts',
     );
 
     logger.verbose('Writing query types output…');
-    await fs.promises.writeFile(typesOutputPath, result);
-    logger.success(`Wrote query types output to: ${typesOutputPath}`);
+    await fs.promises.writeFile(output, result);
+    logger.success(`Wrote query types output to: ${output}`);
   }
 }

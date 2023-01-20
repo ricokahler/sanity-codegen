@@ -2,13 +2,13 @@ import { schemaNormalizer } from './schema-normalizer';
 import { generateTypes } from './generate-types';
 import { exampleSchema } from './__example-files__/example-schema';
 
-describe('generateGroqTypes', () => {
+describe('generateTypes', () => {
   // TODO: better tests lol
   it('works', async () => {
     const result = await generateTypes({
       root: __dirname,
-      groqCodegenInclude: './__example-files__/**/*.ts',
-      groqCodegenExclude: ['**/*.fake-test.ts', '**/mock_node_modules'],
+      include: './__example-files__/**/*.ts',
+      exclude: ['**/*.fake-test.ts', '**/mock_node_modules'],
       normalizedSchema: schemaNormalizer(exampleSchema),
       logger: {
         debug: jest.fn(),
@@ -93,7 +93,7 @@ describe('generateGroqTypes', () => {
         type ImportStarExportStar = Sanity.Query.AllBooksUsesNamedDeclaredExport;
       }
       namespace Sanity.Query {
-        type QueryKeys = {
+        type Map = {
           BookAuthorUsesDefaultAlias: Sanity.Query.BookAuthorUsesDefaultAlias;
           BookTitlesUsesDefaultExport: Sanity.Query.BookTitlesUsesDefaultExport;
           AllBooksUsesDefaultReexport: Sanity.Query.AllBooksUsesDefaultReexport;
