@@ -1,5 +1,8 @@
 import fs from 'fs';
 import path from 'path';
+// @ts-expect-error no types for this
+import register, { revert } from '@babel/register';
+import { defaultBabelOptions } from '@sanity-codegen/extractor';
 
 interface Options {
   filenameIfNotFound: string;
@@ -20,6 +23,9 @@ export async function fileWalker({
   startingPoint,
   filenameIfNotFound,
 }: Options) {
+  // enables require.resolve to find `.ts` extensions
+  register(defaultBabelOptions);
+
   const resolvedRoot = path.resolve(startingPoint);
   const stats = await fs.promises.stat(resolvedRoot);
 
@@ -39,5 +45,9 @@ export async function fileWalker({
     }
   }
 
-  return await find(resolvedRoot);
+  const result = await find(resolvedRoot);
+
+  revert();
+
+  return result;
 }

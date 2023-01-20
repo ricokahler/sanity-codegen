@@ -55,7 +55,6 @@
     "@babel/preset-typescript": "^7.18.6",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@sanity-codegen/extractor": "^1.0.0-alpha.35",
     "@types/object-hash": "^3.0.2",
     "groq": "^3.2.4",
     "rollup": "^3.10.0",

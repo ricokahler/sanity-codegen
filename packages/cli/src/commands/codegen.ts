@@ -150,6 +150,6 @@ export default class GroqCodegen extends Command {
 
     logger.verbose('Writing query types output…');
     await fs.promises.writeFile(output, result);
-    logger.success(`Wrote query types output to: ${output}`);
+    logger.success(`Wrote types to: ${path.relative(root, output)}`);
   }
 }
