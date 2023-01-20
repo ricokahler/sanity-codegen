@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.36](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.35...v1.0.0-alpha.36) (2023-01-20)
+
+### Bug Fixes
+
+- fix bug where sanity config is not found ([ea58371](https://github.com/ricokahler/sanity-codegen/commit/ea583712b27b2a8f7f0012f52dd351709193a614))
+
 # [1.0.0-alpha.35](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.34...v1.0.0-alpha.35) (2023-01-20)
 
 **Note:** Version bump only for package @sanity-codegen/core
