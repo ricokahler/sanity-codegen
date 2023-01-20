@@ -37,25 +37,10 @@ const config: SanityCodegenConfig = {
    */
   groqCodegenExclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
   /**
-   * Optionally provide a destination path to the resulting sanity schema types.
-   * The default value is `schema-types.d.ts`
-   */
-  // schemaTypesOutputPath: './schema-types.d.ts',
-  /**
-   * Optionally provide a destination path to the resulting sanity schema JSON.
-   * The default value is `schema-def.json`
-   */
-  // schemaJsonOutputPath: './schema-def.json',
-  /**
    * Optionally provide a destination path to the resulting sanity groq types.
    * The default value is `query-types.d.ts`.
    */
-  // queryTypesOutputPath: './query-types.d.ts',
-  /**
-   * Optionally provide an input `schema-def.json` file to be used for GROQ
-   * codegen. This is the `schemaJsonOutputPath` by default.
-   */
-  // schemaJsonInputPath: './schema-def.json',
+  // typesOutputPath: './query-types.d.ts',
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
@@ -113,14 +98,16 @@ export default config;
 ```
 
 <!-- toc -->
-* [@sanity-codegen/cli](#sanity-codegencli)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [@sanity-codegen/cli](#sanity-codegencli)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
@@ -132,12 +119,14 @@ USAGE
   $ sanity-codegen COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+
+- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
 
 ## `sanity-codegen help [COMMAND]`
 
@@ -155,4 +144,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.18/src/commands/help.ts)_
+
 <!-- commandsstop -->

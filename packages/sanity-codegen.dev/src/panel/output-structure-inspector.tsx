@@ -1,7 +1,6 @@
 import { useDeferredValue, useMemo } from 'react';
-import { schemaNormalizer } from '@sanity-codegen/schema-codegen/standalone';
-import { transformGroqToStructure } from '@sanity-codegen/groq-codegen/standalone';
-import { extractSchemaString } from './helpers';
+import { transformGroqToStructure } from '@sanity-codegen/core/standalone';
+import { getNormalizedSchema } from './helpers';
 import { ObjectInspector } from './object-inspector';
 import { parse } from 'groq-js';
 
@@ -18,7 +17,7 @@ export default function OutputStructureInspector({
     useMemo(() => {
       return transformGroqToStructure({
         node: parse(queryString),
-        normalizedSchema: schemaNormalizer(extractSchemaString(schemaString)),
+        normalizedSchema: getNormalizedSchema(schemaString),
         scopes: [],
       });
     }, [queryString, schemaString]),

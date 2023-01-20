@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# use node_modules/.bin first
+PATH=./node_modules/.bin:$PATH
+
+# exit on any error
+set -e
+
+# clean
+rm -rf ./dist
+tsc -b --clean
+
+tsc -b
+
+babel                               \
+  -x .js,.ts                        \
+  --ignore /**/*.test.ts,/**/*.d.ts \
+  --out-dir ./dist                  \
+  --root-mode upward                \
+  ./src                             \

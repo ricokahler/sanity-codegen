@@ -1,5 +1,5 @@
 // this is an example config used for testing
-import { schemaNormalizer } from '@sanity-codegen/schema-codegen';
+import { schemaNormalizer } from '@sanity-codegen/core';
 import { SanityCodegenConfig } from '../../types';
 
 const config: SanityCodegenConfig = {

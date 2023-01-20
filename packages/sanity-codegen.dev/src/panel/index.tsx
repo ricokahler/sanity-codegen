@@ -25,9 +25,6 @@ const QueryResultsInspector = lazy(() => import('./query-results-inspector'));
 const TypescriptQueryResultInspector = lazy(
   () => import('./typescript-query-result-inspector'),
 );
-const TypescriptSchemaResultInspector = lazy(
-  () => import('./typescript-schema-result-inspector'),
-);
 const GroqAstInspector = lazy(() => import('./groq-ast-inspector'));
 
 interface Props {
@@ -87,8 +84,7 @@ export function Panel({
             <option value="normalizedSchema">Normalized Schema</option>
             <option value="inputStructure">Input Structure</option>
             <option value="outputStructure">Output Structure</option>
-            <option value="typescriptQueryResult">Query Codegen</option>
-            <option value="typescriptSchemaResult">Schema Codegen</option>
+            <option value="typescriptQueryResult">Codegen Result</option>
           </optgroup>
         </Select>
 
@@ -203,15 +199,6 @@ export function Panel({
                 queryString={queryString}
                 schemaString={schemaString}
               />
-            </ErrorBoundary>
-          )}
-
-          {value === 'typescriptSchemaResult' && (
-            <ErrorBoundary
-              resetKeys={[schemaString, queryString]}
-              fallback={<Text>Failed to load schema or query.</Text>}
-            >
-              <TypescriptSchemaResultInspector schemaString={schemaString} />
             </ErrorBoundary>
           )}
         </Suspense>

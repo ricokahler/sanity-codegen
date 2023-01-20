@@ -1,10 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declarationDir": "./lib",
+    "declarationDir": "./dist",
     "rootDir": "./src",
     "outDir": "./lib"
   },
   "include": ["./src"],
-  "references": [{ "path": "../extractor" }, { "path": "../core" }]
+  "references": [{ "path": "../core" }]
 }

@@ -5,7 +5,7 @@ import babelMerge from 'babel-merge';
 // @ts-expect-error no types for this
 import register, { revert } from '@babel/register';
 import { CLIError } from '@oclif/errors';
-import { defaultBabelOptions } from '@sanity-codegen/schema-codegen';
+import { defaultBabelOptions } from '@sanity-codegen/extractor';
 import { fileWalker } from './file-walker';
 import { SanityCodegenConfig } from './types';
 

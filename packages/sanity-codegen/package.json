@@ -31,8 +31,8 @@
   "dependencies": {
     "@sanity-codegen/cli": "^1.0.0-alpha.32",
     "@sanity-codegen/client": "^1.0.0-alpha.29",
-    "@sanity-codegen/groq-codegen": "^1.0.0-alpha.32",
-    "@sanity-codegen/schema-codegen": "^1.0.0-alpha.32",
+    "@sanity-codegen/core": "^1.0.0-alpha.32",
+    "@sanity-codegen/extractor": "^1.0.0-alpha.32",
     "@sanity-codegen/types": "^1.0.0-alpha.29"
   },
   "engines": {
