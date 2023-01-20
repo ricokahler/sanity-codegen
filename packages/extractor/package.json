@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/extractor",
-  "version": "1.0.0-alpha.32",
+  "version": "1.0.0-alpha.33",
   "keywords": [
     "sanity",
     "sanity-plugin",
@@ -44,8 +44,8 @@
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
     "@babel/register": "^7.18.9",
-    "@sanity-codegen/core": "^1.0.0-alpha.32",
-    "@sanity-codegen/types": "^1.0.0-alpha.29",
+    "@sanity-codegen/core": "^1.0.0-alpha.33",
+    "@sanity-codegen/types": "^1.0.0-alpha.33",
     "babel-merge": "^3.0.0",
     "babel-plugin-css-modules-transform": "^1.6.2",
     "jsdom": "^21.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "sanity-codegen",
-  "version": "1.0.0-alpha.32",
+  "version": "1.0.0-alpha.33",
   "description": "Generate TypeScript types for your Sanity.io projects",
   "keywords": [
     "sanity",
@@ -29,11 +29,11 @@
     "test": ":"
   },
   "dependencies": {
-    "@sanity-codegen/cli": "^1.0.0-alpha.32",
-    "@sanity-codegen/client": "^1.0.0-alpha.29",
-    "@sanity-codegen/core": "^1.0.0-alpha.32",
-    "@sanity-codegen/extractor": "^1.0.0-alpha.32",
-    "@sanity-codegen/types": "^1.0.0-alpha.29"
+    "@sanity-codegen/cli": "^1.0.0-alpha.33",
+    "@sanity-codegen/client": "^1.0.0-alpha.33",
+    "@sanity-codegen/core": "^1.0.0-alpha.33",
+    "@sanity-codegen/extractor": "^1.0.0-alpha.33",
+    "@sanity-codegen/types": "^1.0.0-alpha.33"
   },
   "engines": {
     "node": ">=12.22.0"

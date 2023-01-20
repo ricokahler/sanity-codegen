@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/sanity-codegen.dev",
-  "version": "1.0.0-alpha.32",
+  "version": "1.0.0-alpha.33",
   "private": true,
   "keywords": [
     "sanity",
@@ -56,7 +56,7 @@
     "@babel/standalone": "^7.20.12",
     "@monaco-editor/react": "^4.4.6",
     "@ricokahler/promise-suspender": "^1.0.1",
-    "@sanity-codegen/core": "^1.0.0-alpha.32",
+    "@sanity-codegen/core": "^1.0.0-alpha.33",
     "@sanity/ui": "^1.0.14",
     "@types/babel__standalone": "^7.1.4",
     "@types/jest": "29.2.6",
