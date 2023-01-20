@@ -44,4 +44,4 @@ jobs:
         run: npm run build
 
       - name: lerna publish
-        run: lerna publish from-package --dist-tag alpha --no-git-reset --yes
+        run: lerna publish from-package --dist-tag alpha --no-git-reset --force-publish --yes
