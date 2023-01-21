@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.37](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.36...v1.0.0-alpha.37) (2023-01-21)
+
+### Bug Fixes
+
+- add babel plugins for vite import.meta compat ([#279](https://github.com/ricokahler/sanity-codegen/issues/279)) ([2df465e](https://github.com/ricokahler/sanity-codegen/commit/2df465e9047bfa9fc23552b638584f4bfa35b7b7))
+
 # [1.0.0-alpha.36](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.35...v1.0.0-alpha.36) (2023-01-20)
 
 ### Bug Fixes

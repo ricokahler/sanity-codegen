@@ -111,7 +111,7 @@ $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
 running command...
 $ sanity-codegen (-v|--version|version)
-@sanity-codegen/cli/1.0.0-alpha.36 linux-x64 node-v18.13.0
+@sanity-codegen/cli/1.0.0-alpha.37 linux-x64 node-v18.13.0
 $ sanity-codegen --help [COMMAND]
 USAGE
   $ sanity-codegen COMMAND
