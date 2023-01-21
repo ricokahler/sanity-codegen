@@ -19,21 +19,23 @@ type ConditionalIndexAccess<T, U> = U extends keyof T ? T[U] : unknown;
  * lack of partial type parameter inference.
  * [See here](https://stackoverflow.com/a/45514257/5776910)
  */
-export function wrapClient<Client extends SanityClient>(client: Client) {
-  function configureClient<QueryMap extends { [QueryKey: string]: any }>() {
-    function query<QueryKey extends string>(
+export function wrapClient<TClient extends SanityClient>(client: TClient) {
+  function configureClient<
+    TClientConfig extends { [QueryKey: string]: any },
+  >() {
+    function query<TQueryKey extends string>(
       // the query key is only used for typescript meta programming and is not
       // actually used during runtime
-      _queryKey: QueryKey,
+      _queryKey: TQueryKey,
       groqQuery: string,
       queryParams?: QueryParams,
-    ): Promise<ConditionalIndexAccess<QueryMap, QueryKey>> {
+    ): Promise<ConditionalIndexAccess<TClientConfig, TQueryKey>> {
       return client.fetch(groqQuery, queryParams);
     }
 
     const wrapped = Object.defineProperty(client, 'query', {
       get: () => query,
-    }) as Client & {
+    }) as TClient & {
       query: typeof query;
     };
 

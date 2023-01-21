@@ -2,6 +2,7 @@ import * as t from '@babel/types';
 import { parse } from 'groq-js';
 import { transformGroqToStructure } from './transform-groq-to-structure';
 import { transformStructureToTs } from './transform-structure-to-ts';
+import { simpleLogger } from './utils';
 
 interface GenerateQueryTypesOptions {
   normalizedSchema: Sanity.SchemaDef.Schema;
@@ -18,49 +19,57 @@ export function generateQueryTypes({
   extractedQueries,
   ...options
 }: GenerateQueryTypesOptions) {
-  const queries = extractedQueries.map(({ queryKey, query }) => {
-    // TODO: should this be async?
-    const structure = transformGroqToStructure({
-      node: parse(query),
-      scopes: [],
-      normalizedSchema,
-    });
+  const { logger = simpleLogger } = options;
+  const queries = extractedQueries
+    .map(({ queryKey, query }) => {
+      let structure;
+      try {
+        structure = transformGroqToStructure({
+          node: parse(query),
+          scopes: [],
+          normalizedSchema,
+        });
+      } catch (e) {
+        logger.error(`Failed to parse query \`${queryKey}\`. ${e}`);
+        return null;
+      }
 
-    const { tsType, declarations, substitutions } = transformStructureToTs({
-      structure,
-      substitutions: options.substitutions,
-    });
+      const { tsType, declarations, substitutions } = transformStructureToTs({
+        structure,
+        substitutions: options.substitutions,
+      });
 
-    return {
-      structure,
-      queryKey,
-      declarations: {
-        ...declarations,
-        [structure.hash]: t.tsModuleDeclaration(
-          t.identifier('Sanity'),
-          t.tsModuleDeclaration(
-            t.identifier('Query'),
-            t.tsModuleBlock([
-              t.tsTypeAliasDeclaration(
-                t.identifier(queryKey),
-                undefined,
-                tsType,
-              ),
-            ]),
+      return {
+        structure,
+        queryKey,
+        declarations: {
+          ...declarations,
+          [structure.hash]: t.tsModuleDeclaration(
+            t.identifier('Sanity'),
+            t.tsModuleDeclaration(
+              t.identifier('Query'),
+              t.tsModuleBlock([
+                t.tsTypeAliasDeclaration(
+                  t.identifier(queryKey),
+                  undefined,
+                  tsType,
+                ),
+              ]),
+            ),
           ),
-        ),
-      },
-      substitutions: {
-        ...substitutions,
-        [structure.hash]: t.tsTypeReference(
-          t.tsQualifiedName(
-            t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Query')),
-            t.identifier(queryKey),
+        },
+        substitutions: {
+          ...substitutions,
+          [structure.hash]: t.tsTypeReference(
+            t.tsQualifiedName(
+              t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Query')),
+              t.identifier(queryKey),
+            ),
           ),
-        ),
-      },
-    };
-  });
+        },
+      };
+    })
+    .filter(<T>(t: T): t is NonNullable<T> => !!t);
 
   const substitutions = queries.reduce<{ [key: string]: t.TSType }>(
     (acc, { queryKey, substitutions }) => {
@@ -116,13 +125,13 @@ export function generateQueryTypes({
   return {
     declarations: {
       ...declarations,
-      QueryMap: t.tsModuleDeclaration(
+      _ClientConfig: t.tsModuleDeclaration(
         t.identifier('Sanity'),
         t.tsModuleDeclaration(
-          t.identifier('Query'),
+          t.identifier('Client'),
           t.tsModuleBlock([
             t.tsTypeAliasDeclaration(
-              t.identifier('Map'),
+              t.identifier('Config'),
               undefined,
               t.tsTypeLiteral(
                 Object.entries(queryKeys).map(([queryKey, hash]) => {
