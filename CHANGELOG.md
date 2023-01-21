@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.39](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.38...v1.0.0-alpha.39) (2023-01-21)
+
+### Bug Fixes
+
+- **extractor:** update preset-react to runtime automatic ([#281](https://github.com/ricokahler/sanity-codegen/issues/281)) ([c24b6c2](https://github.com/ricokahler/sanity-codegen/commit/c24b6c23aa7a95fd780656a74653d8ba74a6aec0))
+
 # [1.0.0-alpha.38](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.37...v1.0.0-alpha.38) (2023-01-21)
 
 ### Bug Fixes
