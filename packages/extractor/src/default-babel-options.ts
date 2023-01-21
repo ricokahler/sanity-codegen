@@ -24,6 +24,10 @@ export const defaultBabelOptions = {
   plugins: [
     // used to resolve css module imports that are allowed in sanity projects
     'css-modules-transform',
+    // used to convert import.meta.env.VAR
+    'babel-plugin-transform-vite-meta-env',
+    // used to convert `import.meta.url`
+    'babel-plugin-transform-import-meta',
     '@babel/plugin-proposal-class-properties',
     '@babel/plugin-proposal-numeric-separator',
     '@babel/plugin-proposal-optional-chaining',
