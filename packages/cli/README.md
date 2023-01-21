@@ -38,9 +38,9 @@ const config: SanityCodegenConfig = {
   // exclude: ['**/*.test.{js,ts,tsx}', '**/node_modules'],
   /**
    * Optionally provide a destination path to the resulting sanity groq types.
-   * The default value is `query-types.d.ts`.
+   * The default value is `sanity-codegen.d.ts`.
    */
-  // output: './query-types.d.ts',
+  // output: './sanity-codegen.d.ts',
   /**
    * Optionally provide a path to a .babelrc file. This will be passed into the
    * babel options of the schema executor.
@@ -111,7 +111,7 @@ $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
 running command...
 $ sanity-codegen (-v|--version|version)
-@sanity-codegen/cli/1.0.0-alpha.39 linux-x64 node-v18.13.0
+@sanity-codegen/cli/1.0.0-alpha.38 linux-x64 node-v18.13.0
 $ sanity-codegen --help [COMMAND]
 USAGE
   $ sanity-codegen COMMAND
