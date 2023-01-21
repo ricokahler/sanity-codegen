@@ -74,8 +74,8 @@ describe('codegen command', () => {
           | undefined;
       }
 
-      namespace Sanity.Query {
-        type Map = {
+      namespace Sanity.Client {
+        type Config = {
           QueryKey: Sanity.Query.QueryKey;
         };
       }

@@ -68,6 +68,16 @@ describe('generateTypes', () => {
           | undefined;
       }
 
+      namespace Sanity.Client {
+        type Config = {
+          BookAuthorUsesDefaultAlias: Sanity.Query.BookAuthorUsesDefaultAlias;
+          BookTitlesUsesDefaultExport: Sanity.Query.BookTitlesUsesDefaultExport;
+          AllBooksUsesDefaultReexport: Sanity.Query.AllBooksUsesDefaultReexport;
+          AllBooksUsesNamedDeclaredExport: Sanity.Query.AllBooksUsesNamedDeclaredExport;
+          AllBooksUsesNameSpecifiedExport: Sanity.Query.AllBooksUsesNameSpecifiedExport;
+          ImportStarExportStar: Sanity.Query.ImportStarExportStar;
+        };
+      }
       namespace Sanity.Query {
         type AllBooksUsesDefaultReexport = Sanity.Query.BookTitlesUsesDefaultExport;
       }
@@ -91,16 +101,6 @@ describe('generateTypes', () => {
       }
       namespace Sanity.Query {
         type ImportStarExportStar = Sanity.Query.AllBooksUsesNamedDeclaredExport;
-      }
-      namespace Sanity.Query {
-        type Map = {
-          BookAuthorUsesDefaultAlias: Sanity.Query.BookAuthorUsesDefaultAlias;
-          BookTitlesUsesDefaultExport: Sanity.Query.BookTitlesUsesDefaultExport;
-          AllBooksUsesDefaultReexport: Sanity.Query.AllBooksUsesDefaultReexport;
-          AllBooksUsesNamedDeclaredExport: Sanity.Query.AllBooksUsesNamedDeclaredExport;
-          AllBooksUsesNameSpecifiedExport: Sanity.Query.AllBooksUsesNameSpecifiedExport;
-          ImportStarExportStar: Sanity.Query.ImportStarExportStar;
-        };
       }
       "
     `);

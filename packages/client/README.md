@@ -2,7 +2,7 @@
 
 The following is a sub-package of [`sanity-codegen`](https://github.com/ricokahler/sanity-codegen).
 
-This is the very small runtime dependency required to use Sanity Codegen with GROQ. It's a client carefully coordinated with the GROQ codegen parser/extractor.
+This is a very small runtime dependency created to be used Sanity Codegen for query extraction and usage.
 
 ## Installation
 
@@ -11,62 +11,89 @@ This is the very small runtime dependency required to use Sanity Codegen with GR
 npm i --save @sanity-codegen/client@alpha
 ```
 
-or
-
-```
-# NOTE: the alpha is required at this time
-yarn add @sanity-codegen/client@alpha
-```
-
 ## Usage
 
-In order to correctly configure the `@sanity-codegen/client`, you first need
-to have the GROQ codegen types accessible.
+There are two ways to use this library with codegen:
 
-This can be achieved via the CLI. By the default, the CLI will output GROQ codegen types to the file `queries.d.ts`. This file contains global ambient types that should be referenceable everywhere. Generate this file first.
+1. Option 1: Pluck `codegen('MyQuery', /* ... */)` then use `Sanity.Query.MyQuery`
+2. Option 2: Pluck and use all-in-one `client.query('MyQuery', /* ... */)`
 
-### Configure the client
+### Option 1: Pluck then use
 
-After that's done, you can create your configured client file.
+This method involves writing the query first, running the codegen, then using the type codegen outputs.
+
+```ts
+import { codegen, groq } from '@sanity-codegen/client';
+import sanityClient from '@sanity/client';
+
+const client = sanityClient({
+  // ...
+  // https://www.sanity.io/docs/js-client
+  // ...
+});
+
+// step 1: write the query somewhere in your file.
+// the codegen CLI will look for this call and pluck it out.
+// note: the `codegen` function simply returns the second parameter as is.
+const query = codegen(
+  // the query key:
+  'Books',
+  // the query (must be wrapped in groq``):
+  groq`*[_type == 'Book']`,
+);
+
+// step 2: re-run the codegen
+
+// step 3: after running the codegen, the type for your query will be available.
+// the codegen outputs types "ambiently" meaning they can be used without
+// importing them. the type will be available via `Sanity.Query.YourQueryKey`
+const myBooks = await client.fetch<Sanity.Query.Books>(query);
+```
+
+Pluck then use is the most compatible way to use this library. [See below for important notes and limitations](#important-notes-and-limitations).
+
+### Option 2: Pluck and use
+
+This method wraps any sanity client with a [`fetch`](https://www.sanity.io/docs/js-client#performing-queries) method and adds an additional `query` method that returns the value typed from the wrapped client.
 
 In a file called, `client.ts`, import your favorite Sanity client (both [`@sanity/client`](https://www.sanity.io/docs/js-client) and [`picosanity`](https://github.com/rexxars/picosanity) will work).
 
 ```ts
 // client.ts
 
-import SanityClient from '@sanity/client';
+import sanityClient from '@sanity/client';
 // or use the smaller `picosanity` client
-// import SanityClient from 'picosanity';
+// import sanityClient from 'picosanity';
 
 import { wrapClient, groq } from '@sanity-codegen/client';
 
-// 1. configure your favorite sanity client
-const sanityClient = new SanityClient({
+// step 1: configure your favorite sanity client
+const sanityClient = sanityClient({
+  // ...
+  // https://www.sanity.io/docs/js-client
   // ...
 });
 
-// 2. wrap that client with `wrapClient`. this will return a configure function
+// step 2: wrap that client with `wrapClient`
 const configureClient = wrapClient(picoSanity);
 
-// 3. call this configure function passing in the type argument
-//    `Sanity.Query.Map` from the GROQ codegen output.
-const sanity = configureClient<Sanity.Query.Map>();
+// step 3: call this configure function passing in the type argument
+// `Sanity.Client.Config` from the GROQ codegen output (you will have to run the
+// codegen at least once before)
+const sanity = configureClient<Sanity.Client.Config>();
 
 export { sanity, groq };
 ```
 
-### Using the typed client
+Then use the typed client in your files:
 
 ```ts
-// some-example.ts
-
-// 1. import the client configured from the previous step
+// step 1: import the client configured from the previous step
 import { sanity, groq } from '../client';
 
-export async function someFunction() {
-  // 1. use the added `query` method.
-  //    pass in a _query key_ followed by a template
-  //    literal with the `groq` tag
+async function someFunction() {
+  // step 2: use the added `query` method instead of `fetch`.
+  // pass in a query key followed by a query in a groq tag
   const bookAuthors = await sanity.query(
     'BookAuthors',
     groq`
@@ -74,14 +101,22 @@ export async function someFunction() {
     `,
   );
 
-  // 2. ensure the codegen re-runs.
-  //    this is easiest via the CLI
-
-  // 3. that's it. `bookAuthors` is now typed
+  // step 3: re-run the codegen. `bookAuthors` is now typed
   return bookAuthors;
 }
 
-// Extra note: if ever need to reference the type of a query again,
+// extra note: if ever need to reference the type of a query again,
 // you can do so via `Sanity.Query.{QueryKey}`
 type ExampleType = Sanity.Query.BookAuthors;
 ```
+
+[See below for important notes and limitations](#important-notes-and-limitations).
+
+## Important notes and limitations
+
+This section is a WIP. Check back soon.
+
+TODO:
+
+- mention the plucker and how it has to pluck statically
+- mention resolving identifiers to values etc
