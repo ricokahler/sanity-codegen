@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.38](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.37...v1.0.0-alpha.38) (2023-01-21)
+
+### Bug Fixes
+
+- add `types` to export maps ([21108ab](https://github.com/ricokahler/sanity-codegen/commit/21108abb4e68b83557f494eb3365c219c5e496b4))
+
+### Features
+
+- new client docs + simple codegen function ([0d960e6](https://github.com/ricokahler/sanity-codegen/commit/0d960e6c3c23cd40d9708bb0200388e09793b1d8))
+
 # [1.0.0-alpha.35](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.34...v1.0.0-alpha.35) (2023-01-20)
 
 **Note:** Version bump only for package @sanity-codegen/client
