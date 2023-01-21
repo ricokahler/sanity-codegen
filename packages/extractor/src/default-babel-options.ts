@@ -16,7 +16,7 @@ export const defaultBabelOptions = {
   presets: [
     ['@babel/preset-env', { targets: { node: true } }],
     '@babel/preset-typescript',
-    '@babel/preset-react',
+    ['@babel/preset-react', { runtime: 'automatic' }],
   ],
   // overrides `node_modules` ignoring
   // https://babeljs.io/docs/en/babel-register#ignores-node_modules-by-default
