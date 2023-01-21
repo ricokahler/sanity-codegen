@@ -24,8 +24,15 @@
   },
   "sideEffects": false,
   "exports": {
-    ".": "./dist/index.js",
-    "./standalone": "./dist/index.standalone.esm.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./standalone": {
+      "types": "./dist/index.standalone.d.ts",
+      "import": "./dist/index.standalone.esm.js",
+      "default": "./dist/index.standalone.cjs.js"
+    }
   },
   "types": "./dist/index.d.ts",
   "scripts": {

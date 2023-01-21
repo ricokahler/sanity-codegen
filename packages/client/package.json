@@ -24,6 +24,7 @@
   },
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.esm.js",
       "default": "./dist/index.cjs.js"
     }
