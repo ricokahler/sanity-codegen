@@ -48,6 +48,8 @@
     "@sanity-codegen/types": "^1.0.0-alpha.34",
     "babel-merge": "^3.0.0",
     "babel-plugin-css-modules-transform": "^1.6.2",
+    "babel-plugin-transform-import-meta": "^2.2.0",
+    "babel-plugin-transform-vite-meta-env": "^1.0.3",
     "jsdom": "^21.0.0",
     "jsdom-global": "^3.0.2",
     "prettier": "^2.8.3"

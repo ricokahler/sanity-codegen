@@ -51,7 +51,7 @@ describe('codegen command', () => {
         "Converting queries to typescript…",
         "Converted 2 queries to TypeScript",
         "Writing query types output…",
-        "Wrote query types output to <PATH>",
+        "Wrote types to <PATH>",
       ]
     `);
 
