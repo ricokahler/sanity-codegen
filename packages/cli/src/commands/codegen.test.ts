@@ -40,16 +40,16 @@ describe('codegen command', () => {
       [
         "Starting codegen…",
         "Using sanity-codegen config found at <PATH>",
-        "Generating types from your schema…",
-        "Converted 1 schema definition to TypeScript",
-        "Plucking queries from files…",
-        "Finding files to extract queries from…",
-        "Found 2 candidate files",
-        "Extracting queries… 50% (1/2)",
-        "Extracting queries… 100% (2/2)",
-        "Found 1 query from 2 files.",
-        "Converting queries to typescript…",
-        "Converted 2 queries to TypeScript",
+        "[default] Generating types for workspace \`default\`",
+        "[default] Converted 1 schema definition to TypeScript",
+        "[default] Plucking queries from files…",
+        "[default] Finding files to extract queries from…",
+        "[default] Found 2 candidate files",
+        "[default] Extracting queries… 50% (1/2)",
+        "[default] Extracting queries… 100% (2/2)",
+        "[default] Found 1 query from 2 files.",
+        "[default] Converting queries to typescript…",
+        "[default] Converted 2 queries to TypeScript",
         "Writing query types output…",
         "Wrote types to <PATH>",
       ]
@@ -63,7 +63,15 @@ describe('codegen command', () => {
       [
         "/// <reference types="@sanity-codegen/types" />
 
-      namespace Sanity.Schema {
+      namespace Sanity.Default.Client {
+        type Config = {
+          QueryKey: Sanity.Default.Query.QueryKey;
+        };
+      }
+      namespace Sanity.Default.Query {
+        type QueryKey = (string | null)[];
+      }
+      namespace Sanity.Default.Schema {
         type Book =
           | {
               _id: string;
@@ -72,15 +80,6 @@ describe('codegen command', () => {
               title?: string;
             }
           | undefined;
-      }
-
-      namespace Sanity.Client {
-        type Config = {
-          QueryKey: Sanity.Query.QueryKey;
-        };
-      }
-      namespace Sanity.Query {
-        type QueryKey = (string | null)[];
       }
       ",
       ]

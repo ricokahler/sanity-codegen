@@ -7,6 +7,7 @@ module.exports = defineConfig({
   plugins: [deskTool()],
 
   schema: {
+    name: 'default',
     types: [
       defineType({
         type: 'document',

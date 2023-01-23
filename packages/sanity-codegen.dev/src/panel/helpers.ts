@@ -7,7 +7,10 @@ import {
 export function getNormalizedSchema(
   schemaString: string,
 ): Sanity.SchemaDef.Schema {
-  const schema = schemaNormalizer(extractSchemaString(schemaString));
+  const schema = schemaNormalizer({
+    name: 'default',
+    types: extractSchemaString(schemaString),
+  });
 
   return {
     ...schema,

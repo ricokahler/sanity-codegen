@@ -2,6 +2,7 @@ import * as t from '@babel/types';
 import { parse } from 'groq-js';
 import { transformGroqToStructure } from './transform-groq-to-structure';
 import { transformStructureToTs } from './transform-structure-to-ts';
+import { defaultGenerateTypeName } from './default-generate-type-name';
 import { simpleLogger } from './utils';
 
 interface GenerateQueryTypesOptions {
@@ -19,6 +20,9 @@ export function generateQueryTypes({
   extractedQueries,
   ...options
 }: GenerateQueryTypesOptions) {
+  // TODO: allow customizing this?
+  const workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name);
+
   const { logger = simpleLogger } = options;
   const queries = extractedQueries
     .map(({ queryKey, query }) => {
@@ -47,14 +51,17 @@ export function generateQueryTypes({
           [structure.hash]: t.tsModuleDeclaration(
             t.identifier('Sanity'),
             t.tsModuleDeclaration(
-              t.identifier('Query'),
-              t.tsModuleBlock([
-                t.tsTypeAliasDeclaration(
-                  t.identifier(queryKey),
-                  undefined,
-                  tsType,
-                ),
-              ]),
+              t.identifier(workspaceIdentifier),
+              t.tsModuleDeclaration(
+                t.identifier('Query'),
+                t.tsModuleBlock([
+                  t.tsTypeAliasDeclaration(
+                    t.identifier(queryKey),
+                    undefined,
+                    tsType,
+                  ),
+                ]),
+              ),
             ),
           ),
         },
@@ -62,7 +69,13 @@ export function generateQueryTypes({
           ...substitutions,
           [structure.hash]: t.tsTypeReference(
             t.tsQualifiedName(
-              t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Query')),
+              t.tsQualifiedName(
+                t.tsQualifiedName(
+                  t.identifier('Sanity'),
+                  t.identifier(workspaceIdentifier),
+                ),
+                t.identifier('Query'),
+              ),
               t.identifier(queryKey),
             ),
           ),
@@ -79,7 +92,13 @@ export function generateQueryTypes({
         } else {
           acc[`${hash}_${queryKey}`] = t.tsTypeReference(
             t.tsQualifiedName(
-              t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Query')),
+              t.tsQualifiedName(
+                t.tsQualifiedName(
+                  t.identifier('Sanity'),
+                  t.identifier(workspaceIdentifier),
+                ),
+                t.identifier('Query'),
+              ),
               t.identifier(queryKey),
             ),
           );
@@ -100,14 +119,17 @@ export function generateQueryTypes({
           acc[`${hash}_${queryKey}`] = t.tsModuleDeclaration(
             t.identifier('Sanity'),
             t.tsModuleDeclaration(
-              t.identifier('Query'),
-              t.tsModuleBlock([
-                t.tsTypeAliasDeclaration(
-                  t.identifier(queryKey),
-                  undefined,
-                  substitutions[structure.hash],
-                ),
-              ]),
+              t.identifier(workspaceIdentifier),
+              t.tsModuleDeclaration(
+                t.identifier('Query'),
+                t.tsModuleBlock([
+                  t.tsTypeAliasDeclaration(
+                    t.identifier(queryKey),
+                    undefined,
+                    substitutions[structure.hash],
+                  ),
+                ]),
+              ),
             ),
           );
         }
@@ -128,24 +150,27 @@ export function generateQueryTypes({
       _ClientConfig: t.tsModuleDeclaration(
         t.identifier('Sanity'),
         t.tsModuleDeclaration(
-          t.identifier('Client'),
-          t.tsModuleBlock([
-            t.tsTypeAliasDeclaration(
-              t.identifier('Config'),
-              undefined,
-              t.tsTypeLiteral(
-                Object.entries(queryKeys).map(([queryKey, hash]) => {
-                  return t.tsPropertySignature(
-                    t.identifier(queryKey),
-                    t.tsTypeAnnotation(
-                      substitutions[`${hash}_${queryKey}`] ||
-                        substitutions[hash],
-                    ),
-                  );
-                }),
+          t.identifier(workspaceIdentifier),
+          t.tsModuleDeclaration(
+            t.identifier('Client'),
+            t.tsModuleBlock([
+              t.tsTypeAliasDeclaration(
+                t.identifier('Config'),
+                undefined,
+                t.tsTypeLiteral(
+                  Object.entries(queryKeys).map(([queryKey, hash]) => {
+                    return t.tsPropertySignature(
+                      t.identifier(queryKey),
+                      t.tsTypeAnnotation(
+                        substitutions[`${hash}_${queryKey}`] ||
+                          substitutions[hash],
+                      ),
+                    );
+                  }),
+                ),
               ),
-            ),
-          ]),
+            ]),
+          ),
         ),
       ),
     },

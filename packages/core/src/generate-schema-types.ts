@@ -10,6 +10,9 @@ interface GenerateSchemaTypesOptions {
 export function generateSchemaTypes({
   normalizedSchema,
 }: GenerateSchemaTypesOptions) {
+  // TODO: allow customizing this?
+  const workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name);
+
   const topLevelSchemaNodes = [
     ...normalizedSchema.documents,
     ...normalizedSchema.registeredTypes,
@@ -36,14 +39,17 @@ export function generateSchemaTypes({
         [structure.hash]: t.tsModuleDeclaration(
           t.identifier('Sanity'),
           t.tsModuleDeclaration(
-            t.identifier('Schema'),
-            t.tsModuleBlock([
-              t.tsTypeAliasDeclaration(
-                t.identifier(identifier),
-                undefined,
-                tsType,
-              ),
-            ]),
+            t.identifier(workspaceIdentifier),
+            t.tsModuleDeclaration(
+              t.identifier('Schema'),
+              t.tsModuleBlock([
+                t.tsTypeAliasDeclaration(
+                  t.identifier(identifier),
+                  undefined,
+                  tsType,
+                ),
+              ]),
+            ),
           ),
         ),
       },
@@ -51,7 +57,13 @@ export function generateSchemaTypes({
         ...substitutions,
         [structure.hash]: t.tsTypeReference(
           t.tsQualifiedName(
-            t.tsQualifiedName(t.identifier('Sanity'), t.identifier('Schema')),
+            t.tsQualifiedName(
+              t.tsQualifiedName(
+                t.identifier('Sanity'),
+                t.identifier(workspaceIdentifier),
+              ),
+              t.identifier('Schema'),
+            ),
             t.identifier(identifier),
           ),
         ),

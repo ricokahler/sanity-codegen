@@ -9,7 +9,9 @@ describe('generateTypes', () => {
       root: __dirname,
       include: './__example-files__/**/*.ts',
       exclude: ['**/*.fake-test.ts', '**/mock_node_modules'],
-      normalizedSchema: schemaNormalizer(exampleSchema),
+      normalizedSchemas: [
+        schemaNormalizer({ types: exampleSchema, name: 'default' }),
+      ],
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
@@ -24,21 +26,43 @@ describe('generateTypes', () => {
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types="@sanity-codegen/types" />
 
-      namespace Sanity.Ref {
-        type Ref_RPbsBo7Tupt4mgWO = {
-          _key: string;
-          _type: "block";
-          children: {
-            _key: string;
-            _type: "span";
-            marks?: unknown[];
-            text?: string;
-          }[];
-          markDefs?: unknown[];
-          style?: string;
+      namespace Sanity.Default.Client {
+        type Config = {
+          BookAuthorUsesDefaultAlias: Sanity.Default.Query.BookAuthorUsesDefaultAlias;
+          BookTitlesUsesDefaultExport: Sanity.Default.Query.BookTitlesUsesDefaultExport;
+          AllBooksUsesDefaultReexport: Sanity.Default.Query.AllBooksUsesDefaultReexport;
+          AllBooksUsesNamedDeclaredExport: Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+          AllBooksUsesNameSpecifiedExport: Sanity.Default.Query.AllBooksUsesNameSpecifiedExport;
+          ImportStarExportStar: Sanity.Default.Query.ImportStarExportStar;
+        };
+      }
+      namespace Sanity.Default.Query {
+        type AllBooksUsesDefaultReexport =
+          Sanity.Default.Query.BookTitlesUsesDefaultExport;
+      }
+      namespace Sanity.Default.Query {
+        type AllBooksUsesNamedDeclaredExport = {
+          authorName: string | null;
+          title: string | null;
         }[];
       }
-      namespace Sanity.Schema {
+      namespace Sanity.Default.Query {
+        type AllBooksUsesNameSpecifiedExport =
+          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.Default.Query {
+        type BookAuthorUsesDefaultAlias = {
+          name?: string;
+        } | null;
+      }
+      namespace Sanity.Default.Query {
+        type BookTitlesUsesDefaultExport = (string | null)[];
+      }
+      namespace Sanity.Default.Query {
+        type ImportStarExportStar =
+          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.Default.Schema {
         type Blocks =
           | {
               _key: string;
@@ -54,7 +78,7 @@ describe('generateTypes', () => {
             }[]
           | undefined;
       }
-      namespace Sanity.Schema {
+      namespace Sanity.Default.Schema {
         type Book =
           | {
               _id: string;
@@ -62,45 +86,172 @@ describe('generateTypes', () => {
               author?: {
                 name?: string;
               };
-              description?: Sanity.Ref.Ref_RPbsBo7Tupt4mgWO;
+              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
               title?: string;
             }
           | undefined;
       }
+      namespace Sanity.Ref {
+        type Ref_0NJ3QI56wvVs4iZM = {
+          _key: string;
+          _type: "block";
+          children: {
+            _key: string;
+            _type: "span";
+            marks?: unknown[];
+            text?: string;
+          }[];
+          markDefs?: unknown[];
+          style?: string;
+        }[];
+      }
+      "
+    `);
+  });
 
-      namespace Sanity.Client {
+  it('multiple workspaces', async () => {
+    const result = await generateTypes({
+      root: __dirname,
+      include: './__example-files__/**/*.ts',
+      exclude: ['**/*.fake-test.ts', '**/mock_node_modules'],
+      normalizedSchemas: [
+        schemaNormalizer({ types: exampleSchema, name: 'default' }),
+        schemaNormalizer({
+          types: [
+            {
+              name: 'foo',
+              type: 'document',
+              fields: [{ name: 'myStr', type: 'string' }],
+            },
+          ],
+          name: 'additionalWorkspace',
+        }),
+      ],
+      logger: {
+        debug: jest.fn(),
+        error: jest.fn(),
+        info: jest.fn(),
+        log: jest.fn(),
+        success: jest.fn(),
+        verbose: jest.fn(),
+        warn: jest.fn(),
+      },
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      "/// <reference types="@sanity-codegen/types" />
+
+      namespace Sanity.AdditionalWorkspace.Client {
         type Config = {
-          BookAuthorUsesDefaultAlias: Sanity.Query.BookAuthorUsesDefaultAlias;
-          BookTitlesUsesDefaultExport: Sanity.Query.BookTitlesUsesDefaultExport;
-          AllBooksUsesDefaultReexport: Sanity.Query.AllBooksUsesDefaultReexport;
-          AllBooksUsesNamedDeclaredExport: Sanity.Query.AllBooksUsesNamedDeclaredExport;
-          AllBooksUsesNameSpecifiedExport: Sanity.Query.AllBooksUsesNameSpecifiedExport;
-          ImportStarExportStar: Sanity.Query.ImportStarExportStar;
+          BookAuthorUsesDefaultAlias: Sanity.AdditionalWorkspace.Query.BookAuthorUsesDefaultAlias;
+          BookTitlesUsesDefaultExport: Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
+          AllBooksUsesDefaultReexport: Sanity.AdditionalWorkspace.Query.AllBooksUsesDefaultReexport;
+          AllBooksUsesNamedDeclaredExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          AllBooksUsesNameSpecifiedExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNameSpecifiedExport;
+          ImportStarExportStar: Sanity.AdditionalWorkspace.Query.ImportStarExportStar;
         };
       }
-      namespace Sanity.Query {
-        type AllBooksUsesDefaultReexport = Sanity.Query.BookTitlesUsesDefaultExport;
+      namespace Sanity.AdditionalWorkspace.Query {
+        type AllBooksUsesDefaultReexport =
+          Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
       }
-      namespace Sanity.Query {
+      namespace Sanity.AdditionalWorkspace.Query {
+        type AllBooksUsesNamedDeclaredExport = {
+          authorName: unknown;
+          title: unknown;
+        }[];
+      }
+      namespace Sanity.AdditionalWorkspace.Query {
+        type AllBooksUsesNameSpecifiedExport =
+          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.AdditionalWorkspace.Query {
+        type BookAuthorUsesDefaultAlias = unknown;
+      }
+      namespace Sanity.AdditionalWorkspace.Query {
+        type BookTitlesUsesDefaultExport = unknown[];
+      }
+      namespace Sanity.AdditionalWorkspace.Query {
+        type ImportStarExportStar =
+          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.AdditionalWorkspace.Schema {
+        type Foo =
+          | {
+              _id: string;
+              _type: "foo";
+              myStr?: string;
+            }
+          | undefined;
+      }
+      namespace Sanity.Default.Query {
+        type AllBooksUsesDefaultReexport =
+          Sanity.Default.Query.BookTitlesUsesDefaultExport;
+      }
+      namespace Sanity.Default.Query {
         type AllBooksUsesNamedDeclaredExport = {
           authorName: string | null;
           title: string | null;
         }[];
       }
-      namespace Sanity.Query {
+      namespace Sanity.Default.Query {
         type AllBooksUsesNameSpecifiedExport =
-          Sanity.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.Query {
+      namespace Sanity.Default.Query {
         type BookAuthorUsesDefaultAlias = {
           name?: string;
         } | null;
       }
-      namespace Sanity.Query {
+      namespace Sanity.Default.Query {
         type BookTitlesUsesDefaultExport = (string | null)[];
       }
-      namespace Sanity.Query {
-        type ImportStarExportStar = Sanity.Query.AllBooksUsesNamedDeclaredExport;
+      namespace Sanity.Default.Query {
+        type ImportStarExportStar =
+          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.Default.Schema {
+        type Blocks =
+          | {
+              _key: string;
+              _type: "block";
+              children: {
+                _key: string;
+                _type: "span";
+                marks?: unknown[];
+                text?: string;
+              }[];
+              markDefs?: unknown[];
+              style?: string;
+            }[]
+          | undefined;
+      }
+      namespace Sanity.Default.Schema {
+        type Book =
+          | {
+              _id: string;
+              _type: "book";
+              author?: {
+                name?: string;
+              };
+              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
+              title?: string;
+            }
+          | undefined;
+      }
+      namespace Sanity.Ref {
+        type Ref_0NJ3QI56wvVs4iZM = {
+          _key: string;
+          _type: "block";
+          children: {
+            _key: string;
+            _type: "span";
+            marks?: unknown[];
+            text?: string;
+          }[];
+          markDefs?: unknown[];
+          style?: string;
+        }[];
       }
       "
     `);

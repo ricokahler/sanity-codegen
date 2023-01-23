@@ -69,11 +69,15 @@ const config: SanityCodegenConfig = {
    */
   // root: process.cwd(),
   /**
-   * You can directly provide a normalized instead of using a schema-def.json.
-   * A normalized schema (result of the `schemaNormalizer`)
-   * @see schemaNormalizer
+   * An array of extracted and normalized schema results from the
+   * `normalizeSchema` function
    */
-  // normalizedSchema: undefined,
+  // normalizedSchemas: undefined,
+  /**
+   * Ignores workspace schemas and excludes them from codegen. Useful if you
+   * have a workspace that mirrors another one in schema (e.g. for staging env)
+   */
+  // ignoreSchemas: ['staging'],
   /**
    * Optionally provide a function that generates the typescript type identifer
    * from the sanity type name. Use this function to override the default and
@@ -98,14 +102,16 @@ export default config;
 ```
 
 <!-- toc -->
-* [@sanity-codegen/cli](#sanity-codegencli)
-* [Usage](#usage)
-* [Commands](#commands)
+
+- [@sanity-codegen/cli](#sanity-codegencli)
+- [Usage](#usage)
+- [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
@@ -117,12 +123,14 @@ USAGE
   $ sanity-codegen COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+
+- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
 
 ## `sanity-codegen help [COMMAND]`
 
@@ -140,4 +148,5 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.18/src/commands/help.ts)_
+
 <!-- commandsstop -->

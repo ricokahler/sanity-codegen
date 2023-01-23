@@ -46,8 +46,8 @@ const query = codegen(
 
 // step 3: after running the codegen, the type for your query will be available.
 // the codegen outputs types "ambiently" meaning they can be used without
-// importing them. the type will be available via `Sanity.Query.YourQueryKey`
-const myBooks = await client.fetch<Sanity.Query.Books>(query);
+// importing them. the type will be available via `Sanity.YourWorkspace.Query.YourQueryKey`
+const myBooks = await client.fetch<Sanity.Default.Query.Books>(query);
 ```
 
 Pluck then use is the most compatible way to use this library. [See below for important notes and limitations](#important-notes-and-limitations).
@@ -78,9 +78,9 @@ const sanityClient = sanityClient({
 const configureClient = wrapClient(picoSanity);
 
 // step 3: call this configure function passing in the type argument
-// `Sanity.Client.Config` from the GROQ codegen output (you will have to run the
+// `Sanity.YourWorkspace.Client.Config` from the GROQ codegen output (you will have to run the
 // codegen at least once before)
-const sanity = configureClient<Sanity.Client.Config>();
+const sanity = configureClient<Sanity.Default.Client.Config>();
 
 export { sanity, groq };
 ```
@@ -106,8 +106,8 @@ async function someFunction() {
 }
 
 // extra note: if ever need to reference the type of a query again,
-// you can do so via `Sanity.Query.{QueryKey}`
-type ExampleType = Sanity.Query.BookAuthors;
+// you can do so via `Sanity.{WorkspaceName}.Query.{QueryKey}`
+type ExampleType = Sanity.Default.Query.BookAuthors;
 ```
 
 [See below for important notes and limitations](#important-notes-and-limitations).
