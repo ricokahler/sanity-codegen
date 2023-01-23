@@ -25,11 +25,14 @@ export function transformSchemaToStructure({
     type: 'Array',
     of: createStructure({
       type: 'Or',
-      children: normalizedSchema.documents.map((node) =>
-        removeOptional(
-          transformSchemaNodeToStructure({ node, normalizedSchema }),
-        ),
-      ),
+      children: normalizedSchema.documents
+        .map((node) =>
+          removeOptional(
+            transformSchemaNodeToStructure({ node, normalizedSchema }),
+          ),
+        )
+        // for consistent output
+        .sort((a, b) => a.hash.localeCompare(b.hash, 'en')),
     }),
     canBeNull: false,
     canBeOptional: false,

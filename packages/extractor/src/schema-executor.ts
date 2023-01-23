@@ -16,7 +16,7 @@ const jsdomDefaultHtml = `<!doctype html>
 export type ExecutorResult =
   | {
       status: 'success';
-      result: Sanity.SchemaDef.Schema;
+      result: Sanity.SchemaDef.Schema[];
     }
   | {
       status: 'error';
@@ -100,16 +100,32 @@ async function loadAndExecute() {
     throw new Error('Expected at one workspace.');
   }
 
-  if (workspaces.length > 1) {
-    throw new Error(
-      'Found more than one workspace. ' +
-        'Multiple workspaces are not supported at this time.',
-    );
+  for (const workspace of workspaces) {
+    if (!workspace.name) {
+      throw new Error('Expected all workspaces to have a `name`');
+    }
   }
 
-  const [workspace] = workspaces;
+  const result = workspaces.map((workspace) => {
+    try {
+      return schemaNormalizer({
+        name: workspace.name,
+        types: workspace.schema._original?.types || [],
+        // this is true here to prevent serialization errors
+        omitOriginalNode: true,
+      });
+    } catch (e) {
+      const error = new Error(
+        `Failed to normalize workspace \`${workspace.name}\`. ${e}`,
+      );
+      error.cause = e;
+      throw error;
+    }
+  });
 
-  const result = schemaNormalizer(workspace.schema._original?.types || []);
+  if (!result.length) {
+    throw new Error(`Sanity config did not have any workspaces.`);
+  }
 
   const executorResult: ExecutorResult = {
     status: 'success',

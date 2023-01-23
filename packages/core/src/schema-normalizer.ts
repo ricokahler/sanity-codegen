@@ -14,7 +14,10 @@ const isRecord = (t: unknown): t is Record<string, unknown> => {
   return true;
 };
 
-function getCommonProps(i: any): Sanity.SchemaDef.CommonNodeProps {
+function getCommonProps(
+  i: any,
+  omitOriginalNode: boolean,
+): Sanity.SchemaDef.CommonNodeProps {
   return {
     codegen: {
       required: !!i.codegen?.required,
@@ -25,7 +28,9 @@ function getCommonProps(i: any): Sanity.SchemaDef.CommonNodeProps {
     readOnly: !!i.readOnly,
     title: i.title || (i.name ? transformCamelCase(i.name) : null),
     hasValidation: !!i.validation,
-    originalNode: i,
+    ...(!omitOriginalNode && {
+      originalNode: i,
+    }),
   };
 }
 
@@ -49,7 +54,11 @@ const typeMap: Record<string, Sanity.SchemaDef.SchemaNode['type'] | undefined> =
     reference: 'Reference',
   };
 
-function normalizeFields(t: any, parents: Array<string | number>) {
+function normalizeFields(
+  t: any,
+  parents: Array<string | number>,
+  omitOriginalNode: boolean,
+) {
   const fields: any[] = t.fields || [];
 
   if (!t?.fields?.length) {
@@ -85,14 +94,18 @@ function normalizeFields(t: any, parents: Array<string | number>) {
       readOnly: !!f.readOnly,
       codegen: { required: !!f.codegen?.required },
       hasValidation: !!f.validation,
-      definition: normalizeType(f, parents),
+      definition: normalizeType(f, parents, omitOriginalNode),
     };
 
     return schemaFieldDef;
   });
 }
 
-function normalizeType(t: unknown, parents: Array<string | number>) {
+function normalizeType(
+  t: unknown,
+  parents: Array<string | number>,
+  omitOriginalNode: boolean,
+) {
   const pathname = [...parents, getFormattedName(t)].join('.');
 
   if (!isRecord(t)) {
@@ -117,11 +130,13 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
       }
 
       const schemaArrayDef: Sanity.SchemaDef.ArrayNode = {
-        ...getCommonProps(t),
+        ...getCommonProps(t, omitOriginalNode),
         type,
         of: Array.isArray(of)
-          ? of.map((i, index) => normalizeType(i, [...parents, index]))
-          : [normalizeType(of, [...parents, 0])],
+          ? of.map((i, index) =>
+              normalizeType(i, [...parents, index], omitOriginalNode),
+            )
+          : [normalizeType(of, [...parents, 0], omitOriginalNode)],
         list: normalizeList(t, [...parents, getFormattedName(t)]),
       };
 
@@ -132,12 +147,14 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
       const of = t.of;
 
       const schemaBlockDef: Sanity.SchemaDef.BlockNode = {
-        ...getCommonProps(t),
+        ...getCommonProps(t, omitOriginalNode),
         type,
         of: of
           ? Array.isArray(of)
-            ? of.map((i, index) => normalizeType(i, [...parents, index]))
-            : [normalizeType(of, [...parents, 0])]
+            ? of.map((i, index) =>
+                normalizeType(i, [...parents, index], omitOriginalNode),
+              )
+            : [normalizeType(of, [...parents, 0], omitOriginalNode)]
           : null,
         // TODO: implement this
         markDefs: [],
@@ -148,16 +165,20 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
 
     case 'Object': {
       const schemaDef: Sanity.SchemaDef.ObjectNode = {
-        ...getCommonProps(t),
+        ...getCommonProps(t, omitOriginalNode),
         type,
-        fields: normalizeFields(t, [...parents, getFormattedName(t)]),
+        fields: normalizeFields(
+          t,
+          [...parents, getFormattedName(t)],
+          omitOriginalNode,
+        ),
       };
 
       return schemaDef;
     }
 
     case 'Document': {
-      const { name, title, ...defProps } = getCommonProps(t);
+      const { name, title, ...defProps } = getCommonProps(t, omitOriginalNode);
 
       if (!name || typeof name !== 'string') {
         throw new SchemaParseError(`\`name\` is required for documents`);
@@ -172,7 +193,11 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
         name,
         title,
         type,
-        fields: normalizeFields(t, [...parents, getFormattedName(t)]),
+        fields: normalizeFields(
+          t,
+          [...parents, getFormattedName(t)],
+          omitOriginalNode,
+        ),
       };
 
       return schemaDef;
@@ -187,7 +212,7 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
     case 'Url': {
       const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
         {
-          ...getCommonProps(t),
+          ...getCommonProps(t, omitOriginalNode),
           type,
         };
       return node;
@@ -197,10 +222,14 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
     case 'File': {
       const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
         {
-          ...getCommonProps(t),
+          ...getCommonProps(t, omitOriginalNode),
           type,
           fields: t.fields
-            ? normalizeFields(t, [...parents, getFormattedName(t)])
+            ? normalizeFields(
+                t,
+                [...parents, getFormattedName(t)],
+                omitOriginalNode,
+              )
             : null,
         };
 
@@ -211,7 +240,7 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
     case 'String': {
       const node: Extract<Sanity.SchemaDef.SchemaNode, { type: typeof type }> =
         {
-          ...getCommonProps(t),
+          ...getCommonProps(t, omitOriginalNode),
           type,
           list: normalizeList(t, [...parents, getFormattedName(t)]),
         };
@@ -230,7 +259,7 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
       }
 
       const node: Sanity.SchemaDef.ReferenceNode = {
-        ...getCommonProps(t),
+        ...getCommonProps(t, omitOriginalNode),
         type,
         to: (Array.isArray(to) ? to : [to]).map((i: any) => {
           if (!i.type) {
@@ -240,7 +269,7 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
           }
 
           const n: Sanity.SchemaDef.RegistryReferenceNode = {
-            ...getCommonProps(i),
+            ...getCommonProps(i, omitOriginalNode),
             to: i.type,
             type: 'RegistryReference',
           };
@@ -259,7 +288,7 @@ function normalizeType(t: unknown, parents: Array<string | number>) {
     // reference does exist
     default: {
       const node: Sanity.SchemaDef.RegistryReferenceNode = {
-        ...getCommonProps(t),
+        ...getCommonProps(t, omitOriginalNode),
         type: 'RegistryReference',
         to: t.type,
       };
@@ -322,6 +351,23 @@ function normalizeList(
   });
 }
 
+export interface SchemaNormalizerOptions {
+  /**
+   * The name that will be forwarded to the resulting output type
+   */
+  name: string;
+  /**
+   * The raw sanity schema to be normalized
+   */
+  types: unknown[];
+  /**
+   * Whether or not to include the original node sanity in the output. This will
+   * make the `originalNode` property on a schema node be omitted. This is for
+   * serialization purposes.
+   */
+  omitOriginalNode?: boolean;
+}
+
 /**
  * Takes in a raw sanity schema and returns a statically typed normalized
  * version. This function also validates the raw schema, throwing when errors
@@ -331,8 +377,18 @@ function normalizeList(
  * @returns normalized sanity schema
  */
 // TODO: refactor this API to take in a config object instead of a single argument
-export function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema {
-  const allRegisteredTypes = types.map((i) => normalizeType(i, []));
+export function schemaNormalizer({
+  name,
+  types,
+  omitOriginalNode = false,
+}: SchemaNormalizerOptions): Sanity.SchemaDef.Schema {
+  if (!name) {
+    throw new SchemaParseError('No name was provided alongside a schema.');
+  }
+
+  const allRegisteredTypes = types.map((i) =>
+    normalizeType(i, [], omitOriginalNode),
+  );
 
   // TODO: check if name is trying to override primitive types
   for (const registeredType of allRegisteredTypes) {
@@ -352,6 +408,7 @@ export function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema {
   );
 
   return {
+    name,
     type: 'SchemaRoot',
     documents,
     registeredTypes: restOfRegisteredTypes,

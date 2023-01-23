@@ -6,7 +6,7 @@ import { transformGroqToStructure } from './transform-groq-to-structure';
 import { transformStructureToTs } from './transform-structure-to-ts';
 
 function print(query: string, schemaTypes: any[]) {
-  const schema = schemaNormalizer(schemaTypes);
+  const schema = schemaNormalizer({ name: 'default', types: schemaTypes });
   const root = parse(query);
 
   const structure = transformGroqToStructure({
@@ -147,14 +147,14 @@ describe('transformGroqToStructure', () => {
         books: {
           _id: string;
           _type: "book";
-          author?: Sanity.Reference<Sanity.Ref.Ref_HdGcFofEAyT3OHPP>;
+          author?: Sanity.Reference<Sanity.Ref.Ref_3UeaNVbvCf2CbUDn>;
           authorName: string | null;
           title?: string;
         }[];
       };
 
       namespace Sanity.Ref {
-        type Ref_HdGcFofEAyT3OHPP =
+        type Ref_3UeaNVbvCf2CbUDn =
           | {
               _id: string;
               _type: "author";
@@ -695,14 +695,14 @@ describe('transformGroqToStructure', () => {
     expect(print(query, schema)).toMatchInlineSnapshot(`
       "type Query = {
         child: {
-          name: Sanity.Ref.Ref_KEV5aXwQE8jV7ZPn;
+          name: Sanity.Ref.Ref_xqCFzgxJvs1kmgEP;
           parentName: string | null;
         };
         name: string | null;
       }[];
 
       namespace Sanity.Ref {
-        type Ref_KEV5aXwQE8jV7ZPn = string | null;
+        type Ref_xqCFzgxJvs1kmgEP = string | null;
       }
       "
     `);

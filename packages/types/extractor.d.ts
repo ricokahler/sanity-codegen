@@ -11,7 +11,7 @@ declare namespace Sanity {
       description: string | null;
       codegen: { required: boolean };
       hasValidation: boolean;
-      originalNode: unknown;
+      originalNode?: unknown;
     };
 
     /**
@@ -41,6 +41,10 @@ declare namespace Sanity {
      */
     type Schema = {
       type: 'SchemaRoot';
+      /**
+       * The name of the workspace the schema came from
+       */
+      name: string;
       /**
        * Holds all the documents found in the schema.
        */

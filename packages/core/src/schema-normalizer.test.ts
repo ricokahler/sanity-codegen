@@ -37,7 +37,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const normalized = schemaNormalizer(rawSchema);
+    const normalized = schemaNormalizer({ types: rawSchema, name: 'default' });
 
     // TODO: probably a better idea to remove the snapshots and replace with
     // `.toMatchObject`
@@ -49,7 +49,7 @@ describe('normalizer', () => {
     const rawSchema = [defineType({ type: 'object', name: 'myObject' })];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Expected type \`myObject\` to have property \`fields\` with at least one field."`,
     );
@@ -70,7 +70,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Expected type \`myObject.nestedObject\` to have property \`fields\` with at least one field."`,
     );
@@ -93,7 +93,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"\`(anonymous object).stuff\` had a field missing a \`name\` string."`,
     );
@@ -110,7 +110,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"\`movie\` has an invalid \`type\`. Expected a string but got \`null\`"`,
     );
@@ -131,7 +131,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -149,7 +149,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -185,7 +185,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -200,7 +200,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"\`myObject.myArrayMissingOf\` was of type \`array\` but did not have an \`of\` property."`,
     );
@@ -220,7 +220,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -229,7 +229,7 @@ describe('normalizer', () => {
     const rawSchema = [defineType({ type: 'boolean' })];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Found top-level registered type with no \`name\` field."`,
     );
@@ -255,7 +255,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -272,7 +272,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -327,7 +327,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -351,7 +351,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Expected \`myObject.testField.options.list\` to be an array but found \`number\` instead."`,
     );
@@ -380,7 +380,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected a string, number, or object but found "function""`,
     );
@@ -405,7 +405,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"Invalid \`options.list\` item for type \`myObject.testField\`. Expected item to have properties \`title\` and \`value\`."`,
     );
@@ -432,7 +432,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 
@@ -454,7 +454,7 @@ describe('normalizer', () => {
     ];
 
     expect(() =>
-      schemaNormalizer(rawSchema),
+      schemaNormalizer({ types: rawSchema, name: 'default' }),
     ).toThrowErrorMatchingInlineSnapshot(
       `"\`movie.actor\` was of type \`reference\` but did not have an \`to\` property."`,
     );
@@ -501,7 +501,7 @@ describe('normalizer', () => {
       }),
     ];
 
-    const result = schemaNormalizer(rawSchema);
+    const result = schemaNormalizer({ types: rawSchema, name: 'default' });
     expect(result).toMatchSnapshot();
   });
 

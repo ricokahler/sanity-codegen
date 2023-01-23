@@ -3,13 +3,16 @@ import { transformSchemaToStructure } from './transform-schema-to-structure';
 
 describe('transformSchemaToStructure', () => {
   it('takes in a schema and outputs a Structure node', () => {
-    const normalizedSchema = schemaNormalizer([
-      {
-        type: 'document',
-        name: 'book',
-        fields: [{ name: 'title', type: 'string' }],
-      },
-    ]);
+    const normalizedSchema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          type: 'document',
+          name: 'book',
+          fields: [{ name: 'title', type: 'string' }],
+        },
+      ],
+    });
 
     const structure = transformSchemaToStructure({ normalizedSchema });
 
@@ -24,25 +27,28 @@ describe('transformSchemaToStructure', () => {
 
   // TODO: better description
   it('correctly converts arrays', () => {
-    const normalizedSchema = schemaNormalizer([
-      {
-        name: 'book',
-        type: 'document',
-        fields: [
-          {
-            name: 'authors',
-            type: 'array',
-            of: [
-              {
-                type: 'object',
-                name: 'author',
-                fields: [{ name: 'name', type: 'string' }],
-              },
-            ],
-          },
-        ],
-      },
-    ]);
+    const normalizedSchema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            {
+              name: 'authors',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'author',
+                  fields: [{ name: 'name', type: 'string' }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
 
     const structure = transformSchemaToStructure({ normalizedSchema });
 
@@ -69,37 +75,40 @@ describe('transformSchemaToStructure', () => {
   });
 
   it('works with Blocks', () => {
-    const normalizedSchema = schemaNormalizer([
-      {
-        name: 'book',
-        type: 'document',
-        fields: [
-          { name: 'title', type: 'string' },
-          {
-            name: 'description',
-            type: 'array',
-            of: [
-              {
-                type: 'block',
-                of: [
-                  { type: 'footNote' },
-                  {
-                    type: 'object',
-                    name: 'inlineDefinition',
-                    fields: [{ name: 'num', type: 'number' }],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: 'footNote',
-        type: 'object',
-        fields: [{ name: 'note', type: 'string' }],
-      },
-    ]);
+    const normalizedSchema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            {
+              name: 'description',
+              type: 'array',
+              of: [
+                {
+                  type: 'block',
+                  of: [
+                    { type: 'footNote' },
+                    {
+                      type: 'object',
+                      name: 'inlineDefinition',
+                      fields: [{ name: 'num', type: 'number' }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'footNote',
+          type: 'object',
+          fields: [{ name: 'note', type: 'string' }],
+        },
+      ],
+    });
 
     const structure = transformSchemaToStructure({ normalizedSchema });
 
@@ -110,7 +119,7 @@ describe('transformSchemaToStructure', () => {
         properties: [
           { key: '_type', value: { type: 'String', value: 'book' } },
           { key: '_id', value: { type: 'String' } },
-          { key: 'title', value: { type: 'String' } },
+          { key: 'title', value: { type: 'String', value: null } },
           {
             key: 'description',
             value: {
@@ -127,13 +136,13 @@ describe('transformSchemaToStructure', () => {
                       of: {
                         type: 'Or',
                         children: [
+                          { type: 'Lazy' },
                           {
                             type: 'Object',
                             properties: [
                               { key: 'num', value: { type: 'Number' } },
                             ],
                           },
-                          { type: 'Lazy' },
                           {
                             type: 'Object',
                             properties: [

@@ -3,6 +3,7 @@
 exports[`normalizer accepts a \`block\` type within inline objects 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -289,6 +290,7 @@ exports[`normalizer accepts a \`block\` type within inline objects 1`] = `
 exports[`normalizer accepts a block type with nested of types 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -366,6 +368,7 @@ exports[`normalizer accepts a block type with nested of types 1`] = `
 exports[`normalizer accepts a number or string with or without list options 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -808,6 +811,7 @@ exports[`normalizer accepts a reference type 1`] = `
       "type": "Document",
     },
   ],
+  "name": "default",
   "registeredTypes": [],
   "type": "SchemaRoot",
 }
@@ -816,6 +820,7 @@ exports[`normalizer accepts a reference type 1`] = `
 exports[`normalizer accepts an image and file type with or without fields 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -894,6 +899,7 @@ exports[`normalizer accepts an image and file type with or without fields 1`] = 
 exports[`normalizer accepts and normalizes a field with a nested object 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -996,6 +1002,7 @@ exports[`normalizer accepts and normalizes a field with a nested object 1`] = `
 exports[`normalizer accepts and normalizes a field with a top-level reference 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -1109,6 +1116,7 @@ exports[`normalizer accepts and normalizes a field with a top-level reference 1`
 exports[`normalizer accepts and normalizes array types 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -1329,6 +1337,7 @@ exports[`normalizer accepts and normalizes array types 1`] = `
 exports[`normalizer accepts basic primitives types 1`] = `
 {
   "documents": [],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {
@@ -1706,6 +1715,7 @@ exports[`normalizer takes in a sanity schema and returns a normalized representa
       "type": "Document",
     },
   ],
+  "name": "default",
   "registeredTypes": [
     {
       "codegen": {

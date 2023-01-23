@@ -3,16 +3,21 @@ import { schemaNormalizer } from '@sanity-codegen/core';
 import { SanityCodegenConfig } from '../../types';
 
 const config: SanityCodegenConfig = {
-  normalizedSchema: schemaNormalizer([
-    {
-      name: 'book',
-      type: 'document',
-      fields: [
-        { name: 'title', type: 'string' },
-        { name: 'author', type: 'string' },
+  normalizedSchemas: [
+    schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            { name: 'author', type: 'string' },
+          ],
+        },
       ],
-    },
-  ]),
+    }),
+  ],
   include: '**/*.{js,ts,tsx}',
 };
 

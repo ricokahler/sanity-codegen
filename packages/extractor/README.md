@@ -114,6 +114,21 @@ export declare function schemaExtractor(
 ### `schemaNormalizer()`
 
 ```ts
+interface SchemaNormalizerOptions {
+  /**
+   * The raw sanity schema to be normalized
+   */
+  types: unknown[];
+  /**
+   * Whether or not to include the original node sanity in the output. This will
+   * make the `originalNode` property on a schema node be omitted. This is for
+   * serialization purposes.
+   */
+  omitOriginalNode?: boolean;
+}
+```
+
+```ts
 /**
  * Takes in a raw sanity schema and returns a statically typed normalized
  * version. This function also validates the raw schema, throwing when errors
@@ -122,7 +137,9 @@ export declare function schemaExtractor(
  * @param types raw sanity schema in the form of a type array
  * @returns normalized sanity schema
  */
-export declare function schemaNormalizer(types: any[]): Sanity.SchemaDef.Schema;
+export declare function schemaNormalizer(
+  options: SchemaNormalizerOptions,
+): Sanity.SchemaDef.Schema;
 ```
 
 ### `defaultBabelOptions`

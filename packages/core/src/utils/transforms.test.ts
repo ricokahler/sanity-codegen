@@ -136,21 +136,24 @@ describe('addNull', () => {
 
 describe('unwrapReferences', () => {
   it('takes in a reference structure and returns a structure where that reference points to', () => {
-    const normalizedSchema = schemaNormalizer([
-      {
-        name: 'book',
-        type: 'document',
-        fields: [
-          { name: 'title', type: 'string' },
-          { name: 'author', type: 'reference', to: [{ type: 'author' }] },
-        ],
-      },
-      {
-        name: 'author',
-        type: 'document',
-        fields: [{ name: 'name', type: 'string' }],
-      },
-    ]);
+    const normalizedSchema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            { name: 'author', type: 'reference', to: [{ type: 'author' }] },
+          ],
+        },
+        {
+          name: 'author',
+          type: 'document',
+          fields: [{ name: 'name', type: 'string' }],
+        },
+      ],
+    });
 
     const everything = transformSchemaToStructure({
       normalizedSchema,

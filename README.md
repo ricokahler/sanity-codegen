@@ -25,11 +25,11 @@ This command will locate your schema, generate TypeScript types, and write them 
 
 ### Schema types
 
-The `sanity-codegen.d.ts` file that was generated will add ambient types to your project. Access them via `Sanity.Schema.YourType`
+The `sanity-codegen.d.ts` file that was generated will add ambient types to your project. Access them via `Sanity.{WorkspaceName}.Schema.{TypeName}`
 
 ```js
 interface Props {
-  book: Sanity.Schema.Book; // no import needed. just use it
+  book: Sanity.Default.Schema.Book; // no import needed. just use it
 }
 
 function yourFunction({ book }: Props) {

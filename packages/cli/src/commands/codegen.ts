@@ -72,6 +72,14 @@ export default class GroqCodegen extends Command {
         to exclude from type generation. Powered by globby.
       `,
     }),
+    ignoreSchemas: flags.string({
+      name: 'ignoreSchemas',
+      description: stripIndents`
+        A common separated list that tells the codegen to ignores workspace
+        schemas and exclude them from codegen. Useful if you have a workspace
+        that mirrors another one in schema (e.g. staging env).
+      `,
+    }),
   };
 
   static args: Parser.args.IArg[] = [
@@ -90,47 +98,48 @@ export default class GroqCodegen extends Command {
     const { args, flags } = this.parse(GroqCodegen);
     const { config, root, babelOptions } = await getConfig({ flags, logger });
 
-    const normalizedSchema = config?.normalizedSchema
-      ? config.normalizedSchema
-      : await (async () => {
-          const { babelOptions, config, babelrcPath, root } = await getConfig({
-            flags,
-            logger,
-          });
+    let normalizedSchemas;
 
-          const sanityConfigPath = await getSanityConfigPath({
-            config,
-            args,
-            root,
-            logger,
-          });
+    if (config?.normalizedSchemas) {
+      normalizedSchemas = config.normalizedSchemas;
+    } else {
+      const { babelOptions, config, babelrcPath, root } = await getConfig({
+        flags,
+        logger,
+      });
 
-          let normalizedSchema;
+      const sanityConfigPath = await getSanityConfigPath({
+        config,
+        args,
+        root,
+        logger,
+      });
 
-          if (config?.normalizedSchema) {
-            normalizedSchema = config.normalizedSchema;
-          } else {
-            logger.verbose(
-              `Extracting schema from sanity config (this may take some time)…`,
-            );
+      logger.verbose(
+        `Extracting schema from sanity config (this may take some time)…`,
+      );
 
-            normalizedSchema = await schemaExtractor({
-              sanityConfigPath,
-              babelrcPath: babelrcPath || undefined,
-              babelOptions,
-              cwd: root,
-            });
+      normalizedSchemas = await schemaExtractor({
+        sanityConfigPath,
+        babelrcPath: babelrcPath || undefined,
+        babelOptions,
+        cwd: root,
+      });
 
-            logger.success(`Extracted schema.`);
-          }
-
-          return normalizedSchema;
-        })();
+      logger.success(`Extracted schema.`);
+    }
 
     const include = flags.include ||
       config?.include || ['./src/**/*.{js,ts,tsx}'];
 
     const exclude = flags.exclude || config?.exclude || ['**/node_modules'];
+
+    const ignoreSchemasFromFlags = flags.ignoreSchemas
+      ?.split(',')
+      .map((i) => i.trim())
+      .filter(Boolean);
+
+    const ignoreSchemas = ignoreSchemasFromFlags || config?.ignoreSchemas;
 
     const result = await generateTypes({
       include,
@@ -139,8 +148,9 @@ export default class GroqCodegen extends Command {
       prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
       root,
-      normalizedSchema,
+      normalizedSchemas,
       logger,
+      ignoreSchemas,
     });
 
     const output = path.resolve(

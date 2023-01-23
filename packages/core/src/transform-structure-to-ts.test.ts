@@ -21,35 +21,38 @@ function print({
 
 describe('transformStructureToTs', () => {
   it('creates `TSType`s from `StructureNode`s', () => {
-    const schema = schemaNormalizer([
-      {
-        name: 'book',
-        type: 'document',
-        fields: [
-          {
-            name: 'title',
-            type: 'string',
-          },
-          {
-            name: 'author',
-            type: 'object',
-            fields: [{ name: 'name', type: 'string' }],
-          },
-        ],
-      },
-      {
-        name: 'movie',
-        type: 'document',
-        fields: [
-          { name: 'title', type: 'string' },
-          {
-            name: 'leadActor',
-            type: 'object',
-            fields: [{ name: 'name', type: 'string' }],
-          },
-        ],
-      },
-    ]);
+    const schema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            {
+              name: 'title',
+              type: 'string',
+            },
+            {
+              name: 'author',
+              type: 'object',
+              fields: [{ name: 'name', type: 'string' }],
+            },
+          ],
+        },
+        {
+          name: 'movie',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            {
+              name: 'leadActor',
+              type: 'object',
+              fields: [{ name: 'name', type: 'string' }],
+            },
+          ],
+        },
+      ],
+    });
 
     const everythingNode = transformSchemaToStructure({
       normalizedSchema: schema,
@@ -83,43 +86,46 @@ describe('transformStructureToTs', () => {
   });
 
   it('creates named aliases when recursive definitions are found', () => {
-    const schema = schemaNormalizer([
-      {
-        name: 'jsonLike',
-        type: 'array',
-        of: [
-          { name: 'stringLike', type: 'string' },
-          { name: 'numberLike', type: 'number' },
-          { name: 'booleanLike', type: 'boolean' },
-          { name: 'arrayLike', type: 'array', of: [{ type: 'jsonLike' }] },
-          {
-            name: 'objectLike',
-            type: 'object',
-            fields: [
-              {
-                name: 'properties',
-                type: 'array',
-                of: [
-                  {
-                    type: 'object',
-                    name: 'propertyPair',
-                    fields: [
-                      { name: 'key', type: 'string' },
-                      { name: 'value', type: 'jsonLike' },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        name: 'jsonDoc',
-        type: 'document',
-        fields: [{ name: 'jsonLike', type: 'jsonLike' }],
-      },
-    ]);
+    const schema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'jsonLike',
+          type: 'array',
+          of: [
+            { name: 'stringLike', type: 'string' },
+            { name: 'numberLike', type: 'number' },
+            { name: 'booleanLike', type: 'boolean' },
+            { name: 'arrayLike', type: 'array', of: [{ type: 'jsonLike' }] },
+            {
+              name: 'objectLike',
+              type: 'object',
+              fields: [
+                {
+                  name: 'properties',
+                  type: 'array',
+                  of: [
+                    {
+                      type: 'object',
+                      name: 'propertyPair',
+                      fields: [
+                        { name: 'key', type: 'string' },
+                        { name: 'value', type: 'jsonLike' },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'jsonDoc',
+          type: 'document',
+          fields: [{ name: 'jsonLike', type: 'jsonLike' }],
+        },
+      ],
+    });
 
     const structure = transformSchemaToStructure({ normalizedSchema: schema });
     const result = transformStructureToTs({ structure, substitutions: {} });
@@ -128,21 +134,21 @@ describe('transformStructureToTs', () => {
       "type Everything = {
         _id: string;
         _type: "jsonDoc";
-        jsonLike?: Sanity.Ref.Ref_uyG7JkRVccU1HuUn;
+        jsonLike?: Sanity.Ref.Ref_vO3XB5BrB0AvbYEU;
       }[];
 
       namespace Sanity.Ref {
-        type Ref_uyG7JkRVccU1HuUn = (
+        type Ref_vO3XB5BrB0AvbYEU = (
+          | Sanity.Ref.Ref_vO3XB5BrB0AvbYEU[]
           | boolean
           | string
+          | number
           | {
               properties?: {
                 key?: string;
-                value?: Sanity.Ref.Ref_uyG7JkRVccU1HuUn;
+                value?: Sanity.Ref.Ref_vO3XB5BrB0AvbYEU;
               }[];
             }
-          | number
-          | Sanity.Ref.Ref_uyG7JkRVccU1HuUn[]
         )[];
       }
       "
@@ -150,21 +156,24 @@ describe('transformStructureToTs', () => {
   });
 
   it('transforms references', () => {
-    const schema = schemaNormalizer([
-      {
-        name: 'book',
-        type: 'document',
-        fields: [
-          { name: 'title', type: 'string' },
-          { name: 'author', type: 'reference', to: [{ type: 'author' }] },
-        ],
-      },
-      {
-        name: 'author',
-        type: 'document',
-        fields: [{ name: 'name', type: 'string' }],
-      },
-    ]);
+    const schema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'book',
+          type: 'document',
+          fields: [
+            { name: 'title', type: 'string' },
+            { name: 'author', type: 'reference', to: [{ type: 'author' }] },
+          ],
+        },
+        {
+          name: 'author',
+          type: 'document',
+          fields: [{ name: 'name', type: 'string' }],
+        },
+      ],
+    });
 
     const structure = transformSchemaToStructure({ normalizedSchema: schema });
     const result = transformStructureToTs({ structure, substitutions: {} });
@@ -179,13 +188,13 @@ describe('transformStructureToTs', () => {
         | {
             _id: string;
             _type: "book";
-            author?: Sanity.Reference<Sanity.Ref.Ref_HdGcFofEAyT3OHPP>;
+            author?: Sanity.Reference<Sanity.Ref.Ref_3UeaNVbvCf2CbUDn>;
             title?: string;
           }
       )[];
 
       namespace Sanity.Ref {
-        type Ref_HdGcFofEAyT3OHPP =
+        type Ref_3UeaNVbvCf2CbUDn =
           | {
               _id: string;
               _type: "author";
@@ -198,23 +207,26 @@ describe('transformStructureToTs', () => {
   });
 
   it('correctly encodes `undefined`s and `null`s', () => {
-    const schema = schemaNormalizer([
-      {
-        name: 'requiredDoc',
-        type: 'document',
-        fields: [
-          {
-            name: 'requiredString',
-            type: 'string',
-            codegen: { required: true },
-          },
-          {
-            name: 'optionalString',
-            type: 'string',
-          },
-        ],
-      },
-    ]);
+    const schema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          name: 'requiredDoc',
+          type: 'document',
+          fields: [
+            {
+              name: 'requiredString',
+              type: 'string',
+              codegen: { required: true },
+            },
+            {
+              name: 'optionalString',
+              type: 'string',
+            },
+          ],
+        },
+      ],
+    });
 
     const schemaStructure = transformSchemaToStructure({
       normalizedSchema: schema,
