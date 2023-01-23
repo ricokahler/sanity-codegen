@@ -102,35 +102,31 @@ export default config;
 ```
 
 <!-- toc -->
-
-- [@sanity-codegen/cli](#sanity-codegencli)
-- [Usage](#usage)
-- [Commands](#commands)
+* [@sanity-codegen/cli](#sanity-codegencli)
+* [Usage](#usage)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g @sanity-codegen/cli
 $ sanity-codegen COMMAND
 running command...
 $ sanity-codegen (-v|--version|version)
-@sanity-codegen/cli/1.0.0-alpha.40 linux-x64 node-v18.13.0
+@sanity-codegen/cli/1.0.0-alpha.41 linux-x64 node-v18.13.0
 $ sanity-codegen --help [COMMAND]
 USAGE
   $ sanity-codegen COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-
-- [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
+* [`sanity-codegen help [COMMAND]`](#sanity-codegen-help-command)
 
 ## `sanity-codegen help [COMMAND]`
 
@@ -148,5 +144,4 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.18/src/commands/help.ts)_
-
 <!-- commandsstop -->

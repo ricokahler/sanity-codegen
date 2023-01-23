@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.41](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.40...v1.0.0-alpha.41) (2023-01-23)
+
+### Features
+
+- support multiple workspaces ([#282](https://github.com/ricokahler/sanity-codegen/issues/282)) ([02c1efd](https://github.com/ricokahler/sanity-codegen/commit/02c1efd3cf38430e0c0afb2f1b35ffd051d8b134))
+
 # [1.0.0-alpha.40](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.39...v1.0.0-alpha.40) (2023-01-21)
 
 **Note:** Version bump only for package sanity-codegen-monorepo

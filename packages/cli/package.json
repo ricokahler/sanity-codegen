@@ -1,6 +1,6 @@
 {
   "name": "@sanity-codegen/cli",
-  "version": "1.0.0-alpha.40",
+  "version": "1.0.0-alpha.41",
   "description": "CLI for sanity-codegen",
   "keywords": [
     "oclif",
@@ -49,9 +49,9 @@
     "@oclif/command": "^1.8.21",
     "@oclif/config": "^1.18.6",
     "@oclif/plugin-help": "^5.2.0",
-    "@sanity-codegen/core": "^1.0.0-alpha.38",
-    "@sanity-codegen/extractor": "^1.0.0-alpha.39",
-    "@sanity-codegen/types": "^1.0.0-alpha.38",
+    "@sanity-codegen/core": "^1.0.0-alpha.41",
+    "@sanity-codegen/extractor": "^1.0.0-alpha.41",
+    "@sanity-codegen/types": "^1.0.0-alpha.41",
     "babel-merge": "^3.0.0",
     "chalk": "^4.1.2",
     "common-tags": "^1.8.2",
