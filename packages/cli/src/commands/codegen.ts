@@ -9,6 +9,7 @@ import { getConfig } from '../get-config';
 import { createAnimatedLogger } from '../create-animated-logger';
 import { simpleLogger } from '../simple-logger';
 import { getSanityConfigPath } from '../get-sanity-config-path';
+import { registerDotEnv } from '../register-dot-env';
 
 export default class GroqCodegen extends Command {
   logger =
@@ -97,6 +98,11 @@ export default class GroqCodegen extends Command {
 
     const { args, flags } = this.parse(GroqCodegen);
     const { config, root, babelOptions } = await getConfig({ flags, logger });
+
+    registerDotEnv(
+      process.env.NODE_ENV === 'production' ? 'production' : 'development',
+      root,
+    );
 
     let normalizedSchemas;
 

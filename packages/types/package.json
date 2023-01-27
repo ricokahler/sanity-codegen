@@ -21,12 +21,12 @@
     "email": "ricokahler@me.com",
     "url": "https://github.com/ricokahler"
   },
-  "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts"
     }
   },
+  "types": "./index.d.ts",
   "scripts": {
     "build": ":",
     "clean": "rm -rf node_modules && tsc -b --clean",
