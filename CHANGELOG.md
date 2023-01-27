@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.42](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.41...v1.0.0-alpha.42) (2023-01-27)
+
+### Bug Fixes
+
+- **cli:** fix import issues with config ([4f83cb0](https://github.com/ricokahler/sanity-codegen/commit/4f83cb01e75ab2d2d39ae62aa88e8cc4c67d7f5b))
+
+### Features
+
+- **cli:** parse and load .env files ([cb83af3](https://github.com/ricokahler/sanity-codegen/commit/cb83af35fe216514bd1fd8d9b7436406a2d07e83))
+
 # [1.0.0-alpha.41](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.40...v1.0.0-alpha.41) (2023-01-23)
 
 ### Features
