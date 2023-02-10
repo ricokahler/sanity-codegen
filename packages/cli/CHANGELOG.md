@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.43](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.42...v1.0.0-alpha.43) (2023-02-10)
+
+### Bug Fixes
+
+- **cli:** ensure output dir ([#288](https://github.com/ricokahler/sanity-codegen/issues/288)) ([c7f61ec](https://github.com/ricokahler/sanity-codegen/commit/c7f61ec2f87e289fef43835442c8e4188f922adc))
+
 # [1.0.0-alpha.42](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.41...v1.0.0-alpha.42) (2023-01-27)
 
 ### Bug Fixes

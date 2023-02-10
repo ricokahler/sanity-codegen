@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.43](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.42...v1.0.0-alpha.43) (2023-02-10)
+
+### Bug Fixes
+
+- **client:** fix exports to use mjs extension ([#287](https://github.com/ricokahler/sanity-codegen/issues/287)) ([019a7da](https://github.com/ricokahler/sanity-codegen/commit/019a7da0d2ec8e886282e16da619f4092f549117))
+
 # [1.0.0-alpha.41](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.40...v1.0.0-alpha.41) (2023-01-23)
 
 ### Features
