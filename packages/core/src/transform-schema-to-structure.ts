@@ -28,7 +28,11 @@ export function transformSchemaToStructure({
       children: normalizedSchema.documents
         .map((node) =>
           removeOptional(
-            transformSchemaNodeToStructure({ node, normalizedSchema }),
+            transformSchemaNodeToStructure({
+              node,
+              normalizedSchema,
+              ancestors: [],
+            }),
           ),
         )
         // for consistent output
@@ -50,6 +54,10 @@ interface TransformSchemaNodeToStructureOptions {
    * `@sanity-codegen/extractor` package.
    */
   normalizedSchema: Sanity.SchemaDef.Schema;
+  /**
+   * The ancestors of the current schema node (extracted from `@sanity-codegen/extractor`)
+   */
+  ancestors: Sanity.SchemaDef.SchemaNode[];
 }
 
 /**
@@ -58,7 +66,13 @@ interface TransformSchemaNodeToStructureOptions {
 export function transformSchemaNodeToStructure({
   node,
   normalizedSchema,
+  ancestors,
 }: TransformSchemaNodeToStructureOptions): Sanity.GroqCodegen.StructureNode {
+  const parent = ancestors[ancestors.length - 1] || undefined;
+  const options = {
+    ancestors: [...ancestors, node],
+    normalizedSchema,
+  };
   switch (node.type) {
     case 'RegistryReference': {
       const referencedType = [
@@ -79,8 +93,8 @@ export function transformSchemaNodeToStructure({
         hashInput: `${objectHash(normalizedSchema)}:${referencedType.name}`,
         get: () =>
           transformSchemaNodeToStructure({
+            ...options,
             node: referencedType,
-            normalizedSchema,
           }),
       });
     }
@@ -92,7 +106,7 @@ export function transformSchemaNodeToStructure({
         of: createStructure({
           type: 'Or',
           children: node.of.map((node) =>
-            transformSchemaNodeToStructure({ node, normalizedSchema }),
+            transformSchemaNodeToStructure({ ...options, node }),
           ),
         }),
       });
@@ -178,8 +192,8 @@ export function transformSchemaNodeToStructure({
                   // the rest
                   ...(node.of || []).map((child) =>
                     transformSchemaNodeToStructure({
+                      ...options,
                       node: child,
-                      normalizedSchema,
                     }),
                   ),
                 ],
@@ -240,7 +254,10 @@ export function transformSchemaNodeToStructure({
 
       const properties: ObjectProperties = [];
 
-      if (node.type === 'Document') {
+      if (
+        node.type === 'Document' ||
+        (node.type === 'Object' && parent?.type === 'Array')
+      ) {
         properties.push({
           key: '_type',
           value: createStructure({
@@ -250,7 +267,21 @@ export function transformSchemaNodeToStructure({
             value: node.name,
           }),
         });
+      }
 
+      if (node.type === 'Object' && parent?.type === 'Array') {
+        properties.push({
+          key: '_key',
+          value: createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: false,
+            value: null,
+          }),
+        });
+      }
+
+      if (node.type === 'Document') {
         properties.push({
           key: '_id',
           value: createStructure({
@@ -292,8 +323,8 @@ export function transformSchemaNodeToStructure({
       const fieldProperties = node.fields?.map((field) => ({
         key: field.name,
         value: transformSchemaNodeToStructure({
+          ...options,
           node: field.definition,
-          normalizedSchema,
         }),
       }));
 
@@ -333,7 +364,7 @@ export function transformSchemaNodeToStructure({
         to: createStructure({
           type: 'Or',
           children: node.to.map((node) =>
-            transformSchemaNodeToStructure({ node, normalizedSchema }),
+            transformSchemaNodeToStructure({ ...options, node }),
           ),
         }),
         canBeNull: false,
