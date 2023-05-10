@@ -126,21 +126,25 @@ async function loadAndExecute() {
   if (!result.length) {
     throw new Error(`Sanity config did not have any workspaces.`);
   }
-
-  const executorResult: ExecutorResult = {
-    status: 'success',
-    result,
-  };
-
-  process.send!(JSON.stringify(executorResult));
+  return result;
 }
 
-loadAndExecute().catch((e) => {
-  const executorResult: ExecutorResult = {
-    status: 'error',
-    error: JSON.stringify({ message: e?.message, stack: e?.stack }, null, 2),
-  };
+loadAndExecute()
+  .then((result) => {
+    const executorResult: ExecutorResult = {
+      status: 'success',
+      result,
+    };
 
-  process.send!(JSON.stringify(executorResult));
-  process.exit(1);
-});
+    process.send!(JSON.stringify(executorResult));
+    process.exitCode = 0;
+  })
+  .catch((e) => {
+    const executorResult: ExecutorResult = {
+      status: 'error',
+      error: JSON.stringify({ message: e?.message, stack: e?.stack }, null, 2),
+    };
+
+    process.send!(JSON.stringify(executorResult));
+    process.exitCode = 1;
+  });
