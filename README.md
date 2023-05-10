@@ -1,3 +1,5 @@
+> ### ⚠️ [Project on Hiatus, Open to Sponsorships](https://github.com/ricokahler/sanity-codegen/issues/297) ⚠️
+
 # Sanity Codegen ✨
 
 > Generate TypeScript types from your Sanity schemas and queries
