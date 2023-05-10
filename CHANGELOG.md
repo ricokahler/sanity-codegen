@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.44](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.43...v1.0.0-alpha.44) (2023-05-10)
+
+### Bug Fixes
+
+- **v1:** safer handling of child process exits ([#293](https://github.com/ricokahler/sanity-codegen/issues/293)) ([c7225eb](https://github.com/ricokahler/sanity-codegen/commit/c7225ebc81bd7776e3c1c4f356df7e930262cb14))
+
 # [1.0.0-alpha.43](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.42...v1.0.0-alpha.43) (2023-02-10)
 
 ### Bug Fixes

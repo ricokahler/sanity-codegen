@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.44](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.43...v1.0.0-alpha.44) (2023-05-10)
+
+**Note:** Version bump only for package sanity-codegen
+
 # [1.0.0-alpha.43](https://github.com/ricokahler/sanity-codegen/compare/v1.0.0-alpha.42...v1.0.0-alpha.43) (2023-02-10)
 
 **Note:** Version bump only for package sanity-codegen
