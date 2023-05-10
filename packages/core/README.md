@@ -35,7 +35,7 @@ In particular:
 1. The query must be contained inside of a function call (any identifier can be used).
 2. The first argument of that function call must be a string literal. This string literal is called the **query key**. Query keys are used to uniquely identify a query and must start with a capital letter.
 3. The second argument must be a tagged template literal with the tag being exactly `groq`.
-4. The template literal may _not_ contain any expressions. If you need to use parameters, use [GROQ parameters](https://www.sanity.io/docs/groq-parameters) (e.g. `$parameter`).
+4. The template literal has limited support for expressions. It can follow identifiers to resolve static query fragements but it _not_ contain any complex javascript expressions (the full query has to be resolveable statically, without evaluating JS). If you need to use parameters, use [GROQ parameters](https://www.sanity.io/docs/groq-parameters) (e.g. `$parameter`).
 
 If any source file contains a groq query in the form described above, Sanity Codegen will attempt to parse it and generate TypeScript types for it.
 
