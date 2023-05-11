@@ -65,7 +65,11 @@ describe('transformSchemaToStructure', () => {
               type: 'Array',
               of: {
                 type: 'Object',
-                properties: [{ key: 'name', value: { type: 'String' } }],
+                properties: [
+                  { key: '_type', value: { type: 'String', value: 'author' } },
+                  { key: '_key', value: { type: 'String' } },
+                  { key: 'name', value: { type: 'String' } },
+                ],
               },
             },
           },
