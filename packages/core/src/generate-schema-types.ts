@@ -5,14 +5,13 @@ import { transformStructureToTs } from './transform-structure-to-ts';
 
 interface GenerateSchemaTypesOptions {
   normalizedSchema: Sanity.SchemaDef.Schema;
+  workspaceIdentifier?: string;
 }
 
 export function generateSchemaTypes({
   normalizedSchema,
+  workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name),
 }: GenerateSchemaTypesOptions) {
-  // TODO: allow customizing this?
-  const workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name);
-
   const topLevelSchemaNodes = [
     ...normalizedSchema.documents,
     ...normalizedSchema.registeredTypes,

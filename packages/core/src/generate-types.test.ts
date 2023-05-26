@@ -127,6 +127,7 @@ describe('generateTypes', () => {
           name: 'additionalWorkspace',
         }),
       ],
+      generateWorkspaceName: (name) => `Overriden${name}`,
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
@@ -141,41 +142,41 @@ describe('generateTypes', () => {
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types="@sanity-codegen/types" />
 
-      namespace Sanity.AdditionalWorkspace.Client {
+      namespace Sanity.OverridenAdditionalWorkspace.Client {
         type Config = {
-          BookAuthorUsesDefaultAlias: Sanity.AdditionalWorkspace.Query.BookAuthorUsesDefaultAlias;
-          BookTitlesUsesDefaultExport: Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
-          AllBooksUsesDefaultReexport: Sanity.AdditionalWorkspace.Query.AllBooksUsesDefaultReexport;
-          AllBooksUsesNamedDeclaredExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
-          AllBooksUsesNameSpecifiedExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNameSpecifiedExport;
-          ImportStarExportStar: Sanity.AdditionalWorkspace.Query.ImportStarExportStar;
+          BookAuthorUsesDefaultAlias: Sanity.OverridenAdditionalWorkspace.Query.BookAuthorUsesDefaultAlias;
+          BookTitlesUsesDefaultExport: Sanity.OverridenAdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
+          AllBooksUsesDefaultReexport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesDefaultReexport;
+          AllBooksUsesNamedDeclaredExport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          AllBooksUsesNameSpecifiedExport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNameSpecifiedExport;
+          ImportStarExportStar: Sanity.OverridenAdditionalWorkspace.Query.ImportStarExportStar;
         };
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesDefaultReexport =
-          Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
+          Sanity.OverridenAdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesNamedDeclaredExport = {
           authorName: unknown;
           title: unknown;
         }[];
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesNameSpecifiedExport =
-          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type BookAuthorUsesDefaultAlias = unknown;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type BookTitlesUsesDefaultExport = unknown[];
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type ImportStarExportStar =
-          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.AdditionalWorkspace.Schema {
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
         type Foo =
           | {
               _id: string;
@@ -184,33 +185,33 @@ describe('generateTypes', () => {
             }
           | undefined;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesDefaultReexport =
-          Sanity.Default.Query.BookTitlesUsesDefaultExport;
+          Sanity.OverridenDefault.Query.BookTitlesUsesDefaultExport;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesNamedDeclaredExport = {
           authorName: string | null;
           title: string | null;
         }[];
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesNameSpecifiedExport =
-          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenDefault.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type BookAuthorUsesDefaultAlias = {
           name?: string;
         } | null;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type BookTitlesUsesDefaultExport = (string | null)[];
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type ImportStarExportStar =
-          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenDefault.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.Default.Schema {
+      namespace Sanity.OverridenDefault.Schema {
         type Blocks =
           | {
               _key: string;
@@ -226,7 +227,7 @@ describe('generateTypes', () => {
             }[]
           | undefined;
       }
-      namespace Sanity.Default.Schema {
+      namespace Sanity.OverridenDefault.Schema {
         type Book =
           | {
               _id: string;

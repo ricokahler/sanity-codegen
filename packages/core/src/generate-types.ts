@@ -9,6 +9,7 @@ import {
 import { simpleLogger } from './utils';
 import { generateQueryTypes } from './generate-query-types';
 import { generateSchemaTypes } from './generate-schema-types';
+import { defaultGenerateTypeName } from './default-generate-type-name';
 
 const logLevels: Sanity.Codegen.LogLevel[] = [
   'success',
@@ -42,6 +43,21 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
    * workspace that mirrors another one in schema (e.g. for staging env)
    */
   ignoreSchemas?: string[];
+
+  root?: string;
+  /**
+   * Function that generates the typescript workspace identifier from the schema
+   * name.
+   *
+   * @param typeName The generated workspace name from the schema name
+   */
+  generateWorkspaceName?: (
+    typeName: string,
+    context: {
+      normalizedSchemas: Sanity.SchemaDef.Schema[];
+      normalizedSchema: Sanity.SchemaDef.Schema;
+    },
+  ) => string;
 }
 
 /**
@@ -56,6 +72,7 @@ export async function generateTypes({
   prettierResolveConfigPath,
   normalizedSchemas,
   ignoreSchemas = [],
+  generateWorkspaceName = (typeName) => typeName,
   ...pluckOptions
 }: GenerateTypesOptions) {
   const { logger = simpleLogger } = pluckOptions;
@@ -83,11 +100,22 @@ export async function generateTypes({
       { ...logger },
     );
 
-    wrappedLogger.verbose(
-      `Generating types for workspace \`${normalizedSchema.name}\``,
+    const workspaceIdentifier = generateWorkspaceName(
+      defaultGenerateTypeName(normalizedSchema.name),
+      {
+        normalizedSchemas: filteredSchemas,
+        normalizedSchema,
+      },
     );
 
-    const schemaTypes = generateSchemaTypes({ normalizedSchema });
+    wrappedLogger.verbose(
+      `Generating types for workspace \`${normalizedSchema.name}\` as \`${workspaceIdentifier}\``,
+    );
+
+    const schemaTypes = generateSchemaTypes({
+      normalizedSchema,
+      workspaceIdentifier,
+    });
     const schemaCount = Object.keys(schemaTypes.declarations).length;
 
     wrappedLogger[schemaCount ? 'success' : 'warn'](
@@ -114,6 +142,7 @@ export async function generateTypes({
       normalizedSchema,
       substitutions: schemaTypes.substitutions,
       extractedQueries,
+      workspaceIdentifier,
     });
     const queryCount = Object.keys(queryTypes.declarations).length;
 
