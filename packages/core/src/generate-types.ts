@@ -46,6 +46,19 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
 
   root?: string;
   /**
+   * Function that generates the typescript type identifier from the node name.
+   *
+   * @param typeName The generated type name from the node name
+   */
+  generateTypeName?: (
+    typeName: string,
+    context: {
+      normalizedSchema: Sanity.SchemaDef.Schema;
+      node: Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode;
+      nodes: (Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode)[];
+    },
+  ) => string;
+  /**
    * Function that generates the typescript workspace identifier from the schema
    * name.
    *
@@ -72,6 +85,7 @@ export async function generateTypes({
   prettierResolveConfigPath,
   normalizedSchemas,
   ignoreSchemas = [],
+  generateTypeName,
   generateWorkspaceName = (typeName) => typeName,
   ...pluckOptions
 }: GenerateTypesOptions) {
@@ -115,6 +129,7 @@ export async function generateTypes({
     const schemaTypes = generateSchemaTypes({
       normalizedSchema,
       workspaceIdentifier,
+      generateTypeName,
     });
     const schemaCount = Object.keys(schemaTypes.declarations).length;
 

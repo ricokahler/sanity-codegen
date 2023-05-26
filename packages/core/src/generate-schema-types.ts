@@ -2,15 +2,18 @@ import * as t from '@babel/types';
 import { defaultGenerateTypeName } from './default-generate-type-name';
 import { transformSchemaNodeToStructure } from './transform-schema-to-structure';
 import { transformStructureToTs } from './transform-structure-to-ts';
+import { GenerateTypesOptions } from './generate-types';
 
 interface GenerateSchemaTypesOptions {
   normalizedSchema: Sanity.SchemaDef.Schema;
   workspaceIdentifier?: string;
+  generateTypeName?: GenerateTypesOptions['generateTypeName'];
 }
 
 export function generateSchemaTypes({
   normalizedSchema,
   workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name),
+  generateTypeName = (typeName) => typeName,
 }: GenerateSchemaTypesOptions) {
   const topLevelSchemaNodes = [
     ...normalizedSchema.documents,
@@ -23,8 +26,11 @@ export function generateSchemaTypes({
       normalizedSchema,
     });
 
-    // TODO: allow customizing this?
-    const identifier = defaultGenerateTypeName(node.name);
+    const identifier = generateTypeName(defaultGenerateTypeName(node.name), {
+      node,
+      nodes: topLevelSchemaNodes,
+      normalizedSchema,
+    });
 
     const { tsType, declarations, substitutions } = transformStructureToTs({
       structure,

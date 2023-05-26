@@ -128,6 +128,7 @@ describe('generateTypes', () => {
         }),
       ],
       generateWorkspaceName: (name) => `Overriden${name}`,
+      generateTypeName: (name) => (name === 'Foo' ? 'Bar' : name),
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
@@ -177,7 +178,7 @@ describe('generateTypes', () => {
           Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
       namespace Sanity.OverridenAdditionalWorkspace.Schema {
-        type Foo =
+        type Bar =
           | {
               _id: string;
               _type: "foo";
