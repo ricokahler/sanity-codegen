@@ -40,7 +40,7 @@ describe('codegen command', () => {
       [
         "Starting codegen…",
         "Using sanity-codegen config found at <PATH>",
-        "[default] Generating types for workspace \`default\`",
+        "[default] Generating types for workspace \`default\` as \`Default\`",
         "[default] Converted 1 schema definition to TypeScript",
         "[default] Plucking queries from files…",
         "[default] Finding files to extract queries from…",
