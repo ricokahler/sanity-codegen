@@ -54,8 +54,13 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
     typeName: string,
     context: {
       normalizedSchema: Sanity.SchemaDef.Schema;
-      node: Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode;
-      nodes: (Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode)[];
+      node:
+        | Sanity.SchemaDef.DocumentNode
+        | Sanity.SchemaDef.RegisteredSchemaNode;
+      nodes: (
+        | Sanity.SchemaDef.DocumentNode
+        | Sanity.SchemaDef.RegisteredSchemaNode
+      )[];
     },
   ) => string;
   /**
