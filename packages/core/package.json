@@ -51,8 +51,8 @@
     "@ricokahler/pool": "^1.2.0",
     "@sanity-codegen/types": "^1.0.0-alpha.42",
     "babel-merge": "^3.0.0",
-    "chalk": "^4.1.2",
-    "globby": "~11.0.0",
+    "chalk": "^5.0.0",
+    "globby": "~13.1.0",
     "groq-js": "^1.1.6",
     "object-hash": "^3.0.0",
     "prettier": "^2.8.3"

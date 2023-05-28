@@ -53,18 +53,18 @@
     "@sanity-codegen/extractor": "^1.0.0-alpha.45",
     "@sanity-codegen/types": "^1.0.0-alpha.42",
     "babel-merge": "^3.0.0",
-    "chalk": "^4.1.2",
+    "chalk": "^5.0.0",
     "common-tags": "^1.8.2",
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0",
-    "ora": "^5.4.1",
+    "ora": "^6.0.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.26.10",
     "@types/common-tags": "^1.8.1",
     "@types/node": "^18.11.18",
-    "globby": "~11.0.0"
+    "globby": "~13.1.0"
   },
   "engines": {
     "node": ">=12.22.0"
