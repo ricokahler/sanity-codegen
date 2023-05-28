@@ -64,7 +64,7 @@
     "@oclif/dev-cli": "^1.26.10",
     "@types/common-tags": "^1.8.1",
     "@types/node": "^18.11.18",
-    "globby": "~11.0.0"
+    "globby": "~11.1.0"
   },
   "engines": {
     "node": ">=12.22.0"
