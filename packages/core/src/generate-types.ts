@@ -77,7 +77,8 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
     },
   ) => string;
   /**
-   * Custom declarations to be added to the generated types
+   * Custom declarations to be added to the generated types, or a function that
+   * returns such declarations.
    */
   declarations?:
     | (string | t.TSModuleDeclaration)[]

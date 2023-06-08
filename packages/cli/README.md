@@ -93,6 +93,12 @@ const config: SanityCodegenConfig = {
    */
   // generateWorkspaceName: undefined,
   /**
+   * 
+   * Custom declarations to be added to the generated types, or a function that
+   * returns such declarations.
+   */
+  // declarations: undefined,
+  /**
    * This option is fed directly to prettier `resolveConfig`
    *
    * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
