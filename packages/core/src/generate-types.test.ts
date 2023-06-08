@@ -1,8 +1,44 @@
 import { schemaNormalizer } from './schema-normalizer';
-import { generateTypes } from './generate-types';
+import { GenerateTypesOptions, generateTypes } from './generate-types';
 import { exampleSchema } from './__example-files__/example-schema';
 
 describe('generateTypes', () => {
+  const declarations: GenerateTypesOptions['declarations'] = ({
+    t,
+    normalizedSchemas,
+    getWorkspaceName,
+  }) =>
+    normalizedSchemas.flatMap((normalizedSchema) => [
+      /* ts */ `
+      namespace Sanity.${getWorkspaceName(normalizedSchema)}.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+    `,
+      t.tsModuleDeclaration(
+        t.identifier('Sanity'),
+        t.tsModuleDeclaration(
+          t.identifier(getWorkspaceName(normalizedSchema)),
+          t.tsModuleDeclaration(
+            t.identifier('Schema'),
+            t.tsModuleBlock([
+              t.tsTypeAliasDeclaration(
+                t.identifier('CustomTypeFromTSModuleDeclaration'),
+                undefined,
+                t.tsTypeLiteral([
+                  t.tsPropertySignature(
+                    t.identifier('foo'),
+                    t.tsTypeAnnotation(t.tsStringKeyword()),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    ]);
+
   // TODO: better tests lol
   it('works', async () => {
     const result = await generateTypes({
@@ -21,6 +57,7 @@ describe('generateTypes', () => {
         verbose: jest.fn(),
         warn: jest.fn(),
       },
+      declarations,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -63,6 +100,11 @@ describe('generateTypes', () => {
           Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
       }
       namespace Sanity.Default.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.Default.Schema {
         type Blocks =
           | {
               _key: string;
@@ -90,6 +132,11 @@ describe('generateTypes', () => {
               title?: string;
             }
           | undefined;
+      }
+      namespace Sanity.Default.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
       }
       namespace Sanity.Ref {
         type Ref_0NJ3QI56wvVs4iZM = {
@@ -129,6 +176,7 @@ describe('generateTypes', () => {
       ],
       generateWorkspaceName: (name) => `Overriden${name}`,
       generateTypeName: (name) => (name === 'Foo' ? 'Bar' : name),
+      declarations,
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
@@ -178,6 +226,11 @@ describe('generateTypes', () => {
           Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
       namespace Sanity.OverridenAdditionalWorkspace.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
         type Bar =
           | {
               _id: string;
@@ -185,6 +238,11 @@ describe('generateTypes', () => {
               myStr?: string;
             }
           | undefined;
+      }
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
       }
       namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesDefaultReexport =
@@ -211,6 +269,11 @@ describe('generateTypes', () => {
       namespace Sanity.OverridenDefault.Query {
         type ImportStarExportStar =
           Sanity.OverridenDefault.Query.AllBooksUsesNamedDeclaredExport;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
       }
       namespace Sanity.OverridenDefault.Schema {
         type Blocks =
@@ -240,6 +303,11 @@ describe('generateTypes', () => {
               title?: string;
             }
           | undefined;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
       }
       namespace Sanity.Ref {
         type Ref_0NJ3QI56wvVs4iZM = {

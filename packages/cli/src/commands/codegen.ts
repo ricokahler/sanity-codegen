@@ -155,6 +155,7 @@ export default class GroqCodegen extends Command {
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
       generateTypeName: config?.generateTypeName,
       generateWorkspaceName: config?.generateWorkspaceName,
+      declarations: config?.declarations,
       root,
       normalizedSchemas,
       logger,

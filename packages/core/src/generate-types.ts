@@ -76,6 +76,21 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
       normalizedSchema: Sanity.SchemaDef.Schema;
     },
   ) => string;
+  /**
+   * Custom declarations to be added to the generated types
+   */
+  declarations?:
+    | (string | t.TSModuleDeclaration)[]
+    | ((context: {
+        t: typeof t;
+        normalizedSchemas: Sanity.SchemaDef.Schema[];
+        generateTypeName: GenerateTypesOptions['generateTypeName'];
+        generateWorkspaceName: GenerateTypesOptions['generateWorkspaceName'];
+        defaultGenerateTypeName: typeof defaultGenerateTypeName;
+        getWorkspaceName: (normalizedSchema: Sanity.SchemaDef.Schema) => string;
+      }) =>
+        | (string | t.TSModuleDeclaration)[]
+        | Promise<(string | t.TSModuleDeclaration)[]>);
 }
 
 /**
@@ -90,8 +105,9 @@ export async function generateTypes({
   prettierResolveConfigPath,
   normalizedSchemas,
   ignoreSchemas = [],
-  generateTypeName,
+  generateTypeName = (typeName) => typeName,
   generateWorkspaceName = (typeName) => typeName,
+  declarations: injectedDeclarationsOrFn = [],
   ...pluckOptions
 }: GenerateTypesOptions) {
   const { logger = simpleLogger } = pluckOptions;
@@ -102,6 +118,12 @@ export async function generateTypes({
   const filteredSchemas = normalizedSchemas.filter(
     (schema) => !ignoreSchemas.includes(schema.name),
   );
+
+  const getWorkspaceName = (normalizedSchema: Sanity.SchemaDef.Schema) =>
+    generateWorkspaceName(defaultGenerateTypeName(normalizedSchema.name), {
+      normalizedSchemas: filteredSchemas,
+      normalizedSchema,
+    });
 
   for (let i = 0; i < filteredSchemas.length; i++) {
     const normalizedSchema = filteredSchemas[i];
@@ -119,13 +141,7 @@ export async function generateTypes({
       { ...logger },
     );
 
-    const workspaceIdentifier = generateWorkspaceName(
-      defaultGenerateTypeName(normalizedSchema.name),
-      {
-        normalizedSchemas: filteredSchemas,
-        normalizedSchema,
-      },
-    );
+    const workspaceIdentifier = getWorkspaceName(normalizedSchema);
 
     wrappedLogger.verbose(
       `Generating types for workspace \`${normalizedSchema.name}\` as \`${workspaceIdentifier}\``,
@@ -180,11 +196,31 @@ export async function generateTypes({
     }
   }
 
+  const injectedDeclarations = await Promise.resolve({
+    t,
+    normalizedSchemas: filteredSchemas,
+    generateTypeName,
+    generateWorkspaceName,
+    defaultGenerateTypeName,
+    getWorkspaceName,
+  })
+    .then(
+      typeof injectedDeclarationsOrFn === 'function'
+        ? injectedDeclarationsOrFn
+        : () => injectedDeclarationsOrFn,
+    )
+    .then((maybeDeclarations) => maybeDeclarations || []);
+
   const finalCodegen = `
     /// <reference types="@sanity-codegen/types" />
 
-    ${Object.values(declarations)
-      .map((declaration) => generate(declaration).code)
+    ${injectedDeclarations
+      .concat(Object.values(declarations))
+      .map((declaration) =>
+        typeof declaration === 'string'
+          ? declaration.trim()
+          : generate(declaration).code,
+      )
       .sort((a, b) => a.localeCompare(b, 'en'))
       .join('\n')}
   `;

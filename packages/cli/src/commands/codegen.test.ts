@@ -72,6 +72,11 @@ describe('codegen command', () => {
         type QueryKey = (string | null)[];
       }
       namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.OverridenDefault.Schema {
         type Bar =
           | {
               _id: string;
@@ -89,6 +94,11 @@ describe('codegen command', () => {
               title?: string;
             }
           | undefined;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
       }
       ",
       ]

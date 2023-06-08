@@ -26,6 +26,37 @@ const config: SanityCodegenConfig = {
   include: '**/*.{js,ts,tsx}',
   generateWorkspaceName: (name) => `Overriden${name}`,
   generateTypeName: (name) => (name === 'Foo' ? 'Bar' : name),
+  declarations: ({ t, normalizedSchemas, getWorkspaceName }) =>
+    normalizedSchemas.flatMap((normalizedSchema) => [
+      /* ts */ `
+      namespace Sanity.${getWorkspaceName(normalizedSchema)}.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+    `,
+      t.tsModuleDeclaration(
+        t.identifier('Sanity'),
+        t.tsModuleDeclaration(
+          t.identifier(getWorkspaceName(normalizedSchema)),
+          t.tsModuleDeclaration(
+            t.identifier('Schema'),
+            t.tsModuleBlock([
+              t.tsTypeAliasDeclaration(
+                t.identifier('CustomTypeFromTSModuleDeclaration'),
+                undefined,
+                t.tsTypeLiteral([
+                  t.tsPropertySignature(
+                    t.identifier('foo'),
+                    t.tsTypeAnnotation(t.tsStringKeyword()),
+                  ),
+                ]),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    ]),
 };
 
 export default config;
