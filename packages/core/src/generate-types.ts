@@ -87,6 +87,11 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
         generateTypeName: GenerateTypesOptions['generateTypeName'];
         generateWorkspaceName: GenerateTypesOptions['generateWorkspaceName'];
         defaultGenerateTypeName: typeof defaultGenerateTypeName;
+        getTypeName: (
+          node:
+            | Sanity.SchemaDef.DocumentNode
+            | Sanity.SchemaDef.RegisteredSchemaNode,
+        ) => string;
         getWorkspaceName: (normalizedSchema: Sanity.SchemaDef.Schema) => string;
       }) =>
         | (string | t.TSModuleDeclaration)[]
@@ -124,6 +129,33 @@ export async function generateTypes({
       normalizedSchemas: filteredSchemas,
       normalizedSchema,
     });
+
+  const getTypeName = (
+    node: Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode,
+  ) => {
+    const normalizedSchema = filteredSchemas.find(
+      (schema) =>
+        // perform cheap searches by reference first
+        schema.documents.includes(node as Sanity.SchemaDef.DocumentNode) ||
+        schema.registeredTypes.includes(
+          node as Sanity.SchemaDef.RegisteredSchemaNode,
+        ),
+    );
+    if (!normalizedSchema) {
+      throw new Error(
+        `Could not find normalized schema for node "${node.name}" in any of the normalized schemas. Please pass in the node as it is in the schema, not a copy, as the search is done by reference.`,
+      );
+    }
+
+    return generateTypeName(defaultGenerateTypeName(node.name), {
+      normalizedSchema,
+      node,
+      nodes: [
+        ...normalizedSchema.documents,
+        ...normalizedSchema.registeredTypes,
+      ],
+    });
+  };
 
   for (let i = 0; i < filteredSchemas.length; i++) {
     const normalizedSchema = filteredSchemas[i];
@@ -203,6 +235,7 @@ export async function generateTypes({
     generateWorkspaceName,
     defaultGenerateTypeName,
     getWorkspaceName,
+    getTypeName,
   })
     .then(
       typeof injectedDeclarationsOrFn === 'function'

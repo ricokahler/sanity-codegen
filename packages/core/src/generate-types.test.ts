@@ -7,15 +7,16 @@ describe('generateTypes', () => {
     t,
     normalizedSchemas,
     getWorkspaceName,
+    getTypeName,
   }) =>
     normalizedSchemas.flatMap((normalizedSchema) => [
       /* ts */ `
-      namespace Sanity.${getWorkspaceName(normalizedSchema)}.Schema {
-        type CustomTypeFromString = {
-          foo: string;
-        };
-      }
-    `,
+        namespace Sanity.${getWorkspaceName(normalizedSchema)}.Schema {
+          type CustomTypeFromString = {
+            foo: string;
+          };
+        }
+      `,
       t.tsModuleDeclaration(
         t.identifier('Sanity'),
         t.tsModuleDeclaration(
@@ -32,6 +33,15 @@ describe('generateTypes', () => {
                     t.tsTypeAnnotation(t.tsStringKeyword()),
                   ),
                 ]),
+              ),
+              t.tsTypeAliasDeclaration(
+                t.identifier('Documents'),
+                undefined,
+                t.tsUnionType(
+                  normalizedSchema.documents.map((node) =>
+                    t.tsTypeReference(t.identifier(getTypeName(node))),
+                  ),
+                ),
               ),
             ]),
           ),
@@ -128,7 +138,7 @@ describe('generateTypes', () => {
               author?: {
                 name?: string;
               };
-              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
               title?: string;
             }
           | undefined;
@@ -137,9 +147,20 @@ describe('generateTypes', () => {
         type CustomTypeFromTSModuleDeclaration = {
           foo: string;
         };
+        type Documents = Book | Editorial;
+      }
+      namespace Sanity.Default.Schema {
+        type Editorial =
+          | {
+              _id: string;
+              _type: "editorial";
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
+              title?: string;
+            }
+          | undefined;
       }
       namespace Sanity.Ref {
-        type Ref_0NJ3QI56wvVs4iZM = {
+        type Ref_CSyMjBFeCfC4y2Vp = {
           _key: string;
           _type: "block";
           children: {
@@ -243,6 +264,7 @@ describe('generateTypes', () => {
         type CustomTypeFromTSModuleDeclaration = {
           foo: string;
         };
+        type Documents = Bar;
       }
       namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesDefaultReexport =
@@ -299,7 +321,7 @@ describe('generateTypes', () => {
               author?: {
                 name?: string;
               };
-              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
               title?: string;
             }
           | undefined;
@@ -308,9 +330,20 @@ describe('generateTypes', () => {
         type CustomTypeFromTSModuleDeclaration = {
           foo: string;
         };
+        type Documents = Book | Editorial;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type Editorial =
+          | {
+              _id: string;
+              _type: "editorial";
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
+              title?: string;
+            }
+          | undefined;
       }
       namespace Sanity.Ref {
-        type Ref_0NJ3QI56wvVs4iZM = {
+        type Ref_CSyMjBFeCfC4y2Vp = {
           _key: string;
           _type: "block";
           children: {
