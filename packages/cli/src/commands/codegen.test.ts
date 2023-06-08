@@ -40,8 +40,8 @@ describe('codegen command', () => {
       [
         "Starting codegen…",
         "Using sanity-codegen config found at <PATH>",
-        "[default] Generating types for workspace \`default\` as \`Default\`",
-        "[default] Converted 1 schema definition to TypeScript",
+        "[default] Generating types for workspace \`default\` as \`OverridenDefault\`",
+        "[default] Converted 2 schema definitions to TypeScript",
         "[default] Plucking queries from files…",
         "[default] Finding files to extract queries from…",
         "[default] Found 2 candidate files",
@@ -63,15 +63,24 @@ describe('codegen command', () => {
       [
         "/// <reference types="@sanity-codegen/types" />
 
-      namespace Sanity.Default.Client {
+      namespace Sanity.OverridenDefault.Client {
         type Config = {
-          QueryKey: Sanity.Default.Query.QueryKey;
+          QueryKey: Sanity.OverridenDefault.Query.QueryKey;
         };
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type QueryKey = (string | null)[];
       }
-      namespace Sanity.Default.Schema {
+      namespace Sanity.OverridenDefault.Schema {
+        type Bar =
+          | {
+              _id: string;
+              _type: "foo";
+              myStr?: string;
+            }
+          | undefined;
+      }
+      namespace Sanity.OverridenDefault.Schema {
         type Book =
           | {
               _id: string;
