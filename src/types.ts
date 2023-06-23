@@ -101,6 +101,19 @@ export interface SanityImageHotspot {
 
 export type SanityKeyed<T> = T extends object ? T & { _key: string } : T;
 
+export interface SanityFileAsset extends SanityDocument {
+  _type: "sanity.fileAsset";
+  assetId: string;
+  extension: string,
+  mimeType: string;
+  originalFilename: string;
+  path: string;
+  sha1hash: string;
+  size: number,
+  uploadId: string;
+  url: string;
+}
+
 export interface SanityImageAsset extends SanityDocument {
   _type: 'sanity.imageAsset';
   assetId: string;

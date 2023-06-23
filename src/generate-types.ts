@@ -238,8 +238,9 @@ async function generateTypes({
       const assetClause = `asset: SanityReference<${
         intrinsic.type === 'image'
           ? 'SanityImageAsset'
-          : // TODO: add types for non-image assets
-            'any'
+          : intrinsic.type === 'file'
+          ? 'SanityFileAsset'
+          : 'any'
       }>;`;
       const imageSpecificClause =
         intrinsic.type === 'image'
@@ -408,6 +409,7 @@ async function generateTypes({
         SanityAsset,
         SanityImage,
         SanityFile,
+        SanityFileAsset,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
@@ -427,6 +429,7 @@ async function generateTypes({
         SanityAsset,
         SanityImage,
         SanityFile,
+        SanityFileAsset,
         SanityGeoPoint,
         SanityBlock,
         SanityDocument,
