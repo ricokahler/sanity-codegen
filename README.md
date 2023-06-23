@@ -1,6 +1,4 @@
-> ### 👋 A new version is approaching!
->
-> There are a lot of new features (include GROQ codegen!) and changes coming to this lib soon. See [this issue](https://github.com/ricokahler/sanity-codegen/issues/5) for the 1.0 roadmap and for ways you can contribute.
+> ### ⚠️ [Project on Hiatus, Open to Sponsorships](https://github.com/ricokahler/sanity-codegen/issues/297) ⚠️
 
 ---
 
