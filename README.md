@@ -1,4 +1,4 @@
-> ### ⚠️ [Project on Hiatus, Open to Sponsorships](https://github.com/ricokahler/sanity-codegen/issues/297) ⚠️
+> ### ⚠️ [Sign the Petition to Prioritize the Development of Sanity-Codegen)[https://chng.it/YhqYgTHCf6] ⚠️
 
 # Sanity Codegen ✨
 
