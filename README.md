@@ -1,5 +1,3 @@
-> ### ⚠️ [Sign the Petition to Prioritize the Development of Sanity-Codegen](https://chng.it/YhqYgTHCf6) ⚠️
-
 # Sanity Codegen ✨
 
 > Generate TypeScript types from your Sanity schemas and queries
