@@ -153,6 +153,8 @@ export default class GroqCodegen extends Command {
       babelOptions,
       prettierResolveConfigOptions: config?.prettierResolveConfigOptions,
       prettierResolveConfigPath: config?.prettierResolveConfigPath,
+      generateTypeName: config?.generateTypeName,
+      generateWorkspaceName: config?.generateWorkspaceName,
       root,
       normalizedSchemas,
       logger,
