@@ -85,6 +85,20 @@ const config: SanityCodegenConfig = {
    */
   // generateTypeName: undefined,
   /**
+   * Optionally provide a function that generates the typescript workspace
+   * identifier from the schema type name.
+   * 
+   * Please note that this identifier is used for the generated typescript
+   * file, so the returned value should be a valid typescript identifier.
+   */
+  // generateWorkspaceName: undefined,
+  /**
+   * 
+   * Custom declarations to be added to the generated types, or a function that
+   * returns such declarations.
+   */
+  // declarations: undefined,
+  /**
    * This option is fed directly to prettier `resolveConfig`
    *
    * https://prettier.io/docs/en/api.html#prettierresolveconfigfilepath--options
