@@ -178,4 +178,46 @@ describe('transformSchemaToStructure', () => {
       },
     });
   });
+
+  it('works with string with a predefined list of options', () => {
+    const normalizedSchema = schemaNormalizer({
+      name: 'default',
+      types: [
+        {
+          type: 'document',
+          name: 'book',
+          fields: [
+            {
+              name: 'genre',
+              type: 'string',
+              options: { list: ['fiction', 'thriller'] },
+            },
+          ],
+        },
+      ],
+    });
+
+    const structure = transformSchemaToStructure({ normalizedSchema });
+
+    expect(structure).toMatchObject({
+      type: 'Array',
+      of: {
+        type: 'Object',
+        properties: [
+          { key: '_type', value: { type: 'String', value: 'book' } },
+          { key: '_id', value: { type: 'String' } },
+          {
+            key: 'genre',
+            value: {
+              type: 'Or',
+              children: [
+                { type: 'String', value: 'thriller' },
+                { type: 'String', value: 'fiction' },
+              ],
+            },
+          },
+        ],
+      },
+    });
+  });
 });

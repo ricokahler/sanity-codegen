@@ -222,11 +222,22 @@ export function transformSchemaNodeToStructure({
     case 'String':
     case 'Text':
     case 'Url': {
+      const list = 'list' in node && node.list?.length ? node.list : null;
       return createStructure({
-        type: 'String',
-        canBeNull: false,
-        canBeOptional: !node.codegen.required,
-        value: null,
+        type: 'Or',
+        children: (
+          list ??
+          // treat non list fields as lists of 1 item with a null value
+          // so it's handled aswell as a union of string
+          ([{ value: null }] as const)
+        ).map((item) =>
+          createStructure({
+            type: 'String',
+            canBeNull: false,
+            canBeOptional: !node.codegen.required,
+            value: item.value,
+          }),
+        ),
       });
     }
     case 'Object':
