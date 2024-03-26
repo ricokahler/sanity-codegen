@@ -1,3 +1,18 @@
+> [!NOTE]
+> # 🎉 `sanity-codegen` has been superseded by [Sanity TypeGen][sanity-typegen] 🎉
+> 
+> Exciting news! `sanity-codegen` has been superseded by [**Sanity TypeGen**][sanity-typegen]!
+> 
+> As the sole maintainer of `sanity-codegen`, I found myself unable to dedicate the time and attention it truly deserved. That's why I'm thrilled to announce the arrival of Sanity TypeGen! This project is a complete replacement for `sanity-codegen` and is maintained in-house by the same team that maintains GROQ itselt—you couldn't be in better hands ❤️.
+> 
+> **To the `sanity-codegen` community — Thank you! 💖**
+> 
+> I am deeply grateful for your support, feedback, and contributions to this project and hope you'll continue to offer the same warmth and insightful feedback to the amazing team behind Sanity TypeGen.
+> 
+> **🌟Here's to moving forward with Sanity TypeGen! 🌟**
+
+[sanity-typegen]: https://www.sanity.io/blog/introducing-sanity-typegen
+
 # Sanity Codegen ✨
 
 > Generate TypeScript types from your Sanity schemas and queries
