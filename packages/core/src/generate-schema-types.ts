@@ -22,6 +22,7 @@ export function generateSchemaTypes({
     const structure = transformSchemaNodeToStructure({
       node,
       normalizedSchema,
+      ancestors: [],
     });
 
     // TODO: allow customizing this?

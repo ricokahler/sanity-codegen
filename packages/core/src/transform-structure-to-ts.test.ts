@@ -144,7 +144,11 @@ describe('transformStructureToTs', () => {
           | string
           | number
           | {
+              _key: string;
+              _type: "objectLike";
               properties?: {
+                _key: string;
+                _type: "propertyPair";
                 key?: string;
                 value?: Sanity.Ref.Ref_vO3XB5BrB0AvbYEU;
               }[];
