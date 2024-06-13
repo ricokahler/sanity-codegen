@@ -9,6 +9,7 @@ import {
 import { simpleLogger } from './utils';
 import { generateQueryTypes } from './generate-query-types';
 import { generateSchemaTypes } from './generate-schema-types';
+import { defaultGenerateTypeName } from './default-generate-type-name';
 
 const logLevels: Sanity.Codegen.LogLevel[] = [
   'success',
@@ -42,6 +43,60 @@ export interface GenerateTypesOptions extends PluckGroqFromFilesOptions {
    * workspace that mirrors another one in schema (e.g. for staging env)
    */
   ignoreSchemas?: string[];
+
+  root?: string;
+  /**
+   * Function that generates the typescript type identifier from the node name.
+   *
+   * @param typeName The generated type name from the node name
+   */
+  generateTypeName?: (
+    typeName: string,
+    context: {
+      normalizedSchema: Sanity.SchemaDef.Schema;
+      node:
+        | Sanity.SchemaDef.DocumentNode
+        | Sanity.SchemaDef.RegisteredSchemaNode;
+      nodes: (
+        | Sanity.SchemaDef.DocumentNode
+        | Sanity.SchemaDef.RegisteredSchemaNode
+      )[];
+    },
+  ) => string;
+  /**
+   * Function that generates the typescript workspace identifier from the schema
+   * name.
+   *
+   * @param typeName The generated workspace name from the schema name
+   */
+  generateWorkspaceName?: (
+    typeName: string,
+    context: {
+      normalizedSchemas: Sanity.SchemaDef.Schema[];
+      normalizedSchema: Sanity.SchemaDef.Schema;
+    },
+  ) => string;
+  /**
+   * Custom declarations to be added to the generated types, or a function that
+   * returns such declarations.
+   */
+  declarations?:
+    | (string | t.TSModuleDeclaration)[]
+    | ((context: {
+        t: typeof t;
+        normalizedSchemas: Sanity.SchemaDef.Schema[];
+        generateTypeName: GenerateTypesOptions['generateTypeName'];
+        generateWorkspaceName: GenerateTypesOptions['generateWorkspaceName'];
+        defaultGenerateTypeName: typeof defaultGenerateTypeName;
+        getTypeName: (
+          node:
+            | Sanity.SchemaDef.DocumentNode
+            | Sanity.SchemaDef.RegisteredSchemaNode,
+        ) => string;
+        getWorkspaceName: (normalizedSchema: Sanity.SchemaDef.Schema) => string;
+      }) =>
+        | (string | t.TSModuleDeclaration)[]
+        | Promise<(string | t.TSModuleDeclaration)[]>);
 }
 
 /**
@@ -56,6 +111,9 @@ export async function generateTypes({
   prettierResolveConfigPath,
   normalizedSchemas,
   ignoreSchemas = [],
+  generateTypeName = (typeName) => typeName,
+  generateWorkspaceName = (typeName) => typeName,
+  declarations: injectedDeclarationsOrFn = [],
   ...pluckOptions
 }: GenerateTypesOptions) {
   const { logger = simpleLogger } = pluckOptions;
@@ -66,6 +124,39 @@ export async function generateTypes({
   const filteredSchemas = normalizedSchemas.filter(
     (schema) => !ignoreSchemas.includes(schema.name),
   );
+
+  const getWorkspaceName = (normalizedSchema: Sanity.SchemaDef.Schema) =>
+    generateWorkspaceName(defaultGenerateTypeName(normalizedSchema.name), {
+      normalizedSchemas: filteredSchemas,
+      normalizedSchema,
+    });
+
+  const getTypeName = (
+    node: Sanity.SchemaDef.DocumentNode | Sanity.SchemaDef.RegisteredSchemaNode,
+  ) => {
+    const normalizedSchema = filteredSchemas.find(
+      (schema) =>
+        // perform cheap searches by reference first
+        schema.documents.includes(node as Sanity.SchemaDef.DocumentNode) ||
+        schema.registeredTypes.includes(
+          node as Sanity.SchemaDef.RegisteredSchemaNode,
+        ),
+    );
+    if (!normalizedSchema) {
+      throw new Error(
+        `Could not find normalized schema for node "${node.name}" in any of the normalized schemas. Please pass in the node as it is in the schema, not a copy, as the search is done by reference.`,
+      );
+    }
+
+    return generateTypeName(defaultGenerateTypeName(node.name), {
+      normalizedSchema,
+      node,
+      nodes: [
+        ...normalizedSchema.documents,
+        ...normalizedSchema.registeredTypes,
+      ],
+    });
+  };
 
   for (let i = 0; i < filteredSchemas.length; i++) {
     const normalizedSchema = filteredSchemas[i];
@@ -83,11 +174,17 @@ export async function generateTypes({
       { ...logger },
     );
 
+    const workspaceIdentifier = getWorkspaceName(normalizedSchema);
+
     wrappedLogger.verbose(
-      `Generating types for workspace \`${normalizedSchema.name}\``,
+      `Generating types for workspace \`${normalizedSchema.name}\` as \`${workspaceIdentifier}\``,
     );
 
-    const schemaTypes = generateSchemaTypes({ normalizedSchema });
+    const schemaTypes = generateSchemaTypes({
+      normalizedSchema,
+      workspaceIdentifier,
+      generateTypeName,
+    });
     const schemaCount = Object.keys(schemaTypes.declarations).length;
 
     wrappedLogger[schemaCount ? 'success' : 'warn'](
@@ -114,6 +211,7 @@ export async function generateTypes({
       normalizedSchema,
       substitutions: schemaTypes.substitutions,
       extractedQueries,
+      workspaceIdentifier,
     });
     const queryCount = Object.keys(queryTypes.declarations).length;
 
@@ -131,11 +229,32 @@ export async function generateTypes({
     }
   }
 
+  const injectedDeclarations = await Promise.resolve({
+    t,
+    normalizedSchemas: filteredSchemas,
+    generateTypeName,
+    generateWorkspaceName,
+    defaultGenerateTypeName,
+    getWorkspaceName,
+    getTypeName,
+  })
+    .then(
+      typeof injectedDeclarationsOrFn === 'function'
+        ? injectedDeclarationsOrFn
+        : () => injectedDeclarationsOrFn,
+    )
+    .then((maybeDeclarations) => maybeDeclarations || []);
+
   const finalCodegen = `
     /// <reference types="@sanity-codegen/types" />
 
-    ${Object.values(declarations)
-      .map((declaration) => generate(declaration).code)
+    ${injectedDeclarations
+      .concat(Object.values(declarations))
+      .map((declaration) =>
+        typeof declaration === 'string'
+          ? declaration.trim()
+          : generate(declaration).code,
+      )
       .sort((a, b) => a.localeCompare(b, 'en'))
       .join('\n')}
   `;

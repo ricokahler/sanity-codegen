@@ -13,6 +13,14 @@ export const exampleSchema = [
     ],
   },
   {
+    type: 'document',
+    name: 'editorial',
+    fields: [
+      { name: 'title', type: 'string' },
+      { name: 'description', type: 'blocks' },
+    ],
+  },
+  {
     name: 'blocks',
     type: 'array',
     of: [{ type: 'block' }],

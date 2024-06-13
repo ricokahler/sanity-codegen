@@ -1,8 +1,54 @@
 import { schemaNormalizer } from './schema-normalizer';
-import { generateTypes } from './generate-types';
+import { GenerateTypesOptions, generateTypes } from './generate-types';
 import { exampleSchema } from './__example-files__/example-schema';
 
 describe('generateTypes', () => {
+  const declarations: GenerateTypesOptions['declarations'] = ({
+    t,
+    normalizedSchemas,
+    getWorkspaceName,
+    getTypeName,
+  }) =>
+    normalizedSchemas.flatMap((normalizedSchema) => [
+      /* ts */ `
+        namespace Sanity.${getWorkspaceName(normalizedSchema)}.Schema {
+          type CustomTypeFromString = {
+            foo: string;
+          };
+        }
+      `,
+      t.tsModuleDeclaration(
+        t.identifier('Sanity'),
+        t.tsModuleDeclaration(
+          t.identifier(getWorkspaceName(normalizedSchema)),
+          t.tsModuleDeclaration(
+            t.identifier('Schema'),
+            t.tsModuleBlock([
+              t.tsTypeAliasDeclaration(
+                t.identifier('CustomTypeFromTSModuleDeclaration'),
+                undefined,
+                t.tsTypeLiteral([
+                  t.tsPropertySignature(
+                    t.identifier('foo'),
+                    t.tsTypeAnnotation(t.tsStringKeyword()),
+                  ),
+                ]),
+              ),
+              t.tsTypeAliasDeclaration(
+                t.identifier('Documents'),
+                undefined,
+                t.tsUnionType(
+                  normalizedSchema.documents.map((node) =>
+                    t.tsTypeReference(t.identifier(getTypeName(node))),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    ]);
+
   // TODO: better tests lol
   it('works', async () => {
     const result = await generateTypes({
@@ -21,6 +67,7 @@ describe('generateTypes', () => {
         verbose: jest.fn(),
         warn: jest.fn(),
       },
+      declarations,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -63,6 +110,11 @@ describe('generateTypes', () => {
           Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
       }
       namespace Sanity.Default.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.Default.Schema {
         type Blocks =
           | {
               _key: string;
@@ -86,13 +138,29 @@ describe('generateTypes', () => {
               author?: {
                 name?: string;
               };
-              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
+              title?: string;
+            }
+          | undefined;
+      }
+      namespace Sanity.Default.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
+        type Documents = Book | Editorial;
+      }
+      namespace Sanity.Default.Schema {
+        type Editorial =
+          | {
+              _id: string;
+              _type: "editorial";
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
               title?: string;
             }
           | undefined;
       }
       namespace Sanity.Ref {
-        type Ref_0NJ3QI56wvVs4iZM = {
+        type Ref_CSyMjBFeCfC4y2Vp = {
           _key: string;
           _type: "block";
           children: {
@@ -127,6 +195,9 @@ describe('generateTypes', () => {
           name: 'additionalWorkspace',
         }),
       ],
+      generateWorkspaceName: (name) => `Overriden${name}`,
+      generateTypeName: (name) => (name === 'Foo' ? 'Bar' : name),
+      declarations,
       logger: {
         debug: jest.fn(),
         error: jest.fn(),
@@ -141,42 +212,47 @@ describe('generateTypes', () => {
     expect(result).toMatchInlineSnapshot(`
       "/// <reference types="@sanity-codegen/types" />
 
-      namespace Sanity.AdditionalWorkspace.Client {
+      namespace Sanity.OverridenAdditionalWorkspace.Client {
         type Config = {
-          BookAuthorUsesDefaultAlias: Sanity.AdditionalWorkspace.Query.BookAuthorUsesDefaultAlias;
-          BookTitlesUsesDefaultExport: Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
-          AllBooksUsesDefaultReexport: Sanity.AdditionalWorkspace.Query.AllBooksUsesDefaultReexport;
-          AllBooksUsesNamedDeclaredExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
-          AllBooksUsesNameSpecifiedExport: Sanity.AdditionalWorkspace.Query.AllBooksUsesNameSpecifiedExport;
-          ImportStarExportStar: Sanity.AdditionalWorkspace.Query.ImportStarExportStar;
+          BookAuthorUsesDefaultAlias: Sanity.OverridenAdditionalWorkspace.Query.BookAuthorUsesDefaultAlias;
+          BookTitlesUsesDefaultExport: Sanity.OverridenAdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
+          AllBooksUsesDefaultReexport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesDefaultReexport;
+          AllBooksUsesNamedDeclaredExport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          AllBooksUsesNameSpecifiedExport: Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNameSpecifiedExport;
+          ImportStarExportStar: Sanity.OverridenAdditionalWorkspace.Query.ImportStarExportStar;
         };
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesDefaultReexport =
-          Sanity.AdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
+          Sanity.OverridenAdditionalWorkspace.Query.BookTitlesUsesDefaultExport;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesNamedDeclaredExport = {
           authorName: unknown;
           title: unknown;
         }[];
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type AllBooksUsesNameSpecifiedExport =
-          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type BookAuthorUsesDefaultAlias = unknown;
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type BookTitlesUsesDefaultExport = unknown[];
       }
-      namespace Sanity.AdditionalWorkspace.Query {
+      namespace Sanity.OverridenAdditionalWorkspace.Query {
         type ImportStarExportStar =
-          Sanity.AdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenAdditionalWorkspace.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.AdditionalWorkspace.Schema {
-        type Foo =
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
+        type Bar =
           | {
               _id: string;
               _type: "foo";
@@ -184,33 +260,44 @@ describe('generateTypes', () => {
             }
           | undefined;
       }
-      namespace Sanity.Default.Query {
-        type AllBooksUsesDefaultReexport =
-          Sanity.Default.Query.BookTitlesUsesDefaultExport;
+      namespace Sanity.OverridenAdditionalWorkspace.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
+        type Documents = Bar;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
+        type AllBooksUsesDefaultReexport =
+          Sanity.OverridenDefault.Query.BookTitlesUsesDefaultExport;
+      }
+      namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesNamedDeclaredExport = {
           authorName: string | null;
           title: string | null;
         }[];
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type AllBooksUsesNameSpecifiedExport =
-          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenDefault.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type BookAuthorUsesDefaultAlias = {
           name?: string;
         } | null;
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type BookTitlesUsesDefaultExport = (string | null)[];
       }
-      namespace Sanity.Default.Query {
+      namespace Sanity.OverridenDefault.Query {
         type ImportStarExportStar =
-          Sanity.Default.Query.AllBooksUsesNamedDeclaredExport;
+          Sanity.OverridenDefault.Query.AllBooksUsesNamedDeclaredExport;
       }
-      namespace Sanity.Default.Schema {
+      namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromString = {
+          foo: string;
+        };
+      }
+      namespace Sanity.OverridenDefault.Schema {
         type Blocks =
           | {
               _key: string;
@@ -226,7 +313,7 @@ describe('generateTypes', () => {
             }[]
           | undefined;
       }
-      namespace Sanity.Default.Schema {
+      namespace Sanity.OverridenDefault.Schema {
         type Book =
           | {
               _id: string;
@@ -234,13 +321,29 @@ describe('generateTypes', () => {
               author?: {
                 name?: string;
               };
-              description?: Sanity.Ref.Ref_0NJ3QI56wvVs4iZM;
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
+              title?: string;
+            }
+          | undefined;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type CustomTypeFromTSModuleDeclaration = {
+          foo: string;
+        };
+        type Documents = Book | Editorial;
+      }
+      namespace Sanity.OverridenDefault.Schema {
+        type Editorial =
+          | {
+              _id: string;
+              _type: "editorial";
+              description?: Sanity.Ref.Ref_CSyMjBFeCfC4y2Vp;
               title?: string;
             }
           | undefined;
       }
       namespace Sanity.Ref {
-        type Ref_0NJ3QI56wvVs4iZM = {
+        type Ref_CSyMjBFeCfC4y2Vp = {
           _key: string;
           _type: "block";
           children: {
