@@ -13,16 +13,15 @@ interface GenerateQueryTypesOptions {
    * optionally override the default logger (e.g. to silence it, etc)
    */
   logger?: Sanity.Codegen.Logger;
+  workspaceIdentifier?: string;
 }
 
 export function generateQueryTypes({
   normalizedSchema,
   extractedQueries,
+  workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name),
   ...options
 }: GenerateQueryTypesOptions) {
-  // TODO: allow customizing this?
-  const workspaceIdentifier = defaultGenerateTypeName(normalizedSchema.name);
-
   const { logger = simpleLogger } = options;
   const queries = extractedQueries
     .map(({ queryKey, query }) => {

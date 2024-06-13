@@ -15,10 +15,17 @@ const config: SanityCodegenConfig = {
             { name: 'author', type: 'string' },
           ],
         },
+        {
+          name: 'foo',
+          type: 'document',
+          fields: [{ name: 'myStr', type: 'string' }],
+        },
       ],
     }),
   ],
   include: '**/*.{js,ts,tsx}',
+  generateWorkspaceName: (name) => `Overriden${name}`,
+  generateTypeName: (name) => (name === 'Foo' ? 'Bar' : name),
 };
 
 export default config;
