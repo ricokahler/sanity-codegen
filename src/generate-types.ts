@@ -29,6 +29,7 @@ type ReferenceType = {
   // blog example doesn't follow this.
   to: { type: string } | Array<{ type: string }>;
   weak?: boolean;
+  name?: string;
 };
 type SlugType = { name?: string; type: 'slug' };
 type StringType = {
@@ -294,6 +295,15 @@ async function generateTypes({
           ])
         )
         .join(' | ');
+
+      const name = (obj as ReferenceType)?.name;
+
+      // In the case that a new, named schema type is defined as a reference.
+      // Sanity treats this like a normal reference, but sets `_type` like
+      // an object. based on `name`.
+      if (!parents.length && name) {
+        return `{_type: '${name}'; _ref: string}`;
+      }
 
       // Note: we want the union to be wrapped by one Reference<T> so when
       // unwrapped the union can be further discriminated using the `_type`
