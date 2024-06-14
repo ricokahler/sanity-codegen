@@ -114,7 +114,9 @@ async function cli() {
   console.info(`[SanityCodeGen]: types written out to ${outputPath})`);
 }
 
-cli().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+cli()
+  .then(() => process.exit(0))
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
