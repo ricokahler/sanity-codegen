@@ -265,7 +265,8 @@ async function generateTypes({
         .join('\n')} }`;
     }
     if (intrinsic.type === 'object') {
-      const typeClause = intrinsic.name ? `_type: '${intrinsic.name}';` : '';
+      const lastParent = parents[parents.length - 1] as Parent | undefined;
+      const typeClause = (lastParent === undefined || lastParent.node.type === 'array') && intrinsic.name ? `_type: '${intrinsic.name}';` : '';
 
       return `{ ${typeClause} ${intrinsic.fields
         .map((field) =>
